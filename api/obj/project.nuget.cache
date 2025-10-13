@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "XPVIoeyn9kM=",
+  "dgSpecHash": "EqXhpeo4CFE=",
   "success": true,
-  "projectFilePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\api\\api.csproj",
+  "projectFilePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\yaren\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.6\\microsoft.aspnetcore.openapi.9.0.6.nupkg.sha512",
     "C:\\Users\\yaren\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
