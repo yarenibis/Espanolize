@@ -9,7 +9,7 @@ namespace api.src.Models
     {
     public int Id { get; set; }
     public string IspanyolcaOrnek { get; set; }
-    public string CeVIRI { get; set; }
+    public string Ceviri { get; set; }
     public string Aciklama { get; set; }
     
     // Navigation Properties

@@ -9,7 +9,6 @@ namespace api.src.Models
     {
     public int Id { get; set; }
     public string Ad { get; set; }
-    public string Icon { get; set; }
     public int Sira { get; set; }
     
     // Navigation Properties
