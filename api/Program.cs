@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using api.src.Data;
 using Microsoft.OpenApi.Models;
+using api.src.Interface;
+using api.src.Repository;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IKategori, KategoriRepository>();
 
 var app = builder.Build();
 

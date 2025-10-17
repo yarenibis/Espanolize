@@ -10,6 +10,7 @@ namespace api.src.Interface
     public interface IKategori
     {
         Task<List<Kategori>> GetAllAsync();
+        Task<List<Kategori>> GetAllWithKonularAsync();
         Task<Kategori?> GetByIdAsync(int id);
         Task<Kategori> CreateAsync(Kategori kategori);
         Task<Kategori?> UpdateAsync(int id, KategoriRequest request);
