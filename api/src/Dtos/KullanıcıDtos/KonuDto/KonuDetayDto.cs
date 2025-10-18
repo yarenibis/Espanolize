@@ -13,7 +13,7 @@ namespace api.src.Dtos.KullanıcıDtos.KonuDto
         public string Zorluk { get; set; }
         public int CalismaSuresi { get; set; }
         public string Aciklama { get; set; }
-        public string KategoriAd { get; set; }
+        public int KategoriId{ get; set; }
         public List<GramerKuralDto> Kurallar { get; set; } = new();
     }
 }

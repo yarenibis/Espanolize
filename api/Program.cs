@@ -17,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IKategori, KategoriRepository>();
+builder.Services.AddScoped<IKonu, KonuRepository>();
 
 var app = builder.Build();
 

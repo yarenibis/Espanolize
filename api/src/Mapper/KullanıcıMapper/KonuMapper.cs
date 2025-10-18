@@ -18,11 +18,12 @@ namespace api.src.Mapper.KullanıcıMapper
                 Baslik = konu.Baslik,
                 Aciklama = konu.Aciklama,
                 CalismaSuresi = konu.CalismaSuresi,
-                Zorluk = konu.Zorluk
+                Zorluk = konu.Zorluk,
+                KategoriId = konu.KategoriId
             };
         }
 
-        public static  KonuDetayDto ToKonuDetayDto(this Konu konu)
+        public static KonuDetayDto ToKonuDetayDto(this Konu konu)
         {
             return new KonuDetayDto
             {
@@ -31,6 +32,7 @@ namespace api.src.Mapper.KullanıcıMapper
                 Aciklama = konu.Aciklama,
                 CalismaSuresi = konu.CalismaSuresi,
                 Zorluk = konu.Zorluk,
+                KategoriId = konu.KategoriId,
                 Kurallar = konu.Kurallar?
                     .Select(k => k.ToGramerKuralDto())
                     .ToList() ?? new List<GramerKuralDto>()
