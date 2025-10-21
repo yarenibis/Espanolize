@@ -10,7 +10,20 @@ namespace api.src.Mapper.KullanıcıMapper
 {
     public static class GramerMapper
     {
-        public static GramerKuralDto ToGramerKuralDto(this GramerKural gramer)
+        public static GramerKuralDto ToGramerKuralListDto(this GramerKural gramer)
+        {
+            return new GramerKuralDto
+            {
+                Id = gramer.Id,
+                Aciklama = gramer.Aciklama,
+                KuralBaslik = gramer.KuralBaslik,
+
+
+            };
+        }
+
+
+        public static GramerKuralDto ToGramerKuralDetayDto(this GramerKural gramer)
         {
             return new GramerKuralDto
             {

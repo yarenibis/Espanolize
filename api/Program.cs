@@ -18,6 +18,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IKategori, KategoriRepository>();
 builder.Services.AddScoped<IKonu, KonuRepository>();
+builder.Services.AddScoped<IGramer, GramerRepository>();
 
 var app = builder.Build();
 

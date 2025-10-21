@@ -34,7 +34,7 @@ namespace api.src.Mapper.KullanıcıMapper
                 Zorluk = konu.Zorluk,
                 KategoriId = konu.KategoriId,
                 Kurallar = konu.Kurallar?
-                    .Select(k => k.ToGramerKuralDto())
+                    .Select(k => k.ToGramerKuralListDto())
                     .ToList() ?? new List<GramerKuralDto>()
             };
         }
