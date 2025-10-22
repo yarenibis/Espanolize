@@ -10,9 +10,9 @@ namespace api.src.Mapper.KullanıcıMapper
 {
     public static class GramerMapper
     {
-        public static GramerKuralDto ToGramerKuralListDto(this GramerKural gramer)
+        public static GramerKuralListDto ToGramerKuralListDto(this GramerKural gramer)
         {
-            return new GramerKuralDto
+            return new GramerKuralListDto
             {
                 Id = gramer.Id,
                 Aciklama = gramer.Aciklama,
@@ -23,16 +23,16 @@ namespace api.src.Mapper.KullanıcıMapper
         }
 
 
-        public static GramerKuralDto ToGramerKuralDetayDto(this GramerKural gramer)
+        public static GramerKuralDetayDto ToGramerKuralDetayDto(this GramerKural gramer)
         {
-            return new GramerKuralDto
+            return new GramerKuralDetayDto
             {
                 Id = gramer.Id,
                 Aciklama = gramer.Aciklama,
                 KuralBaslik = gramer.KuralBaslik,
                 Ornekler = gramer.Ornekler?
-                    .Select(o => o.ToOrnekDto())
-                    .ToList() ?? new List<OrnekDto>()
+                    .Select(o => o.ToOrnekListDto())
+                    .ToList() ?? new List<OrnekListDto>()
 
             };
         }

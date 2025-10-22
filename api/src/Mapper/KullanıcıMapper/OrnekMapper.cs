@@ -9,9 +9,9 @@ namespace api.src.Mapper.KullanıcıMapper
 {
     public static class OrnekMapper
     {
-        public static OrnekDto ToOrnekDto(this Ornek ornek)
+        public static OrnekListDto ToOrnekListDto(this Ornek ornek)
         {
-            return new OrnekDto
+            return new OrnekListDto
             {
                 Id = ornek.Id,
                 IspanyolcaOrnek = ornek.IspanyolcaOrnek,
@@ -19,5 +19,7 @@ namespace api.src.Mapper.KullanıcıMapper
                 Aciklama = ornek.Aciklama
             };
         }
+
+  
     }
 }

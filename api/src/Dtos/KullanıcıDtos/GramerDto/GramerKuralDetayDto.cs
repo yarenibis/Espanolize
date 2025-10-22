@@ -6,11 +6,11 @@ using api.src.Dtos.KullanıcıDtos.OrnekDtos;
 
 namespace api.src.Dtos.KullanıcıDtos.GramerDto
 {
-    public class GramerKuralDto
+    public class GramerKuralDetayDto
     {
         public int Id { get; set; }
         public string KuralBaslik { get; set; }
         public string Aciklama { get; set; }
-        public List<OrnekDto> Ornekler { get; set; } = new();
+        public List<OrnekListDto> Ornekler { get; set; } = new();
     }
 }

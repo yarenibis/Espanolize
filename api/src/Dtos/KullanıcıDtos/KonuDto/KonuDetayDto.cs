@@ -14,6 +14,6 @@ namespace api.src.Dtos.KullanıcıDtos.KonuDto
         public int CalismaSuresi { get; set; }
         public string Aciklama { get; set; }
         public int KategoriId{ get; set; }
-        public List<GramerKuralDto> Kurallar { get; set; } = new();
+        public List<GramerKuralListDto> Kurallar { get; set; } = new();
     }
 }

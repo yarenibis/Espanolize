@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace api.src.Dtos.KullanıcıDtos.OrnekDtos
 {
-    public class OrnekDto
+    public class OrnekListDto
     {
          public int Id { get; set; }
         public string IspanyolcaOrnek { get; set; }
