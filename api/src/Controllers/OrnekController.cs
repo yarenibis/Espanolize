@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api.src.Data;
 using api.src.Dtos.AdminDtos.OrnekDto;
 using api.src.Interface;
+using api.src.Mapper.AdminMapper;
 using api.src.Mapper.KullanıcıMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,10 +52,32 @@ namespace api.src.Controllers
             {
                 return null;
             }
-            var updatedModel = await _repository.UpdateAsync(id,request);
+            var updatedModel = await _repository.UpdateAsync(id, request);
             return Ok(updatedModel.ToOrnekListDto());
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateOrnek([FromBody] OrnekRequest request)
+        {
+            var createdDto = request.CreateKonuDto();
+            var createdOrnek = await _repository.CreateAsync(createdDto);
+            return CreatedAtAction(nameof(GetById), new { id = createdOrnek.Id }, createdOrnek.ToOrnekListDto());
+
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOrnek([FromRoute] int id)
+        {
+            var ornekModel = await _repository.GetByIdAsync(id);
+
+            if (ornekModel == null )
+            {
+                return NotFound();
+            }
+
+            await _repository.DeleteAsync(id);
+            return NoContent();
+        }
 
     }
 }
