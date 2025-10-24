@@ -7,12 +7,14 @@ using api.src.Dtos.AdminDtos.KonuDto;
 using api.src.Interface;
 using api.src.Mapper.AdminMapper;
 using api.src.Mapper.KullanıcıMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.src.Controllers
 {
     [Route("api/admin/konular")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class KonuController :ControllerBase
     {
         private readonly ApplicationDbContext _context;

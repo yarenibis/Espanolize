@@ -14,7 +14,7 @@ namespace api.src.Controllers
 {
     [Route("api/admin/kategoriler")]
     [ApiController]
-//    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class KategoriController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

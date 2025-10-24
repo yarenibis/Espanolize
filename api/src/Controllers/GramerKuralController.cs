@@ -7,12 +7,14 @@ using api.src.Dtos.AdminDtos.GramerKuralDto;
 using api.src.Interface;
 using api.src.Mapper.AdminMapper;
 using api.src.Mapper.KullanıcıMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.src.Controllers
 {
     [Route("api/admin/gramerkurallar")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class GramerKuralController :ControllerBase
     {
         private readonly ApplicationDbContext _context;

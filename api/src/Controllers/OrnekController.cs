@@ -7,12 +7,14 @@ using api.src.Dtos.AdminDtos.OrnekDto;
 using api.src.Interface;
 using api.src.Mapper.AdminMapper;
 using api.src.Mapper.KullanıcıMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.src.Controllers
 {
     [ApiController]
     [Route("/api/admin/ornekler")]
+    [Authorize(Roles = "Admin")]
     public class OrnekController :ControllerBase
     {
         private readonly ApplicationDbContext _context;
