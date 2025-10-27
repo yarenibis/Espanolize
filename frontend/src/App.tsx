@@ -5,6 +5,8 @@ import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import KategoriPage from "./pages/KategoriPage";
+import AdminDashboard from "./pages/Dashboard";
+import KonuPage from "./pages/KonuPage";
 
 export default function App() {
   return (
@@ -12,12 +14,26 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route
+  path="/admin"
+  element={
+    <ProtectedRoute>
+      <AdminDashboard />
+    </ProtectedRoute>
+  }
+/>
         <Route path="/admin/kategoriler" element={
     <ProtectedRoute>
       <KategoriPage />
     </ProtectedRoute>
   }
 />
+
+<Route path="/admin/konular" element={
+  <ProtectedRoute>
+    <KonuPage/>
+  </ProtectedRoute>
+} />
 
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>

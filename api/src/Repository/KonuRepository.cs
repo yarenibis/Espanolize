@@ -66,6 +66,7 @@ namespace api.src.Repository
             konuModel.CalismaSuresi = request.CalismaSuresi;
             konuModel.KategoriId = request.KategoriId;
             konuModel.Zorluk = request.Zorluk;
+            await _context.SaveChangesAsync();
             return konuModel;
 
         }
