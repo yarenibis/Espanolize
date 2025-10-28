@@ -10,5 +10,6 @@ namespace api.src.Dtos.KullanıcıDtos.GramerDto
          public int Id { get; set; }
         public string KuralBaslik { get; set; }
         public string Aciklama { get; set; }
+        public int KonuId { get; set; }
     }
 }

@@ -63,6 +63,7 @@ namespace api.src.Repository
             kuralModel.Aciklama = request.Aciklama;
             kuralModel.KuralBaslik = request.KuralBaslik;
             kuralModel.KonuId = request.KonuId;
+            await _context.SaveChangesAsync();
             return kuralModel;
         }
     }

@@ -17,7 +17,7 @@ namespace api.src.Mapper.KullanıcıMapper
                 Id = gramer.Id,
                 Aciklama = gramer.Aciklama,
                 KuralBaslik = gramer.KuralBaslik,
-
+                KonuId=gramer.KonuId
 
             };
         }
@@ -30,6 +30,7 @@ namespace api.src.Mapper.KullanıcıMapper
                 Id = gramer.Id,
                 Aciklama = gramer.Aciklama,
                 KuralBaslik = gramer.KuralBaslik,
+                KonuId= gramer.KonuId,
                 Ornekler = gramer.Ornekler?
                     .Select(o => o.ToOrnekListDto())
                     .ToList() ?? new List<OrnekListDto>()

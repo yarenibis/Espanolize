@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import KategoriPage from "./pages/KategoriPage";
 import AdminDashboard from "./pages/Dashboard";
 import KonuPage from "./pages/KonuPage";
+import GramerKuralPage from "./pages/GramerKuralPage";
 
 export default function App() {
   return (
@@ -32,6 +33,12 @@ export default function App() {
 <Route path="/admin/konular" element={
   <ProtectedRoute>
     <KonuPage/>
+  </ProtectedRoute>
+} />
+
+<Route path="/admin/gramerkurallar" element={
+  <ProtectedRoute>
+    <GramerKuralPage/>
   </ProtectedRoute>
 } />
 
