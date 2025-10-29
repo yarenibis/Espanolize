@@ -13,7 +13,7 @@ namespace api.src.Models
     public string Aciklama { get; set; }
     
     // Navigation Properties
-    public int? GramerKuralId { get; set; } // Nullable: bazı örnekler kurala bağlı olmayabilir
+    public int GramerKuralId { get; set; } // Nullable: bazı örnekler kurala bağlı olmayabilir
     public GramerKural GramerKural { get; set; }
     }
 }

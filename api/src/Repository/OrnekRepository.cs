@@ -59,6 +59,7 @@ namespace api.src.Repository
             ornekModel.IspanyolcaOrnek = request.IspanyolcaOrnek;
             ornekModel.Ceviri = request.Ceviri;
             ornekModel.GramerKuralId = request.GramerKuralId;
+            await _context.SaveChangesAsync();
             return ornekModel;
         }
     }

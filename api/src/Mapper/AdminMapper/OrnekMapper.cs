@@ -9,7 +9,7 @@ namespace api.src.Mapper.AdminMapper
 {
     public static class OrnekMapper
     {
-        public static Ornek CreateKonuDto(this OrnekRequest request)
+        public static Ornek CreateOrnekDto(this OrnekRequest request)
         {
             return new Ornek
             {

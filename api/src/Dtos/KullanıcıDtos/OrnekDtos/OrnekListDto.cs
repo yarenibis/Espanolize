@@ -11,5 +11,6 @@ namespace api.src.Dtos.KullanıcıDtos.OrnekDtos
         public string IspanyolcaOrnek { get; set; }
         public string Ceviri { get; set; }
         public string Aciklama { get; set; }
+        public int GramerKuralId{ get; set; }
     }
 }

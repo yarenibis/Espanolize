@@ -12,8 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace api.src.Controllers
 {
-    [ApiController]
+
     [Route("/api/admin/ornekler")]
+    [ApiController]
     [Authorize(Roles = "Admin")]
     public class OrnekController :ControllerBase
     {
@@ -61,7 +62,7 @@ namespace api.src.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrnek([FromBody] OrnekRequest request)
         {
-            var createdDto = request.CreateKonuDto();
+            var createdDto = request.CreateOrnekDto();
             var createdOrnek = await _repository.CreateAsync(createdDto);
             return CreatedAtAction(nameof(GetById), new { id = createdOrnek.Id }, createdOrnek.ToOrnekListDto());
 

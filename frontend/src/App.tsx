@@ -8,6 +8,7 @@ import KategoriPage from "./pages/KategoriPage";
 import AdminDashboard from "./pages/Dashboard";
 import KonuPage from "./pages/KonuPage";
 import GramerKuralPage from "./pages/GramerKuralPage";
+import OrnekPage from "./pages/OrnekPage";
 
 export default function App() {
   return (
@@ -39,6 +40,12 @@ export default function App() {
 <Route path="/admin/gramerkurallar" element={
   <ProtectedRoute>
     <GramerKuralPage/>
+  </ProtectedRoute>
+} />
+
+<Route path="/admin/ornekler" element={
+  <ProtectedRoute>
+    <OrnekPage/>
   </ProtectedRoute>
 } />
 

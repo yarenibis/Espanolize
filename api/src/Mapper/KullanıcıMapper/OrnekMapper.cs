@@ -16,10 +16,11 @@ namespace api.src.Mapper.KullanıcıMapper
                 Id = ornek.Id,
                 IspanyolcaOrnek = ornek.IspanyolcaOrnek,
                 Ceviri = ornek.Ceviri,
-                Aciklama = ornek.Aciklama
+                Aciklama = ornek.Aciklama,
+                GramerKuralId = ornek.GramerKuralId
             };
         }
 
-  
+
     }
 }
