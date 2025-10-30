@@ -12,15 +12,32 @@ interface Konu {
   kategoriId: number;
 }
 
+interface Kategori{
+  id: number;
+  ad: string;
+}
+
 export default function KonuPage() {
   const [konular, setKonular] = useState<Konu[]>([]);
+  const [kategoriler, setKategoriler] = useState<Kategori[]>([]);
   const [yeniBaslik, setYeniBaslik] = useState("");
   const [yeniZorluk, setYeniZorluk] = useState("");
   const [yeniCalismaSuresi, setYeniCalismaSuresi] = useState<number | "">("");
   const [yeniAciklama, setYeniAciklama] = useState("");
   const [yeniKategoriId, setYeniKategoriId] = useState<number | "">("");
   const [duzenlenecek, setDuzenlenecek] = useState<Konu | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  //kategorileri yükle
+  async function getKategoriler(){
+    try{
+      const res = await api.get("/admin/kategoriler");
+      setKategoriler(res.data);
+    }catch (err) {
+      console.error("kategoriler yüklenemedi:", err);
+    }
+
+  }
   // 📥 Konuları yükle
   async function fetchKonular() {
     try {
@@ -32,8 +49,32 @@ export default function KonuPage() {
   }
 
   useEffect(() => {
-    fetchKonular();
-  }, []);
+        const loadData = async () => {
+            setLoading(true);
+            // Önce konuları, sonra kuralları yükle
+            await fetchKonular();
+            await getKategoriler();
+            setLoading(false);
+        };
+        loadData();
+    }, [])
+
+
+  // Konu ID'sine göre konu başlığını bul
+    const getKategoriBaslik = (kategoriId: number) => {
+        const kategori = kategoriler.find(k => k.id === kategoriId);
+        return kategori ? kategori.ad : `Konu ID: ${kategoriId}`;
+    };
+
+    // Tablo için düzenlenmiş data oluştur (konu başlıkları ile)
+    const tabloData = konular.map(konu => ({
+        id: konu.id,
+  baslik: konu.baslik,
+  zorluk: konu.zorluk,
+  calismaSuresi: konu.calismaSuresi,
+  aciklama: konu.aciklama,
+        Ad: getKategoriBaslik(konu.kategoriId)
+    }));
 
   // ➕ Yeni konu ekle
   async function handleAdd() {
@@ -116,7 +157,7 @@ export default function KonuPage() {
     }
   }
 
-  // ❌ Düzenleme iptali
+  //  Düzenleme iptali
   function cancelEdit() {
     setDuzenlenecek(null);
     setYeniAciklama("");
@@ -126,76 +167,106 @@ export default function KonuPage() {
     setYeniZorluk("");
   }
 
-  return (
-    <div className="p-6">
-      <Navbar />
-      <h1 className="text-2xl font-bold mb-4">Konular Yönetimi</h1>
+if (loading) {
+        return (
+            <div className="p-6">
+                <Navbar />
+                <div className="flex justify-center items-center h-64">
+                    <div className="text-lg">Yükleniyor...</div>
+                </div>
+            </div>
+        );
+    }
 
-      {/* Ekle / Düzenle Alanı */}
-      <div className="flex gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Konu başlığı"
-          value={yeniBaslik}
-          onChange={(e) => setYeniBaslik(e.target.value)}
-          className="border p-2 rounded flex-1"
-        />
-        <input
-          type="text"
-          placeholder="Konu açıklaması"
-          value={yeniAciklama}
-          onChange={(e) => setYeniAciklama(e.target.value)}
-          className="border p-2 rounded flex-1"
-        />
-        <input
-          type="text"
-          placeholder="Konu zorluğu"
-          value={yeniZorluk}
-          onChange={(e) => setYeniZorluk(e.target.value)}
-          className="border p-2 rounded flex-1"
-        />
-        <input
-          type="number"
-          placeholder="Kategori ID"
-          value={yeniKategoriId}
-          onChange={(e) => setYeniKategoriId(Number(e.target.value))}
-          className="border p-2 rounded w-24"
-        />
-        <input
-          type="number"
-          placeholder="Çalışma süresi"
-          value={yeniCalismaSuresi}
-          onChange={(e) => setYeniCalismaSuresi(Number(e.target.value))}
-          className="border p-2 rounded w-32"
-        />
 
-        {duzenlenecek ? (
-          <>
-            <button
-              onClick={handleUpdate}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Güncelle
-            </button>
-            <button
-              onClick={cancelEdit}
-              className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              İptal
-            </button>
-          </>
-        ) : (
-          <button
-            onClick={handleAdd}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-          >
-            Ekle
-          </button>
-        )}
-      </div>
+   return (
+        <div className="p-6">
+            <Navbar />
+            <h1 className="text-2xl font-bold mb-4">Konu Yönetimi</h1>
 
-      {/* Tablo */}
-      <CrudTable data={konular} onEdit={startEdit} onDelete={handleDelete} />
-    </div>
-  );
+            {/* Ekle / Düzenle Alanı */}
+            <div className="flex gap-2 mb-4 flex-wrap">
+                <input
+                    type="text"
+                    placeholder="Konu başlığı"
+                    value={yeniBaslik}
+                    onChange={(e) => setYeniBaslik(e.target.value)}
+                    className="border p-2 rounded flex-1 min-w-[200px]"
+                />
+                <input
+                    type="text"
+                    placeholder="Konu açıklaması"
+                    value={yeniAciklama}
+                    onChange={(e) => setYeniAciklama(e.target.value)}
+                    className="border p-2 rounded flex-1 min-w-[200px]"
+                />
+                
+                <input
+                    type="text"
+                    placeholder="çalışma süresi"
+                    value={yeniCalismaSuresi}
+                    onChange={(e) => setYeniCalismaSuresi(Number(e.target.value))}
+                    className="border p-2 rounded flex-1 min-w-[200px]"
+                />
+
+                <input
+                    type="text"
+                    placeholder="Konu zorluk"
+                    value={yeniZorluk}
+                    onChange={(e) => setYeniZorluk(e.target.value)}
+                    className="border p-2 rounded flex-1 min-w-[200px]"
+                />
+
+                {/* Konu seçimi için dropdown */}
+                <select
+                    value={yeniKategoriId}
+                    onChange={(e) => setYeniKategoriId(Number(e.target.value))}
+                    className="border p-2 rounded min-w-[200px]"
+                >
+                    <option value="">Konu Seçin</option>
+                    {kategoriler.map((kategori) => (
+                        <option key={kategori.id} value={kategori.id}>
+                            {kategori.ad}
+                        </option>
+                    ))}
+                </select>
+
+                {duzenlenecek ? (
+                    <>
+                        <button
+                            onClick={handleUpdate}
+                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                        >
+                            Güncelle
+                        </button>
+                        <button
+                            onClick={cancelEdit}
+                            className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
+                        >
+                            İptal
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        onClick={handleAdd}
+                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                    >
+                        Ekle
+                    </button>
+                )}
+            </div>
+
+            {/* CrudTable kullanımı */}
+            <CrudTable 
+                data={tabloData} 
+                onEdit={(item) => {
+                    const originalKural = konular.find(k => k.id === item.id);
+                    if (originalKural) {
+                        startEdit(originalKural);
+                    }
+                }}
+                onDelete={handleDelete}
+            />
+        </div>
+    );
 }
