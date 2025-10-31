@@ -1,113 +1,149 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../services/ApiService";
-import Navbar from "../components/Navbar";
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { 
+  Layout,
+  Menu,
+  Button,
+  Space,
+  Select,
+  Typography
+} from "antd";
+import {
+  DashboardOutlined,
+  BookOutlined,
+  FileTextOutlined,
+  EditOutlined,
+  MessageOutlined,
+  UserOutlined
+} from "@ant-design/icons";
+import type { MenuProps } from 'antd';
+
+const { Header, Content, Sider } = Layout;
+const { Option } = Select;
 
 export default function AdminDashboard() {
-  const [counts, setCounts] = useState({
-    kategoriler: 0,
-    konular: 0,
-    gramerler: 0,
-    ornekler: 0,
-  });
+  const [collapsed, setCollapsed] = useState<boolean>(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  useEffect(() => {
-    async function fetchCounts() {
-      try {
-        const [kat, kon, gram, orn] = await Promise.all([
-          api.get("/admin/kategoriler"),
-          api.get("/admin/konular"),
-          api.get("/admin/gramerkurallar"),
-          api.get("/admin/ornekler"),
-        ]);
-        setCounts({
-          kategoriler: kat.data.length,
-          konular: kon.data.length,
-          gramerler: gram.data.length,
-          ornekler: orn.data.length,
-        });
-      } catch (err) {
-        console.error("Veriler yüklenemedi:", err);
-      }
-    }
-    fetchCounts();
-  }, []);
+  const menuItems: MenuProps['items'] = [
+    {
+      key: '/admin',
+      icon: <DashboardOutlined />,
+      label: 'Dashboard',
+      onClick: () => navigate('/admin'),
+    },
+    {
+      key: '/admin/kategoriler',
+      icon: <BookOutlined />,
+      label: 'Kategoriler',
+      onClick: () => navigate('/admin/kategoriler'),
+    },
+    {
+      key: '/admin/konular',
+      icon: <FileTextOutlined />,
+      label: 'Konular',
+      onClick: () => navigate('/admin/konular'),
+    },
+    {
+      key: '/admin/gramerkurallar',
+      icon: <EditOutlined />,
+      label: 'Gramer Kuralları',
+      onClick: () => navigate('/admin/gramerkurallar'),
+    },
+    {
+      key: '/admin/ornekler',
+      icon: <MessageOutlined />,
+      label: 'Örnekler',
+      onClick: () => navigate('/admin/ornekler'),
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <div className="p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          👋 Hoş geldin, Admin!
-        </h1>
-        <p className="text-gray-600 mb-8">
-          Buradan dil uygulaması içeriğini yönetebilirsin.  
-          Aşağıda sistemdeki veri özetini görebilirsin:
-        </p>
-
-        {/* Özet Kutuları */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-          <div className="bg-white p-6 rounded-xl shadow text-center">
-            <h2 className="text-2xl font-semibold text-blue-600">
-              {counts.kategoriler}
-            </h2>
-            <p className="text-gray-500">Kategoriler</p>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl shadow text-center">
-            <h2 className="text-2xl font-semibold text-green-600">
-              {counts.konular}
-            </h2>
-            <p className="text-gray-500">Konular</p>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl shadow text-center">
-            <h2 className="text-2xl font-semibold text-purple-600">
-              {counts.gramerler}
-            </h2>
-            <p className="text-gray-500">Gramer Kuralları</p>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl shadow text-center">
-            <h2 className="text-2xl font-semibold text-orange-600">
-              {counts.ornekler}
-            </h2>
-            <p className="text-gray-500">Örnekler</p>
-          </div>
+    <Layout style={{ minHeight: '100vh' }}>
+      {/* Sidebar */}
+      <Sider 
+        collapsible 
+        collapsed={collapsed} 
+        onCollapse={setCollapsed}
+        theme="light"
+        width={250}
+      >
+        <div style={{ 
+          height: 64, 
+          padding: 16,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontWeight: 'bold',
+          fontSize: '18px',
+          color: '#1890ff',
+          borderBottom: '1px solid #f0f0f0'
+        }}>
+          {collapsed ? 'A' : 'ADMIN'}
         </div>
+        <Menu
+          theme="light"
+          selectedKeys={[location.pathname]}
+          mode="inline"
+          items={menuItems}
+          style={{ borderRight: 0, marginTop: '8px' }}
+        />
+      </Sider>
 
-        {/* Yönetim Modülleri */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <button
-            onClick={() => navigate("/admin/kategoriler")}
-            className="bg-blue-500 hover:bg-blue-600 text-white text-lg p-5 rounded-xl shadow transition"
-          >
-            📚 Kategori Yönetimi
-          </button>
+      <Layout>
+        {/* Header */}
+        <Header style={{ 
+          padding: '0 24px', 
+          background: '#fff',
+          boxShadow: '0 1px 4px rgba(0,21,41,.08)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <div style={{ fontSize: '16px', fontWeight: 600, color: '#262626' }}>
+            {location.pathname === '/admin' && 'Dashboard'}
+            {location.pathname === '/admin/kategoriler' && 'Kategori Yönetimi'}
+            {location.pathname === '/admin/konular' && 'Konu Yönetimi'}
+            {location.pathname === '/admin/gramerkurallar' && 'Gramer Kuralları'}
+            {location.pathname === '/admin/ornekler' && 'Örnek Yönetimi'}
+          </div>
+          <Space>
+            <Select 
+              defaultValue="tr" 
+              style={{ width: 120 }}
+              size="small"
+            >
+              <Option value="tr">Türkçe</Option>
+              <Option value="en">English</Option>
+            </Select>
+            <Button type="text" icon={<UserOutlined />} size="small">
+              Admin
+            </Button>
+          </Space>
+        </Header>
 
-          <button
-            onClick={() => navigate("/admin/konular")}
-            className="bg-green-500 hover:bg-green-600 text-white text-lg p-5 rounded-xl shadow transition"
-          >
-            🧩 Konu Yönetimi
-          </button>
-
-          <button
-            onClick={() => navigate("/admin/gramer")}
-            className="bg-purple-500 hover:bg-purple-600 text-white text-lg p-5 rounded-xl shadow transition"
-          >
-            ✏️ Gramer Kuralları
-          </button>
-
-          <button
-            onClick={() => navigate("/admin/ornekler")}
-            className="bg-orange-500 hover:bg-orange-600 text-white text-lg p-5 rounded-xl shadow transition"
-          >
-            💬 Örnekler
-          </button>
-        </div>
-      </div>
-    </div>
+        {/* Content - Düzeltilmiş Alan */}
+        <Content style={{ 
+          margin: '24px 16px', 
+          padding: 0,
+          background: 'transparent'
+        }}>
+          <div style={{ 
+            background: '#fff',
+            borderRadius: '8px',
+            padding: '48px 32px',
+            minHeight: '60vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center'
+          }}>
+            
+          </div>
+        </Content>
+      </Layout>
+    </Layout>
   );
 }
