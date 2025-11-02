@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
-import api from "../services/ApiService"
-import CrudTable from "../components/CrudTable"
-import Navbar from "../components/Navbar"
+import api from "../../services/ApiService"
+import CrudTable from "../../components/CrudTable"
+import Navbar from "../../components/Navbar"
 
 interface GramerKural {
     id: number

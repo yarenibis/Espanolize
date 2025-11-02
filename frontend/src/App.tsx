@@ -1,14 +1,14 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import Dashboard from "./pages/Dashboard";
+import HomePage from "./pages/user/HomePage";
+import LoginPage from "./pages/admin/LoginPage";
+import Dashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import KategoriPage from "./pages/KategoriPage";
-import AdminDashboard from "./pages/Dashboard";
-import KonuPage from "./pages/KonuPage";
-import GramerKuralPage from "./pages/GramerKuralPage";
-import OrnekPage from "./pages/OrnekPage";
+import KategoriPage from "./pages/admin/KategoriPage";
+import AdminDashboard from "./pages/admin/Dashboard";
+import KonuPage from "./pages/admin/KonuPage";
+import GramerKuralPage from "./pages/admin/GramerKuralPage";
+import OrnekPage from "./pages/admin/OrnekPage";
 
 export default function App() {
   return (

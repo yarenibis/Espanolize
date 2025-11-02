@@ -1,6 +1,6 @@
 // src/pages/LoginPage.tsx
 import { useState } from "react";
-import { login } from "../services/AuthService";
+import { login } from "../../services/AuthService";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {

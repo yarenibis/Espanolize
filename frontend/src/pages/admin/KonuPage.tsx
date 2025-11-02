@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import api from "../services/ApiService";
-import Navbar from "../components/Navbar";
-import CrudTable from "../components/CrudTable";
+import api from "../../services/ApiService";
+import Navbar from "../../components/Navbar";
+import CrudTable from "../../components/CrudTable";
 
 interface Konu {
   id: number;
