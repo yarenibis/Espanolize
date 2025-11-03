@@ -48,6 +48,14 @@ namespace api.src.Repository
             return await _context.GramerKurallar.Include(t => t.Ornekler).ToListAsync();
         }
 
+        public async Task<GramerKural?> GetByIdWithOrneklerAsync(int id)
+{
+    return await _context.GramerKurallar
+        .Include(x => x.Ornekler)
+        .FirstOrDefaultAsync(x => x.Id == id);
+}
+
+
         public async Task<GramerKural?> GetByIdAsync(int id)
         {
             return await _context.GramerKurallar.FirstOrDefaultAsync(t => t.Id == id);

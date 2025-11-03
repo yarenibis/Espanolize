@@ -11,6 +11,7 @@ namespace api.src.Interface
     {
          Task<List<GramerKural>> GetAllAsync();
         Task<List<GramerKural>> GetAllWithOrneklerAsync();
+        Task<GramerKural?> GetByIdWithOrneklerAsync(int id);
         Task<GramerKural?> GetByIdAsync(int id);
         Task<GramerKural> CreateAsync(GramerKural kural);
         Task<GramerKural?> UpdateAsync(int id, GramerKuralRequest request);

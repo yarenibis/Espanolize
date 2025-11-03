@@ -22,12 +22,26 @@ namespace api.src.Controllers
             _repository = repository;
         }
 
+     
+
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var kurallar = await _repository.GetAllWithOrneklerAsync();
-            var kurallarDto = kurallar.Select(t => t.ToGramerKuralDetayDto());
-            return Ok(kurallarDto);
-        }
+public async Task<IActionResult> GetAll()
+{
+    var kurallar = await _repository.GetAllAsync();
+    var dto = kurallar.Select(t => t.ToGramerKuralListDto()); // sadece başlık, açıklama vs.
+    return Ok(dto);
+}
+
+
+        [HttpGet("{id}")]
+public async Task<IActionResult> GetById(int id)
+{
+    var kural = await _repository.GetByIdWithOrneklerAsync(id);
+    if (kural == null)
+        return NotFound();
+
+    return Ok(kural.ToGramerKuralDetayDto());
+}
+
     }
 }

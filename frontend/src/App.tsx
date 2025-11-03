@@ -9,14 +9,17 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import KonuPage from "./pages/admin/KonuPage";
 import GramerKuralPage from "./pages/admin/GramerKuralPage";
 import OrnekPage from "./pages/admin/OrnekPage";
-import GramerKonuSayfasi from "./pages/user/GramerKonuSayfasi.tsx";
+import GramerKonuSayfasi from "./pages/user/GramerListPage.tsx";
+import GramerListPage from "./pages/user/GramerListPage.tsx";
+import GramerDetailPage from "./pages/user/GramerDetailPage.tsx";
 
 export default function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/gramerkurallar" element={<GramerKonuSayfasi/>}/>
+        <Route path="/gramerkurallar" element={<GramerListPage/>}/>
+        <Route path="/gramer/:id" element={<GramerDetailPage />} />
       
         <Route path="/login" element={<LoginPage />} />
         <Route
