@@ -21,6 +21,8 @@ namespace api.src.Data
         public DbSet<Konu> Konular { get; set; }
         public DbSet<GramerKural> GramerKurallar { get; set; }
         public DbSet<Ornek> Ornekler { get; set; }
+        public DbSet<KelimeTemasi> KelimeTemalari { get; set; }
+        public DbSet<Kelime> Kelimeler { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,6 +34,12 @@ namespace api.src.Data
                 .HasMany(k => k.Konular)
                 .WithOne(k => k.Kategori)
                 .HasForeignKey(k => k.KategoriId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<KelimeTemasi>()
+                .HasMany(k => k.Kelimeler)
+                .WithOne(k => k.KelimeTemasi)
+                .HasForeignKey(k => k.KelimeTemasiId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Konu>()

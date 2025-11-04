@@ -18,5 +18,6 @@ namespace api.src.Models
     public Kategori Kategori { get; set; }
     
     public List<GramerKural> Kurallar { get; set; }
+
     }
 }
