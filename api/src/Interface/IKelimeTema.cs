@@ -11,8 +11,7 @@ namespace api.src.Interface
     {
         Task<List<KelimeTemasi>> GetAllAsync();
         Task<List<KelimeTemasi>> GetAllWithKelimelerAsync();
-
-        Task<KelimeTemasi?> GetByIdWithKelimelerAsync(int id);
+        Task<KelimeTemasi?> GetAllWithKelimelerAsync(int id);
         Task<KelimeTemasi?> GetByIdAsync(int id);
         Task<KelimeTemasi> CreateAsync(KelimeTemasi tema);
         Task<KelimeTemasi?> UpdateAsync(int id, KelimeTemaRequest request);

@@ -96,6 +96,8 @@ builder.Services.AddScoped<IKonu, KonuRepository>();
 builder.Services.AddScoped<IGramer, GramerRepository>();
 builder.Services.AddScoped<IOrnek, OrnekRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IKelime, KelimeRepository>();
+builder.Services.AddScoped<IKelimeTema, KelimeTemaRepository>();
 
 builder.Services.AddCors(options =>
 {

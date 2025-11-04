@@ -12,7 +12,7 @@ namespace api.src.Interface
         Task<List<Kelime>> GetAllAsync();
 
         Task<Kelime?> GetByIdAsync(int id);
-        Task<Kelime> CreateAsync(Kelime tema);
+        Task<Kelime> CreateAsync(Kelime kelime);
         Task<Kelime?> UpdateAsync(int id, KelimeRequest request);
         Task<Kelime?> DeleteAsync(int id);
     }

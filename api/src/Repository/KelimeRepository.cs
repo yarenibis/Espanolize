@@ -6,6 +6,7 @@ using api.src.Data;
 using api.src.Dtos.AdminDtos.KelimeDto;
 using api.src.Interface;
 using api.src.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.src.Repository
 {
@@ -18,29 +19,47 @@ namespace api.src.Repository
             _context = context;
         }
 
-        public Task<Kelime> CreateAsync(Kelime tema)
+        public async Task<Kelime> CreateAsync(Kelime kelime)
         {
-            throw new NotImplementedException();
+            await _context.Kelimeler.AddAsync(kelime);
+            await _context.SaveChangesAsync();
+            return kelime;
         }
 
-        public Task<Kelime?> DeleteAsync(int id)
+        public async Task<Kelime?> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var kelimeler=await _context.Kelimeler.FirstOrDefaultAsync(k => k.Id == id);
+            if (kelimeler == null)
+            {
+                return null;
+            }
+            _context.Remove(kelimeler);
+            await _context.SaveChangesAsync();
+            return kelimeler;
         }
 
-        public Task<List<Kelime>> GetAllAsync()
+        public async Task<List<Kelime>> GetAllAsync()
         {
-            throw new NotImplementedException();
+           return  await _context.Kelimeler.ToListAsync();
         }
 
-        public Task<Kelime?> GetByIdAsync(int id)
+        public async  Task<Kelime?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Kelimeler.FirstOrDefaultAsync(k => k.Id == id);
         }
 
-        public Task<Kelime?> UpdateAsync(int id, KelimeRequest request)
+        public async Task<Kelime?> UpdateAsync(int id, KelimeRequest request)
         {
-            throw new NotImplementedException();
+           var kelimeler=await _context.Kelimeler.FirstOrDefaultAsync(k => k.Id == id);
+            if (kelimeler == null)
+            {
+                return null;
+            }
+            kelimeler.Ispanyolca = request.Ispanyolca;
+            kelimeler.Turkce = request.Turkce;
+            kelimeler.KelimeTemasiId = request.KelimeTemasiId;
+            await _context.SaveChangesAsync();
+            return kelimeler;
         }
     }
 }
