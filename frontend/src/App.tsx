@@ -14,6 +14,8 @@ import GramerListPage from "./pages/user/GramerListPage.tsx";
 import GramerDetailPage from "./pages/user/GramerDetailPage.tsx";
 import KelimeTemaPage from "./pages/admin/KelimeTemaPage.tsx";
 import KelimePage from "./pages/admin/KelimePage.tsx";
+import KelimeTemaListPage from "./pages/user/KelimeTemaListPage.tsx";
+import KelimeTemaDetailPage from "./pages/user/KelimeTemaDetailPage.tsx";
 
 export default function App() {
   return (
@@ -22,6 +24,11 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/gramerkurallar" element={<GramerListPage/>}/>
         <Route path="/gramer/:id" element={<GramerDetailPage />} />
+
+        <Route path="/kelimetemalari" element={<KelimeTemaListPage />} />
+        <Route path="/kelimeler/:id" element={<KelimeTemaDetailPage />} />
+
+
       
         <Route path="/login" element={<LoginPage />} />
         <Route
