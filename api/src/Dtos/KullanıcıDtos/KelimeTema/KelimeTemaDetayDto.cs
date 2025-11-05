@@ -11,7 +11,7 @@ namespace api.src.Dtos.KullanıcıDtos
     {
         public int Id { get; set; }
         public string Baslik { get; set; }
-        public string? Aciklama { get; set; }
+        public string Aciklama { get; set; }
         public List<KelimeListDto> Kelimeler { get; set; } = new();
     }
 }

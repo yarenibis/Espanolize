@@ -14,6 +14,7 @@ namespace api.src.Mapper.KullanıcıMapper
         {
             return new KelimeTemaListDto
             {
+                Id= tema.Id,
                 Baslik = tema.Baslik,
                 Aciklama = tema.Aciklama
             };

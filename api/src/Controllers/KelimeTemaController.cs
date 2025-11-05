@@ -47,7 +47,7 @@ namespace api.src.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateKategori([FromBody] KelimeTemaRequest request)
+        public async Task<IActionResult> CreateTema([FromBody] KelimeTemaRequest request)
         {
             var temaModel = request.CreateKelimeTemaDto();
             await _repository.CreateAsync(temaModel);
@@ -56,7 +56,7 @@ namespace api.src.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateKategori([FromRoute] int id, [FromBody] KelimeTemaRequest updatedModel)
+        public async Task<IActionResult> UpdateTema([FromRoute] int id, [FromBody] KelimeTemaRequest updatedModel)
         {
             var temaModel = await _repository.GetByIdAsync(id);
             if (temaModel == null)

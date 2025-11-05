@@ -57,6 +57,18 @@ export default function AdminDashboard() {
       label: 'Örnekler',
       onClick: () => navigate('/admin/ornekler'),
     },
+    {
+      key: '/admin/kelimeTema',
+      icon: <MessageOutlined />,
+      label: 'Kelime Temaları',
+      onClick: () => navigate('/admin/kelimeTema'),
+    },
+    {
+      key: '/admin/kelimeler',
+      icon: <MessageOutlined />,
+      label: 'Kelimeler',
+      onClick: () => navigate('/admin/kelimeler'),
+    },
   ];
 
   return (
@@ -107,6 +119,9 @@ export default function AdminDashboard() {
             {location.pathname === '/admin/konular' && 'Konu Yönetimi'}
             {location.pathname === '/admin/gramerkurallar' && 'Gramer Kuralları'}
             {location.pathname === '/admin/ornekler' && 'Örnek Yönetimi'}
+            {location.pathname === '/admin/kelimeTema' && 'Kelime Tema Yönetimi'}
+            {location.pathname === '/admin/kelimeler' && 'Kelime Yönetimi'}
+
           </div>
           <Space>
             <Select 

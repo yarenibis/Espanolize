@@ -12,6 +12,8 @@ import OrnekPage from "./pages/admin/OrnekPage";
 import GramerKonuSayfasi from "./pages/user/GramerListPage.tsx";
 import GramerListPage from "./pages/user/GramerListPage.tsx";
 import GramerDetailPage from "./pages/user/GramerDetailPage.tsx";
+import KelimeTemaPage from "./pages/admin/KelimeTemaPage.tsx";
+import KelimePage from "./pages/admin/KelimePage.tsx";
 
 export default function App() {
   return (
@@ -54,6 +56,20 @@ export default function App() {
     <OrnekPage/>
   </ProtectedRoute>
 } />
+
+<Route path="/admin/kelimeTema" element={
+    <ProtectedRoute>
+      <KelimeTemaPage />
+    </ProtectedRoute>
+  }
+/>
+
+<Route path="/admin/kelimeler" element={
+    <ProtectedRoute>
+      <KelimePage />
+    </ProtectedRoute>
+  }
+/>
 
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
