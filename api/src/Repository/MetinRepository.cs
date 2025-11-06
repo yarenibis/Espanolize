@@ -6,6 +6,7 @@ using api.src.Data;
 using api.src.Dtos.AdminDtos;
 using api.src.Interface;
 using api.src.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.src.Repository
 {
@@ -23,24 +24,41 @@ namespace api.src.Repository
             return metin;
         }
 
-        public Task<Metin?> DeleteAsync(int id)
+        public async Task<Metin?> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var metinModel=await _context.Metinler.FirstOrDefaultAsync(t => t.Id == id);
+            if (metinModel == null)
+            {
+                return null;
+            }
+            _context.Remove(metinModel);
+            await _context.SaveChangesAsync();
+            return metinModel;
         }
 
-        public Task<List<Metin>> GetAllAsync()
+        public async Task<List<Metin>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Metinler.ToListAsync();
         }
 
-        public Task<Metin?> GetByIdAsync(int id)
+        public async Task<Metin?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Metinler.FindAsync(id);
         }
 
-        public Task<Metin?> UpdateAsync(int id, MetinRequest request)
+        public async Task<Metin?> UpdateAsync(int id, MetinRequest request)
         {
-            throw new NotImplementedException();
+            var metinModel=await _context.Metinler.FirstOrDefaultAsync(t => t.Id == id);
+            if (metinModel == null)
+            {
+                return null;
+            }
+            metinModel.ceviri = request.ceviri;
+            metinModel.icerik = request.icerik;
+            metinModel.zorluk = request.zorluk;
+            metinModel.MetinTemaId = request.MetinTemaId;
+            await _context.SaveChangesAsync();
+            return metinModel;
         }
     }
 }

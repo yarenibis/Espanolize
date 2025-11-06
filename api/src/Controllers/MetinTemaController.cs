@@ -12,25 +12,25 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace api.src.Controllers
 {
-    [Route("/api/admin/kelimeTema")]
+    [Route("/api/admin/metinTema")]
     [ApiController]
     [Authorize(Roles = "Admin")]
-    public class KelimeTemaController : ControllerBase
+    public class MetinTemaController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IKelimeTema _repository;
+        private readonly IMetinTema _repository;
 
-        public KelimeTemaController(ApplicationDbContext context, IKelimeTema repository)
+        public MetinTemaController(ApplicationDbContext context, IMetinTema repository)
         {
             _context = context;
             _repository = repository;
         }
 
-        [HttpGet]
+          [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var temalar = await _repository.GetAllAsync();
-            var temadto = temalar.Select(s => s.ToKelimeTemaListDto());
+            var temadto = temalar.Select(s => s.ToMetinTemaListDto());
             return Ok(temadto);
         }
 
@@ -42,21 +42,21 @@ namespace api.src.Controllers
             {
                 return NotFound();
             }
-            return Ok(result.ToKelimeTemaListDto());
+            return Ok(result.ToMetinTemaListDto());
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateTema([FromBody] KelimeTemaRequest request)
+        public async Task<IActionResult> CreateTema([FromBody] MetinTemaRequest request)
         {
-            var temaModel = request.CreateKelimeTemaDto();
+            var temaModel = request.CreateMetinDto();
             await _repository.CreateAsync(temaModel);
-            return CreatedAtAction(nameof(GetById), new { id = temaModel.Id }, temaModel.ToKelimeTemaListDto());
+            return CreatedAtAction(nameof(GetById), new { id = temaModel.Id }, temaModel.ToMetinTemaListDto());
         }
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTema([FromRoute] int id, [FromBody] KelimeTemaRequest updatedModel)
+        public async Task<IActionResult> UpdateTema([FromRoute] int id, [FromBody] MetinTemaRequest updatedModel)
         {
             var temaModel = await _repository.GetByIdAsync(id);
             if (temaModel == null)
@@ -64,12 +64,12 @@ namespace api.src.Controllers
                 return NotFound();
             }
             var updatedKategori = await _repository.UpdateAsync(id, updatedModel);
-            return Ok(updatedKategori.ToKelimeTemaListDto());
+            return Ok(updatedKategori.ToMetinTemaListDto());
         }
 
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteKelimeTema([FromRoute] int id)
+        public async Task<IActionResult> DeleteMetinTema([FromRoute] int id)
         {
             var temaModel = await _repository.GetByIdAsync(id);
 
@@ -82,5 +82,7 @@ namespace api.src.Controllers
             return NoContent();
         }
 
+
+        
     }
 }

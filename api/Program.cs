@@ -98,6 +98,8 @@ builder.Services.AddScoped<IOrnek, OrnekRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IKelime, KelimeRepository>();
 builder.Services.AddScoped<IKelimeTema, KelimeTemaRepository>();
+builder.Services.AddScoped<IMetinTema, MetinTemaRepository>();
+builder.Services.AddScoped<IMetin, MetinRepository>();
 
 builder.Services.AddCors(options =>
 {

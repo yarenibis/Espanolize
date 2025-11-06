@@ -9,7 +9,7 @@ namespace api.src.Mapper.AdminMapper
 {
     public static  class MetinTemaMapper
     {
-        public static MetinTema CreateMetinDto(MetinTemaRequest request)
+        public static MetinTema CreateMetinDto(this MetinTemaRequest request)
         {
             return new MetinTema
             {
