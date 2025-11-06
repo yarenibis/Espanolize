@@ -15,7 +15,7 @@ namespace api.src.Mapper.AdminMapper
             {
                 Ispanyolca = request.Ispanyolca,
                 Turkce = request.Turkce,
-                 KelimeTemasiId=request.KelimeTemasiId 
+                KelimeTemasiId=request.KelimeTemasiId 
 
             };
         }

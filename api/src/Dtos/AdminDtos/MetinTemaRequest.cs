@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace api.src.Dtos.AdminDtos
 {
-    public class KelimeTemaRequest
+    public class MetinTemaRequest
     {
         public string Baslik { get; set; }
         public string Aciklama { get; set; }

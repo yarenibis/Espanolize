@@ -23,6 +23,9 @@ namespace api.src.Data
         public DbSet<Ornek> Ornekler { get; set; }
         public DbSet<KelimeTemasi> KelimeTemalari { get; set; }
         public DbSet<Kelime> Kelimeler { get; set; }
+        public DbSet<MetinTema> MetinTemalari { get; set; }
+
+        public DbSet<Metin> Metinler { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,6 +43,12 @@ namespace api.src.Data
                 .HasMany(k => k.Kelimeler)
                 .WithOne(k => k.KelimeTemasi)
                 .HasForeignKey(k => k.KelimeTemasiId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MetinTema>()
+                .HasMany(k => k.Metinler)
+                .WithOne(k => k.MetinTema)
+                .HasForeignKey(k => k.MetinTemaId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Konu>()

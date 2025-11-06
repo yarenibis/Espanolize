@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace api.src.Dtos.AdminDtos
+namespace api.src.Models
 {
-    public class KelimeTemaRequest
+    public class MetinTema
     {
+        public int Id { get; set; }
         public string Baslik { get; set; }
         public string Aciklama { get; set; }
+        
+
+        public List<Metin> Metinler { get; set; }
     }
 }
