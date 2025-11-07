@@ -10,6 +10,8 @@ export default function Navbar() {
       <Link to="/admin/ornekler" className="hover:text-yellow-400">Örnekler</Link>
       <Link to="/admin/kelimeTema" className="hover:text-yellow-400">Kelime Tema</Link>
       <Link to="/admin/kelimeler" className="hover:text-yellow-400">Kelimeler</Link>
+      <Link to="/admin/metinTema" className="hover:text-yellow-400">Metin Tema</Link>
+      <Link to="/admin/metinler" className="hover:text-yellow-400">Metinler</Link>
     </nav>
   );
 }

@@ -69,6 +69,19 @@ export default function AdminDashboard() {
       label: 'Kelimeler',
       onClick: () => navigate('/admin/kelimeler'),
     },
+    {
+      key: '/admin/metinTema',
+      icon: <MessageOutlined />,
+      label: 'Metin tema',
+      onClick: () => navigate('/admin/MetinTema'),
+    },
+
+    {
+      key: '/admin/metinler',
+      icon: <MessageOutlined />,
+      label: 'Metinler',
+      onClick: () => navigate('/admin/metinler'),
+    },
   ];
 
   return (
@@ -121,6 +134,8 @@ export default function AdminDashboard() {
             {location.pathname === '/admin/ornekler' && 'Örnek Yönetimi'}
             {location.pathname === '/admin/kelimeTema' && 'Kelime Tema Yönetimi'}
             {location.pathname === '/admin/kelimeler' && 'Kelime Yönetimi'}
+            {location.pathname === '/admin/metinTema' && 'Metin tema Yönetimi'}
+            {location.pathname === '/admin/metinler' && 'Metin Yönetimi'}
 
           </div>
           <Space>

@@ -16,6 +16,8 @@ import KelimeTemaPage from "./pages/admin/KelimeTemaPage.tsx";
 import KelimePage from "./pages/admin/KelimePage.tsx";
 import KelimeTemaListPage from "./pages/user/KelimeTemaListPage.tsx";
 import KelimeTemaDetailPage from "./pages/user/KelimeTemaDetailPage.tsx";
+import MetinTemaPage from "./pages/admin/MetinTemaPage.tsx";
+import MetinPage from "./pages/admin/MetinPage.tsx";
 
 export default function App() {
   return (
@@ -74,6 +76,21 @@ export default function App() {
 <Route path="/admin/kelimeler" element={
     <ProtectedRoute>
       <KelimePage />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route path="/admin/metinTema" element={
+    <ProtectedRoute>
+      <MetinTemaPage />
+    </ProtectedRoute>
+  }
+/>
+
+<Route path="/admin/metinler" element={
+    <ProtectedRoute>
+      <MetinPage />
     </ProtectedRoute>
   }
 />

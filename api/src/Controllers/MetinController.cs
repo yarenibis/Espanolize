@@ -12,10 +12,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace api.src.Controllers
 {
-    [Route("/api/admin/metin")]
+    [Route("/api/admin/metinler")]
     [ApiController]
     [Authorize(Roles = "Admin")]
-    public class MetinController :ControllerBase
+    public class MetinController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly IMetin _repository;
@@ -72,7 +72,7 @@ namespace api.src.Controllers
         {
             var metinModel = await _repository.GetByIdAsync(id);
 
-            if (metinModel == null )
+            if (metinModel == null)
             {
                 return NotFound();
             }
