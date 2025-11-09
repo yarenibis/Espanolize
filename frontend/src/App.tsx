@@ -2,24 +2,22 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/user/HomePage";
 import LoginPage from "./pages/admin/LoginPage";
-import Dashboard from "./pages/admin/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 import KategoriPage from "./pages/admin/KategoriPage";
 import AdminDashboard from "./pages/admin/Dashboard";
 import KonuPage from "./pages/admin/KonuPage";
 import GramerKuralPage from "./pages/admin/GramerKuralPage";
 import OrnekPage from "./pages/admin/OrnekPage";
-import GramerKonuSayfasi from "./pages/user/GramerListPage.tsx";
-import GramerListPage from "./pages/user/GramerListPage.tsx";
-import GramerDetailPage from "./pages/user/GramerDetailPage.tsx";
-import KelimeTemaPage from "./pages/admin/KelimeTemaPage.tsx";
-import KelimePage from "./pages/admin/KelimePage.tsx";
-import KelimeTemaListPage from "./pages/user/KelimeTemaListPage.tsx";
-import KelimeTemaDetailPage from "./pages/user/KelimeTemaDetailPage.tsx";
-import MetinTemaPage from "./pages/admin/MetinTemaPage.tsx";
-import MetinPage from "./pages/admin/MetinPage.tsx";
-import MetinTemaListPage from "./pages/user/MetinTemaListPage.tsx";
-import MetinTemaDetailPage from "./pages/user/MetinTemaDetailPage.tsx";
+import GramerListPage from "./pages/user/GramerListPage";
+import GramerDetailPage from "./pages/user/GramerDetailPage";
+import KelimeTemaPage from "./pages/admin/KelimeTemaPage";
+import KelimePage from "./pages/admin/KelimePage";
+import KelimeTemaListPage from "./pages/user/KelimeTemaListPage";
+import KelimeTemaDetailPage from "./pages/user/KelimeTemaDetailPage";
+import MetinTemaPage from "./pages/admin/MetinTemaPage";
+import MetinPage from "./pages/admin/MetinPage";
+import MetinTemaListPage from "./pages/user/MetinTemaListPage";
+import MetinTemaDetailPage from "./pages/user/MetinTemaDetailPage";
+import ProtectedRoute from "./components/adminDashboard/ProtectedRoute";
 
 export default function App() {
   return (
@@ -102,5 +100,6 @@ export default function App() {
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </Router>
+
   );
 }

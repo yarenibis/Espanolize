@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../services/ApiService";
-import Navbar from "../../components/Navbar";
-import CrudTable from "../../components/CrudTable";
+import Navbar from "../../components/adminDashboard/Navbar";
+import CrudTable from "../../components/adminDashboard/CrudTable";
 
 interface Metin {
   id: number;

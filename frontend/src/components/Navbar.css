@@ -1,0 +1,49 @@
+.navbar {
+  background: #fff;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 16px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 24px;
+  background: linear-gradient(135deg, #5F7FFF, #9F6AFF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: #444;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  color: #5F7FFF;
+}
+
+.login-btn {
+  background: linear-gradient(135deg,#6F80FF,#A66BFF);
+  padding: 8px 18px;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+}
