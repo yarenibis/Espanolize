@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using api.Models;
+using System.Text.Json;
 
 namespace api.src.Data
 {
@@ -62,6 +63,13 @@ namespace api.src.Data
                 .WithOne(o => o.GramerKural)
                 .HasForeignKey(o => o.GramerKuralId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<GramerKural>()
+        .Property(g => g.DetayResimUrls)
+        .HasConversion(
+            v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
+            v => JsonSerializer.Deserialize<List<string>>(v, new JsonSerializerOptions())
+        );
 
 
             var adminRole = new IdentityRole

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import api from "../../services/ApiService"
 import CrudTable from "../../components/adminDashboard/CrudTable"
 import Navbar from "../../components/adminDashboard/Navbar"
+import { useNavigate } from "react-router-dom"
 
 interface GramerKural {
     id: number
@@ -9,13 +10,14 @@ interface GramerKural {
     aciklama: string 
     konuId: number
 }
-
 interface Konu {
     id: number
     baslik: string
 }
 
+
 export default function GramerKuralPage() {
+    const navigate = useNavigate(); 
     const [gramer, setGramer] = useState<GramerKural[]>([]);
     const [konular, setKonular] = useState<Konu[]>([]);
     const [yeniKuralBaslik, setYeniKuralBaslik] = useState("");
@@ -104,7 +106,6 @@ export default function GramerKuralPage() {
         setYeniAciklama(k.aciklama);
         setYeniKonuId(k.konuId);
     }
-
     async function handleUpdate() {
         if (!duzenlenecek) return;
 
@@ -142,7 +143,6 @@ export default function GramerKuralPage() {
             </div>
         );
     }
-
      return (
         <div className="p-6">
             <Navbar />
@@ -187,6 +187,8 @@ export default function GramerKuralPage() {
                         >
                             Güncelle
                         </button>
+
+                        
                         <button
                             onClick={cancelEdit}
                             className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
@@ -206,16 +208,21 @@ export default function GramerKuralPage() {
 
             {/* CrudTable kullanımı */}
             <CrudTable 
-                data={tabloData} 
-                onEdit={(item) => {
-                    // Orijinal gramer kuralını bul (konuId ile)
-                    const originalKural = gramer.find(k => k.id === item.id);
-                    if (originalKural) {
-                        startEdit(originalKural);
-                    }
-                }}
-                onDelete={handleDelete}
-            />
+  data={tabloData} 
+  onEdit={(item) => {
+    const originalKural = gramer.find((k) => k.id === item.id);
+    if (originalKural) startEdit(originalKural);
+  }}
+  onDelete={handleDelete}
+  extraActions={(row) => (
+    <button
+      onClick={() => navigate(`/admin/gramerkurallar/${row.id}/images`)}
+      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+    >
+      Resimler
+    </button>
+  )}
+/>     
         </div>
     );
 }

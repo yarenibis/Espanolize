@@ -11,7 +11,7 @@ namespace api.src.Models
         public string Baslik { get; set; }
         public string Aciklama { get; set; }
         
-
+        public string? ImageUrl { get; set; }
         public List<Metin> Metinler { get; set; }
     }
 }

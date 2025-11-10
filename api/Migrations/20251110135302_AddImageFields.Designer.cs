@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.src.Data;
 
@@ -11,9 +12,11 @@ using api.src.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251110135302_AddImageFields")]
+    partial class AddImageFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,10 +243,7 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DetayResimUrls")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("KapakResmiUrl")
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("KonuId")
@@ -258,6 +258,28 @@ namespace api.Migrations
                     b.HasIndex("KonuId");
 
                     b.ToTable("GramerKurallar");
+                });
+
+            modelBuilder.Entity("api.src.Models.GramerKuralImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GramerKuralId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GramerKuralId");
+
+                    b.ToTable("GramerKuralImage");
                 });
 
             modelBuilder.Entity("api.src.Models.Kategori", b =>
@@ -508,6 +530,17 @@ namespace api.Migrations
                     b.Navigation("Konu");
                 });
 
+            modelBuilder.Entity("api.src.Models.GramerKuralImage", b =>
+                {
+                    b.HasOne("api.src.Models.GramerKural", "GramerKural")
+                        .WithMany("Images")
+                        .HasForeignKey("GramerKuralId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GramerKural");
+                });
+
             modelBuilder.Entity("api.src.Models.Kelime", b =>
                 {
                     b.HasOne("api.src.Models.KelimeTemasi", "KelimeTemasi")
@@ -554,6 +587,8 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.src.Models.GramerKural", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("Ornekler");
                 });
 

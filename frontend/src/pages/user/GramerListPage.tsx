@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Row, Col, Typography, Input, Button, Breadcrumb, Spin, Empty } from "antd";
-import { SearchOutlined, FileTextOutlined, HomeOutlined, ArrowRightOutlined, BookOutlined } from "@ant-design/icons";
+import { Card, Row, Col, Typography, Input, Spin, Empty, Tag } from "antd";
+import { SearchOutlined, BookOutlined } from "@ant-design/icons";
 import api from "../../services/ApiService";
+import Navbar from "../../components/Navbar";
 
 const { Title, Paragraph } = Typography;
 const { Search } = Input;
@@ -11,8 +12,17 @@ interface GramerKural {
   id: number;
   kuralBaslik: string;
   aciklama: string;
-  konuId?: number;
+  zorlukSeviyesi?: "Başlangıç" | "Orta" | "İleri";
 }
+
+const getLevelColor = (level?: string) => {
+  switch (level) {
+    case "Başlangıç": return "green";
+    case "Orta": return "orange";
+    case "İleri": return "red";
+    default: return "blue";
+  }
+};
 
 export default function GramerListPage() {
   const [kurallar, setKurallar] = useState<GramerKural[]>([]);
@@ -31,87 +41,64 @@ export default function GramerListPage() {
     `${kural.kuralBaslik} ${kural.aciklama}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading) {
-    return (
-      <div style={{ height: "100vh", display: "grid", placeItems: "center" }}>
-        <Spin size="large" />
-      </div>
-    );
-  }
-
   return (
-    <div style={{ background: "#f7f9fc", minHeight: "100vh", padding: "32px 16px" }}>
+    <>
+      <Navbar />
 
-      {/* Header */}
-      <div style={{ 
-        background: "#fff", 
-        padding: "16px 32px", 
-        display: "flex", 
-        alignItems: "center", 
-        gap: 8,
-        borderBottom: "1px solid #eee",
-        marginBottom: 32
-      }}>
-        <FileTextOutlined style={{ fontSize: 26, color: "#1890ff" }} />
-        <Title level={3} style={{ margin: 0 }}>Gramer Kuralları</Title>
-      </div>
+      <div className="max-w-6xl mx-auto py-16 px-4">
+        <Title level={1} className="text-center font-bold mb-6">
+          📘 İspanyolca Gramer Kuralları
+        </Title>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        
-        <Breadcrumb
-          items={[
-            { title: <span onClick={() => navigate("/")}><HomeOutlined /> Ana Sayfa</span> },
-            { title: "Gramer Kuralları" }
-          ]}
-          style={{ marginBottom: 24 }}
-        />
-
-        <Title level={1} style={{ marginBottom: 12 }}>📘 Gramer Kuralları</Title>
-        <Paragraph style={{ maxWidth: 600, marginBottom: 24 }}>
-          Açıklamalar ve örnek cümlelerle İspanyolca gramer kurallarını öğren.
+        <Paragraph className="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+          Açıklamalar ve örneklerle gramer kurallarını kolayca öğren.
         </Paragraph>
 
         <Search
-          placeholder="Kural veya açıklama ara..."
-          allowClear
+          placeholder="Kural ara..."
+          enterButton={<SearchOutlined />}
           size="large"
-          style={{ maxWidth: 400, marginBottom: 32 }}
+          className="max-w-md mx-auto block mb-12"
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        {/* Eğer sonuç yoksa */}
-        {filtered.length === 0 && (
-          <Empty description="Kural bulunamadı." />
+        {loading && (
+          <div className="grid place-items-center h-40">
+            <Spin size="large" />
+          </div>
         )}
 
-        {/* Kartlar */}
+        {!loading && filtered.length === 0 && (
+          <Empty description="Hiç kural bulunamadı." />
+        )}
+
         <Row gutter={[24, 24]}>
           {filtered.map((kural) => (
             <Col xs={24} sm={12} lg={8} key={kural.id}>
               <Card
                 hoverable
                 onClick={() => navigate(`/gramer/${kural.id}`)}
-                style={{ borderRadius: 10 }}
+                className="rounded-xl shadow-sm hover:shadow-lg transition-all"
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <BookOutlined style={{ fontSize: 22, color: "#7b61ff" }} />
-                  <Title level={4} style={{ margin: 0 }}>{kural.kuralBaslik}</Title>
+                <div className="flex items-center gap-3 mb-3">
+                  <BookOutlined style={{ fontSize: 24, color: "#7b61ff" }} />
+                  <Title level={4} className="!mb-0">{kural.kuralBaslik}</Title>
                 </div>
 
-                <Paragraph ellipsis={{ rows: 3 }} style={{ marginTop: 12 }}>
+                <Paragraph ellipsis={{ rows: 3 }}>
                   {kural.aciklama}
                 </Paragraph>
 
-                <Button type="link" icon={<ArrowRightOutlined />}>
-                  Detayları Gör
-                </Button>
+                {kural.zorlukSeviyesi && (
+                  <Tag color={getLevelColor(kural.zorlukSeviyesi)}>
+                    {kural.zorlukSeviyesi}
+                  </Tag>
+                )}
               </Card>
             </Col>
           ))}
         </Row>
-
       </div>
-
-    </div>
+    </>
   );
 }

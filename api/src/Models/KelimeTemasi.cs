@@ -10,7 +10,7 @@ namespace api.src.Models
         public int Id { get; set; }
     public string Baslik { get; set; }
     public string? Aciklama { get; set; }
-
+    public string? ImageUrl { get; set; }
     public List<Kelime> Kelimeler { get; set; }
     }
 }
