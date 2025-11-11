@@ -11,7 +11,6 @@ using Microsoft.OpenApi.Models;
 using api.Models;
 using api.Interface;
 using api.Services;
-using api.src.Settings;
 
 
 
@@ -91,8 +90,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
-builder.Services.AddSingleton<CloudinaryService>();
+
 
 builder.Services.AddScoped<IKategori, KategoriRepository>();
 builder.Services.AddScoped<IKonu, KonuRepository>();
@@ -122,6 +120,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");

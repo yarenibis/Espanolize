@@ -10,5 +10,6 @@ namespace api.src.Dtos.AdminDtos.KelimeDto
         public string Ispanyolca { get; set; }
         public string Turkce { get; set; }
         public int KelimeTemasiId { get; set; }
+      
     }
 }

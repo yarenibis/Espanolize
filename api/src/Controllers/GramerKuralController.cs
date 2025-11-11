@@ -48,52 +48,6 @@ namespace api.src.Controllers
 
 
 
-[HttpPost("{id}/upload-cover")]
-public async Task<IActionResult> UploadCover(int id, IFormFile file, [FromServices] CloudinaryService cloudinary)
-{
-    var kural = await _context.GramerKurallar.FindAsync(id);
-    if (kural == null) return NotFound();
-
-    var imageUrl = await cloudinary.UploadImageAsync(file);
-    kural.KapakResmiUrl = imageUrl;
-
-    await _context.SaveChangesAsync();
-
-    return Ok(new { success = true, imageUrl });
-}
-
-
-
-[HttpPost("{id}/upload-details")]
-public async Task<IActionResult> UploadDetailImages(
-    int id,
-    [FromForm] List<IFormFile> files,
-    [FromServices] CloudinaryService cloudinary)
-{
-    var kural = await _context.GramerKurallar.FindAsync(id);
-    if (kural == null)
-        return NotFound();
-
-    // ✅ Bu garanti
-    if (kural.DetayResimUrls == null)
-        kural.DetayResimUrls = new List<string>();
-
-    foreach (var file in files)
-    {
-        var url = await cloudinary.UploadImageAsync(file);
-        kural.DetayResimUrls.Add(url);
-    }
-
-    _context.GramerKurallar.Update(kural);
-    await _context.SaveChangesAsync();
-
-    return Ok(new { success = true, urls = kural.DetayResimUrls });
-}
-
-
-
-
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateKural([FromBody] GramerKuralRequest request, [FromRoute] int id)
         {
@@ -107,19 +61,6 @@ public async Task<IActionResult> UploadDetailImages(
         }
 
 
-        [HttpDelete("{id}/delete-detail-image")]
-public async Task<IActionResult> DeleteDetailImage(int id, [FromBody] DeleteImageRequest request)
-{
-    var kural = await _context.GramerKurallar.FindAsync(id);
-    if (kural == null) return NotFound();
-
-    kural.DetayResimUrls.Remove(request.Url);
-    await _context.SaveChangesAsync();
-
-    return Ok();
-}
-
-public class DeleteImageRequest { public string Url { get; set; } }
 
 
         [HttpPost]

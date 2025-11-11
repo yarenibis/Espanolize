@@ -14,9 +14,10 @@ namespace api.src.Mapper.KullanıcıMapper
         {
             return new KelimeTemaListDto
             {
-                Id= tema.Id,
+                Id = tema.Id,
                 Baslik = tema.Baslik,
-                Aciklama = tema.Aciklama
+                Aciklama = tema.Aciklama,
+                KapakResmiUrl = tema.Tema?.KapakResmiUrl
             };
         }
 
@@ -27,6 +28,10 @@ namespace api.src.Mapper.KullanıcıMapper
                 Id = tema.Id,
                 Baslik = tema.Baslik,
                 Aciklama = tema.Aciklama,
+                KapakResmiUrl = tema.Tema?.KapakResmiUrl,         // ✅ Detay sayfa kapak resmi
+                DetayResimUrls = tema.Tema?.DetayResimler
+                    ?.Select(r => r.ResimUrl)
+                    .ToList() ?? new List<string>(),
                 Kelimeler = tema.Kelimeler?.Select(k => k.ToKelimeListDto())
                   .ToList() ?? new List<KelimeListDto>()
             };

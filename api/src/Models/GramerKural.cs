@@ -17,11 +17,7 @@ namespace api.src.Models
     
     public List<Ornek> Ornekler { get; set; }
 
-    // Yeni alan
-    // tek kapak resmi
-    public string? KapakResmiUrl { get; set; }
-
-    // çoklu resim alanı
-    public List<string>? DetayResimUrls { get; set; } = new();
+    public int? TemaId { get; set; }
+    public Tema Tema { get; set; }
     }
 }

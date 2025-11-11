@@ -5,13 +5,12 @@ using System.Threading.Tasks;
 
 namespace api.src.Models
 {
-    public class KelimeTemasi
+    public class TemaResim
     {
         public int Id { get; set; }
-    public string Baslik { get; set; }
-    public string? Aciklama { get; set; }
-    public List<Kelime> Kelimeler { get; set; }
-    public int? TemaId { get; set; }
+    public string ResimUrl { get; set; }
+
+    public int TemaId { get; set; }
     public Tema Tema { get; set; }
     }
 }

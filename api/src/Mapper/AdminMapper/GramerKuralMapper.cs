@@ -15,7 +15,8 @@ namespace api.src.Mapper.AdminMapper
             {
                 Aciklama = request.Aciklama,
                 KonuId = request.KonuId,
-                KuralBaslik=request.KuralBaslik
+                KuralBaslik = request.KuralBaslik,
+                TemaId=request.TemaId
             };
         }
     }

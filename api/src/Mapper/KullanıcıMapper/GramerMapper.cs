@@ -17,7 +17,8 @@ namespace api.src.Mapper.KullanıcıMapper
                 Id = gramer.Id,
                 Aciklama = gramer.Aciklama,
                 KuralBaslik = gramer.KuralBaslik,
-                KonuId=gramer.KonuId
+                KonuId = gramer.KonuId,
+                KapakResmiUrl = gramer.Tema?.KapakResmiUrl
 
             };
         }
@@ -30,7 +31,11 @@ namespace api.src.Mapper.KullanıcıMapper
                 Id = gramer.Id,
                 Aciklama = gramer.Aciklama,
                 KuralBaslik = gramer.KuralBaslik,
-                KonuId= gramer.KonuId,
+                KonuId = gramer.KonuId,
+                KapakResmiUrl = gramer.Tema?.KapakResmiUrl,         // ✅ Detay sayfa kapak resmi
+                DetayResimUrls = gramer.Tema?.DetayResimler
+                    ?.Select(r => r.ResimUrl)
+                    .ToList() ?? new List<string>(),
                 Ornekler = gramer.Ornekler?
                     .Select(o => o.ToOrnekListDto())
                     .ToList() ?? new List<OrnekListDto>()

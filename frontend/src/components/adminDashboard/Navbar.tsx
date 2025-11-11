@@ -12,6 +12,7 @@ export default function Navbar() {
       <Link to="/admin/kelimeler" className="hover:text-yellow-400">Kelimeler</Link>
       <Link to="/admin/metinTema" className="hover:text-yellow-400">Metin Tema</Link>
       <Link to="/admin/metinler" className="hover:text-yellow-400">Metinler</Link>
+      <Link to="/admin/tema" className="hover:text-yellow-400">Tema</Link>
     </nav>
   );
 }

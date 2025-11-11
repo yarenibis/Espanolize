@@ -11,5 +11,7 @@ namespace api.src.Dtos.KullanıcıDtos.GramerDto
         public string KuralBaslik { get; set; }
         public string Aciklama { get; set; }
         public int KonuId { get; set; }
+        public int TemaId { get; set; }
+        public string? KapakResmiUrl { get; set; }
     }
 }

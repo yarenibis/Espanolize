@@ -13,8 +13,9 @@ namespace api.src.Mapper.AdminMapper
         {
             return new KelimeTemasi
             {
-                Baslik=request.Baslik,
-                Aciklama=request.Aciklama
+                Baslik = request.Baslik,
+                Aciklama = request.Aciklama,
+                 TemaId=request.TemaId
             };
         }
     }

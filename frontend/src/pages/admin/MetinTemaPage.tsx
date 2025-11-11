@@ -7,6 +7,12 @@ interface MetinTema {
   id: number;
   baslik: string;
   aciklama: string;
+  temaId:number;
+}
+
+interface Tema {
+  id: number;
+  baslik: string;
 }
 
 export default function MetinTemaPage() {
@@ -14,6 +20,9 @@ export default function MetinTemaPage() {
   const [yeniBaslik, setYeniBaslik] = useState("");
   const [yeniAciklama, setYeniAciklama] = useState("");
   const [duzenlenecek, setDuzenlenecek] = useState<MetinTema | null>(null);
+  const [temalarList, setTemalarList] = useState<Tema[]>([]);
+const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
+
 
   async function fetchTemalar() {
     try {
@@ -24,8 +33,19 @@ export default function MetinTemaPage() {
     }
   }
 
+  async function fetchTemalarList() {
+  try {
+    const res = await api.get("/admin/tema");
+    setTemalarList(res.data);
+  } catch (err) {
+    console.error("Tema listesi yüklenemedi:", err);
+  }
+}
+
+
   useEffect(() => {
     fetchTemalar();
+    fetchTemalarList();
   }, []);
 
 
@@ -41,6 +61,7 @@ export default function MetinTemaPage() {
 
       setYeniBaslik("");
       setYeniAciklama("");
+      setYeniTemaId("");
       fetchTemalar();
     } catch (err) {
       console.error("Ekleme hatası:", err);
@@ -64,6 +85,7 @@ export default function MetinTemaPage() {
     setDuzenlenecek(item);
     setYeniBaslik(item.baslik);
     setYeniAciklama(item.aciklama);
+    setYeniTemaId(item.temaId);
   }
 
   async function handleUpdate() {
@@ -78,6 +100,7 @@ export default function MetinTemaPage() {
       setDuzenlenecek(null);
       setYeniBaslik("");
       setYeniAciklama("");
+      setYeniTemaId("");
       fetchTemalar();
     } catch (err) {
       console.error("Güncelleme hatası:", err);
@@ -88,6 +111,7 @@ export default function MetinTemaPage() {
     setDuzenlenecek(null);
     setYeniBaslik("");
     setYeniAciklama("");
+    setYeniTemaId("");
   }
 
 
@@ -113,6 +137,21 @@ export default function MetinTemaPage() {
             onChange={(e) => setYeniAciklama(e.target.value)}
             className="border p-2 rounded flex-1 min-w-[200px]"
           />
+
+
+          <select
+  value={yeniTemaId}
+  onChange={(e) => setYeniTemaId(Number(e.target.value))}
+  className="border p-2 rounded min-w-[200px]"
+>
+  <option value="">Tema Seçin</option>
+  {temalarList.map((tema) => (
+    <option key={tema.id} value={tema.id}>
+      {tema.baslik}
+    </option>
+  ))}
+</select>
+
   
           {duzenlenecek ? (
             <>

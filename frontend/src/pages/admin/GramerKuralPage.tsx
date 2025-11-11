@@ -9,10 +9,16 @@ interface GramerKural {
     kuralBaslik: string 
     aciklama: string 
     konuId: number
+    temaId:number
 }
 interface Konu {
     id: number
     baslik: string
+}
+
+interface Tema {
+  id: number;
+  baslik: string;
 }
 
 
@@ -25,6 +31,8 @@ export default function GramerKuralPage() {
     const [yeniKonuId, setYeniKonuId] = useState<number | "">("");
     const [duzenlenecek, setDuzenlenecek] = useState<GramerKural | null>(null);
     const [loading, setLoading] = useState(true);
+    const [temalar, setTemalar] = useState<Tema[]>([]);
+const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
 
     // Konuları API'den çek
     async function getKonular(){
@@ -35,6 +43,15 @@ export default function GramerKuralPage() {
             console.error("Konular yüklenemedi:", err);
         }
     }
+
+    async function getTemalar(){
+    try{
+        const res = await api.get("/admin/tema");
+        setTemalar(res.data);
+    } catch(err) {
+        console.error("Temalar yüklenemedi:", err);
+    }
+}
 
     async function getAll(){
         try{
@@ -51,6 +68,7 @@ export default function GramerKuralPage() {
             // Önce konuları, sonra kuralları yükle
             await getKonular();
             await getAll();
+            await getTemalar();
             setLoading(false);
         };
         loadData();
@@ -78,12 +96,14 @@ export default function GramerKuralPage() {
             await api.post(`/admin/gramerkurallar`, {
                 kuralBaslik: yeniKuralBaslik,
                 aciklama: yeniAciklama,
-                konuId: Number(yeniKonuId)
+                konuId: Number(yeniKonuId),
+                temaId: Number(yeniTemaId)
             });
 
             setYeniAciklama("");
             setYeniKuralBaslik("");
             setYeniKonuId("");
+            setYeniTemaId("");
             getAll();
         } catch(err) {
             console.error("Ekleme hatası:", err);
@@ -105,6 +125,7 @@ export default function GramerKuralPage() {
         setYeniKuralBaslik(k.kuralBaslik);
         setYeniAciklama(k.aciklama);
         setYeniKonuId(k.konuId);
+        setYeniTemaId(k.temaId);
     }
     async function handleUpdate() {
         if (!duzenlenecek) return;
@@ -113,13 +134,15 @@ export default function GramerKuralPage() {
             await api.put(`/admin/gramerkurallar/${duzenlenecek.id}`, {
                 kuralBaslik: yeniKuralBaslik,
                 aciklama: yeniAciklama,
-                konuId: Number(yeniKonuId)
+                konuId: Number(yeniKonuId),
+                temaId: Number(yeniTemaId)
             });
 
             setDuzenlenecek(null);
             setYeniAciklama("");
             setYeniKuralBaslik("");
             setYeniKonuId("");
+            setYeniTemaId("");
             getAll();
         } catch (err) {
             console.error("Güncelleme hatası:", err);
@@ -131,6 +154,7 @@ export default function GramerKuralPage() {
         setYeniAciklama("");
         setYeniKuralBaslik("");
         setYeniKonuId("");
+        setYeniTemaId("");
     };
 
     if (loading) {
@@ -179,6 +203,20 @@ export default function GramerKuralPage() {
                     ))}
                 </select>
 
+
+                <select
+  value={yeniTemaId}
+  onChange={(e) => setYeniTemaId(Number(e.target.value))}
+  className="border p-2 rounded min-w-[200px]"
+>
+  <option value="">Tema Seçin</option>
+  {temalar.map((tema) => (
+    <option key={tema.id} value={tema.id}>
+      {tema.baslik}
+    </option>
+  ))}
+</select>
+
                 {duzenlenecek ? (
                     <>
                         <button
@@ -214,15 +252,7 @@ export default function GramerKuralPage() {
     if (originalKural) startEdit(originalKural);
   }}
   onDelete={handleDelete}
-  extraActions={(row) => (
-    <button
-      onClick={() => navigate(`/admin/gramerkurallar/${row.id}/images`)}
-      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
-    >
-      Resimler
-    </button>
-  )}
-/>     
+/>   
         </div>
     );
 }

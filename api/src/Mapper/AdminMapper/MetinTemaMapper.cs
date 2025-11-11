@@ -15,7 +15,7 @@ namespace api.src.Mapper.AdminMapper
             {
                 Aciklama = request.Aciklama,
                 Baslik = request.Baslik,
-                
+                TemaId=request.TemaId
             };
         }
     }

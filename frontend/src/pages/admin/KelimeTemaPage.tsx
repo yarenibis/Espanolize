@@ -7,6 +7,11 @@ interface KelimeTema {
   id: number;
   baslik: string;
   aciklama: string;
+  temaId:number;
+}
+interface Tema {
+  id: number;
+  baslik: string;
 }
 
 export default function KelimeTemaPage() {
@@ -14,6 +19,9 @@ export default function KelimeTemaPage() {
   const [yeniBaslik, setYeniBaslik] = useState("");
   const [yeniAciklama, setYeniAciklama] = useState("");
   const [duzenlenecek, setDuzenlenecek] = useState<KelimeTema | null>(null);
+  const [temalarList, setTemalarList] = useState<Tema[]>([]);
+const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
+
 
   async function fetchTemalar() {
     try {
@@ -24,8 +32,19 @@ export default function KelimeTemaPage() {
     }
   }
 
+  async function fetchTemalarList() {
+  try {
+    const res = await api.get("/admin/tema");
+    setTemalarList(res.data);
+  } catch (err) {
+    console.error("Temalar yüklenemedi:", err);
+  }
+}
+
+
   useEffect(() => {
     fetchTemalar();
+    fetchTemalarList();
   }, []);
 
   async function handleAdd() {
@@ -34,11 +53,13 @@ export default function KelimeTemaPage() {
     try {
       await api.post("/admin/kelimeTema", {
         baslik: yeniBaslik,
-        aciklama: yeniAciklama
+        aciklama: yeniAciklama,
+        temaId: Number(yeniTemaId)
       });
 
       setYeniBaslik("");
       setYeniAciklama("");
+      setYeniTemaId("");
       fetchTemalar();
     } catch (err) {
       console.error("Ekleme hatası:", err);
@@ -59,6 +80,7 @@ export default function KelimeTemaPage() {
     setDuzenlenecek(item);
     setYeniBaslik(item.baslik);
     setYeniAciklama(item.aciklama);
+    setYeniTemaId(item.temaId);
   }
 
   async function handleUpdate() {
@@ -67,12 +89,14 @@ export default function KelimeTemaPage() {
     try {
       await api.put(`/admin/kelimeTema/${duzenlenecek.id}`, {
         baslik: yeniBaslik,
-        aciklama: yeniAciklama
+        aciklama: yeniAciklama,
+        temaId:yeniTemaId
       });
 
       setDuzenlenecek(null);
       setYeniBaslik("");
       setYeniAciklama("");
+      setYeniTemaId("");
       fetchTemalar();
     } catch (err) {
       console.error("Güncelleme hatası:", err);
@@ -83,6 +107,7 @@ export default function KelimeTemaPage() {
     setDuzenlenecek(null);
     setYeniBaslik("");
     setYeniAciklama("");
+    setYeniTemaId("");
   }
 
   return (
@@ -106,6 +131,20 @@ export default function KelimeTemaPage() {
           onChange={(e) => setYeniAciklama(e.target.value)}
           className="border p-2 rounded flex-1 min-w-[200px]"
         />
+
+
+        <select
+  value={yeniTemaId}
+  onChange={(e) => setYeniTemaId(Number(e.target.value))}
+  className="border p-2 rounded min-w-[200px]"
+>
+  <option value="">Tema Seçin</option>
+  {temalarList.map((tema) => (
+    <option key={tema.id} value={tema.id}>
+      {tema.baslik}
+    </option>
+  ))}
+</select>
 
         {duzenlenecek ? (
           <>

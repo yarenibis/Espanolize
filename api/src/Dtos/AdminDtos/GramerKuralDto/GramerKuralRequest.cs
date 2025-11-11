@@ -12,8 +12,8 @@ namespace api.src.Dtos.AdminDtos.GramerKuralDto
     
     // Navigation Properties
     public int KonuId { get; set; }
+    public int TemaId{ get; set; }
 
-    public string? KapakResmiUrl { get; set; }
-    public List<string>? DetayResimUrls { get; set; }
+
     }
 }

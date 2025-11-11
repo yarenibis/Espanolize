@@ -27,6 +27,8 @@ namespace api.src.Data
         public DbSet<MetinTema> MetinTemalari { get; set; }
 
         public DbSet<Metin> Metinler { get; set; }
+        public DbSet<Tema> Temalar { get; set; }
+        public DbSet<TemaResim> TemaResimleri { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -63,13 +65,33 @@ namespace api.src.Data
                 .WithOne(o => o.GramerKural)
                 .HasForeignKey(o => o.GramerKuralId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
             modelBuilder.Entity<GramerKural>()
-        .Property(g => g.DetayResimUrls)
-        .HasConversion(
-            v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
-            v => JsonSerializer.Deserialize<List<string>>(v, new JsonSerializerOptions())
-        );
+ .HasOne(g => g.Tema)
+ .WithMany()
+ .HasForeignKey(g => g.TemaId)
+ .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<KelimeTemasi>()
+            .HasOne(k => k.Tema)
+            .WithMany()
+            .HasForeignKey(k => k.TemaId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<MetinTema>()
+            .HasOne(m => m.Tema)
+            .WithMany()
+            .HasForeignKey(m => m.TemaId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+
+
+            modelBuilder.Entity<Tema>()
+                .HasMany(t => t.DetayResimler)
+                .WithOne(r => r.Tema)
+                .HasForeignKey(r => r.TemaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
 
             var adminRole = new IdentityRole

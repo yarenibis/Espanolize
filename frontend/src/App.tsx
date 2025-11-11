@@ -18,8 +18,7 @@ import MetinPage from "./pages/admin/MetinPage";
 import MetinTemaListPage from "./pages/user/MetinTemaListPage";
 import MetinTemaDetailPage from "./pages/user/MetinTemaDetailPage";
 import ProtectedRoute from "./components/adminDashboard/ProtectedRoute";
-import AdminGramerImageUploadPage from "./pages/admin/GramerKuralImageUploadPage";
-import GramerKuralImagesPage from "./pages/admin/GramerKuralImageUploadPage";
+import TemaPage from "./pages/admin/TemaPage";
 
 export default function App() {
   return (
@@ -99,15 +98,15 @@ export default function App() {
   }
 />
 
+<Route path="/admin/tema" element={
+  <ProtectedRoute>
+    <TemaPage />
+  </ProtectedRoute>
+} />
 
-<Route
-  path="/admin/gramerkurallar/:id/images"
-  element={
-    <ProtectedRoute>
-      <GramerKuralImagesPage />
-    </ProtectedRoute>
-  }
-/>
+
+
+
 
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
