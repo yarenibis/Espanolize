@@ -159,3 +159,4 @@ C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Micros
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\CloudinaryDotNet.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Newtonsoft.Json.dll
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\api.staticwebassets.runtime.json

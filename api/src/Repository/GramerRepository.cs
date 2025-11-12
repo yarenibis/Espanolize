@@ -40,7 +40,10 @@ namespace api.src.Repository
 
         public async Task<List<GramerKural>> GetAllAsync()
         {
-            return await _context.GramerKurallar.ToListAsync();
+            return await _context.GramerKurallar.Include(g => g.Tema)            // ✅ Tema'yı dahil et
+        .Include(g => g.Konu)
+        .Include(g => g.Ornekler)
+        .ToListAsync();
         }
 
         public async Task<List<GramerKural>> GetAllWithOrneklerAsync()
@@ -52,13 +55,19 @@ namespace api.src.Repository
 {
     return await _context.GramerKurallar
         .Include(x => x.Ornekler)
+        .Include(g => g.Konu)
+        .Include(g => g.Tema) // ✅ Tema’yı dahil et
+            .ThenInclude(t => t.DetayResimler)
         .FirstOrDefaultAsync(x => x.Id == id);
 }
 
 
         public async Task<GramerKural?> GetByIdAsync(int id)
         {
-            return await _context.GramerKurallar.FirstOrDefaultAsync(t => t.Id == id);
+            return await _context.GramerKurallar.Include(g => g.Ornekler)
+        .Include(g => g.Tema) // ✅ Tema’yı dahil et
+            .ThenInclude(t => t.DetayResimler) // ✅ detay fotoğraflar da gelsin
+        .FirstOrDefaultAsync(g => g.Id == id);
         }
 
         public async Task<GramerKural?> UpdateAsync(int id, GramerKuralRequest request)

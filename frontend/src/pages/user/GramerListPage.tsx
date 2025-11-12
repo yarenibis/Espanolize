@@ -12,6 +12,7 @@ interface GramerKural {
   id: number;
   kuralBaslik: string;
   aciklama: string;
+  kapakResmiUrl?: string | null;
   zorlukSeviyesi?: "Başlangıç" | "Orta" | "İleri";
 }
 
@@ -24,11 +25,52 @@ const getLevelColor = (level?: string) => {
   }
 };
 
+// Özel CSS
+const cardStyle = `
+  .gramer-card .ant-card-cover {
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+  }
+  
+  .gramer-card .ant-card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .gramer-card:hover .ant-card-cover img {
+    transform: scale(1.05);
+  }
+  
+  .gramer-card .ant-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+`;
+
 export default function GramerListPage() {
   const [kurallar, setKurallar] = useState<GramerKural[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // CSS'i head'e ekle
+    const styleElement = document.createElement('style');
+    styleElement.textContent = cardStyle;
+    document.head.appendChild(styleElement);
+
+    return () => {
+      // Component unmount olduğunda CSS'i temizle
+      document.head.removeChild(styleElement);
+    };
+  }, []);
 
   useEffect(() => {
     api.get("/kurallar")
@@ -51,7 +93,7 @@ export default function GramerListPage() {
         </Title>
 
         <Paragraph className="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
-          Açıklamalar ve örneklerle gramer kurallarını kolayca öğren.
+          Açıklamalar, örnekler ve görsellerle gramer kurallarını kolayca öğren.
         </Paragraph>
 
         <Search
@@ -78,21 +120,42 @@ export default function GramerListPage() {
               <Card
                 hoverable
                 onClick={() => navigate(`/gramer/${kural.id}`)}
-                className="rounded-xl shadow-sm hover:shadow-lg transition-all"
+                className="gramer-card h-full flex flex-col rounded-xl shadow-sm hover:shadow-lg transition-all overflow-hidden"
+                cover={
+                  <div className="w-full h-48 overflow-hidden bg-gray-100 flex items-center justify-center">
+                    <img
+                      alt={kural.kuralBaslik}
+                      src={
+                        kural.kapakResmiUrl
+                          ? kural.kapakResmiUrl.startsWith("http")
+                            ? kural.kapakResmiUrl
+                            : `http://localhost:5001${kural.kapakResmiUrl}`
+                          : "/no-cover.png"
+                      }
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "/no-cover.png";
+                      }}
+                    />
+                  </div>
+                }
               >
                 <div className="flex items-center gap-3 mb-3">
                   <BookOutlined style={{ fontSize: 24, color: "#7b61ff" }} />
                   <Title level={4} className="!mb-0">{kural.kuralBaslik}</Title>
                 </div>
 
-                <Paragraph ellipsis={{ rows: 3 }}>
+                <Paragraph ellipsis={{ rows: 3 }} className="flex-grow">
                   {kural.aciklama}
                 </Paragraph>
 
                 {kural.zorlukSeviyesi && (
-                  <Tag color={getLevelColor(kural.zorlukSeviyesi)}>
-                    {kural.zorlukSeviyesi}
-                  </Tag>
+                  <div className="mt-auto pt-3">
+                    <Tag color={getLevelColor(kural.zorlukSeviyesi)}>
+                      {kural.zorlukSeviyesi}
+                    </Tag>
+                  </div>
                 )}
               </Card>
             </Col>
