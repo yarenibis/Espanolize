@@ -10,71 +10,113 @@ const { Title, Paragraph, Text } = Typography;
 // Özel CSS
 const imageStyles = `
   .detail-page-image {
-    max-height: 400px;
     width: 100%;
-    object-fit: contain;
+    height: 250px; /* Daha kısa yükseklik */
+    object-fit: cover; /* Resmi kutuya sığdır */
+    border-radius: 8px;
   }
   
   .kapak-resim-container {
     background: #f8f9fa;
     border-radius: 12px;
-    padding: 20px;
+    padding: 0; /* Padding'i kaldırdık */
     margin-bottom: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
-    max-height: 500px;
     overflow: hidden;
+    width: 100%;
   }
 
-  /* Detay galeri için kompakt stil */
+  /* Çok küçük detay galeri için stil - YAN YANA */
   .detail-gallery-container {
-    aspect-ratio: 1;
+    width: 100%;
+    height: 80px;
     background: #f8f9fa;
-    border-radius: 8px;
+    border-radius: 6px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid #e8e8e8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .detail-gallery-container:hover {
+    border-color: #1890ff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   }
   
   .detail-gallery-image {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    transition: transform 0.3s ease;
-    padding: 8px;
+    object-fit: cover;
+    transition: transform 0.2s ease;
   }
   
   .detail-gallery-container:hover .detail-gallery-image {
     transform: scale(1.08);
   }
 
-  /* Daha sıkı grid düzeni */
-  .compact-grid {
-    gap: 12px !important;
+  /* YAN YANA grid düzeni - FLEX kullanıyoruz */
+  .horizontal-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
   }
 
-  /* Küçük ekranlar için daha fazla sütun */
+  /* Küçük ekranlar için */
   @media (max-width: 640px) {
-    .compact-grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px !important;
+    .horizontal-gallery {
+      gap: 6px;
+    }
+    .detail-gallery-container {
+      width: 70px;
+      height: 70px;
+      flex-shrink: 0;
+    }
+    .detail-page-image {
+      height: 200px; /* Mobilde biraz daha kısa */
     }
   }
 
-  @media (min-width: 641px) and (max-width: 1024px) {
-    .compact-grid {
-      grid-template-columns: repeat(4, 1fr);
+  @media (min-width: 641px) and (max-width: 768px) {
+    .detail-gallery-container {
+      width: 80px;
+      height: 80px;
+      flex-shrink: 0;
+    }
+    .detail-page-image {
+      height: 220px;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .detail-gallery-container {
+      width: 90px;
+      height: 90px;
+      flex-shrink: 0;
+    }
+    .detail-page-image {
+      height: 240px;
     }
   }
 
   @media (min-width: 1025px) {
-    .compact-grid {
-      grid-template-columns: repeat(5, 1fr);
+    .detail-gallery-container {
+      width: 100px;
+      height: 100px;
+      flex-shrink: 0;
     }
+  }
+
+  /* Preview modal için maksimum boyut */
+  .ant-image-preview-img {
+    max-height: 80vh !important;
+    max-width: 90vw !important;
+    object-fit: contain;
   }
 `;
 
@@ -118,7 +160,7 @@ export default function GramerDetailPage() {
     <>
       <Navbar />
 
-      <div className="max-w-5xl mx-auto py-12 px-4">
+      <div className="max-w-7xl mx-auto py-12 px-4">
         <Link
           to="/gramerkurallar"
           className="text-blue-600 flex items-center gap-2 mb-6 hover:underline"
@@ -145,7 +187,7 @@ export default function GramerDetailPage() {
             </div>
           )}
 
-          <Paragraph className="text-gray-600 bg-gray-50 p-4 rounded-lg border-l-4 border-blue-500">
+          <Paragraph className="text-gray-600 bg-gray-50 p-4 rounded-lg border-l-4 border-blue-500 mt-6">
             {kural.aciklama}
           </Paragraph>
 
@@ -156,14 +198,14 @@ export default function GramerDetailPage() {
           )}
         </Card>
 
-        {/* 📷 Detay Görselleri - KOMPAKT VERSİYON */}
+        {/* 📷 Detay Görselleri - YAN YANA FLEX */}
         {kural.detayResimUrls?.length > 0 && (
           <div className="mb-12">
             <Title level={3} className="mb-4 flex items-center gap-2">
-              <PictureOutlined /> Detay Görselleri
+              <PictureOutlined /> Detay Görselleri ({kural.detayResimUrls.length})
             </Title>
 
-            <div className="compact-grid grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+            <div className="horizontal-gallery">
               {kural.detayResimUrls.map((url: string, i: number) => (
                 <div key={i} className="detail-gallery-container">
                   <Image
@@ -171,9 +213,14 @@ export default function GramerDetailPage() {
                     alt={`${kural.kuralBaslik} - Detay ${i + 1}`}
                     className="detail-gallery-image"
                     preview={{
-                      mask: <span className="text-white text-xs">👁️</span>,
+                      mask: <span className="text-xs">👁️</span>,
                     }}
                     fallback="/no-cover.png"
+                    placeholder={
+                      <div className="flex items-center justify-center h-full">
+                        <Spin size="small" />
+                      </div>
+                    }
                   />
                 </div>
               ))}

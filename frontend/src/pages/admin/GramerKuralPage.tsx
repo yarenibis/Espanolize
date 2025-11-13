@@ -9,7 +9,7 @@ interface GramerKural {
     kuralBaslik: string 
     aciklama: string 
     konuId: number
-    temaId:number
+    temaId: number
 }
 interface Konu {
     id: number
@@ -21,7 +21,6 @@ interface Tema {
   baslik: string;
 }
 
-
 export default function GramerKuralPage() {
     const navigate = useNavigate(); 
     const [gramer, setGramer] = useState<GramerKural[]>([]);
@@ -32,7 +31,7 @@ export default function GramerKuralPage() {
     const [duzenlenecek, setDuzenlenecek] = useState<GramerKural | null>(null);
     const [loading, setLoading] = useState(true);
     const [temalar, setTemalar] = useState<Tema[]>([]);
-const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
+    const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
 
     // Konuları API'den çek
     async function getKonular(){
@@ -45,13 +44,13 @@ const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
     }
 
     async function getTemalar(){
-    try{
-        const res = await api.get("/admin/tema");
-        setTemalar(res.data);
-    } catch(err) {
-        console.error("Temalar yüklenemedi:", err);
+        try{
+            const res = await api.get("/admin/tema");
+            setTemalar(res.data);
+        } catch(err) {
+            console.error("Temalar yüklenemedi:", err);
+        }
     }
-}
 
     async function getAll(){
         try{
@@ -80,16 +79,22 @@ const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
         return konu ? konu.baslik : `Konu ID: ${konuId}`;
     };
 
-    // Tablo için düzenlenmiş data oluştur (konu başlıkları ile)
-    const tabloData = gramer.map(kural => ({
+    const getTemaBaslik = (temaId: number) => {
+        const tema = temalar.find(t => t.id === temaId);
+        return tema ? tema.baslik : `Tema ID: ${temaId}`;
+    };
+
+    // Tablo için düzenlenmiş data oluştur (konu ve tema başlıkları ile)
+    const tableData = gramer.map(kural => ({
         id: kural.id,
         kuralBaslik: kural.kuralBaslik,
-        aciklama:kural.aciklama,
-        konuBaslik: getKonuBaslik(kural.konuId)
+        aciklama: kural.aciklama,
+        konuBaslik: getKonuBaslik(kural.konuId),
+        temaBaslik: getTemaBaslik(kural.temaId)
     }));
 
     async function handleAdd(){
-        if(!yeniAciklama.trim() || !yeniKuralBaslik.trim() || yeniKonuId === "") 
+        if(!yeniAciklama.trim() || !yeniKuralBaslik.trim() || yeniKonuId === "" || yeniTemaId === "") 
             return alert("Tüm alanlar gerekli!");
         
         try{
@@ -127,6 +132,7 @@ const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
         setYeniKonuId(k.konuId);
         setYeniTemaId(k.temaId);
     }
+
     async function handleUpdate() {
         if (!duzenlenecek) return;
 
@@ -167,7 +173,8 @@ const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
             </div>
         );
     }
-     return (
+
+    return (
         <div className="p-6">
             <Navbar />
             <h1 className="text-2xl font-bold mb-4">Gramer Kural Yönetimi</h1>
@@ -203,19 +210,19 @@ const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
                     ))}
                 </select>
 
-
+                {/* Tema seçimi için dropdown */}
                 <select
-  value={yeniTemaId}
-  onChange={(e) => setYeniTemaId(Number(e.target.value))}
-  className="border p-2 rounded min-w-[200px]"
->
-  <option value="">Tema Seçin</option>
-  {temalar.map((tema) => (
-    <option key={tema.id} value={tema.id}>
-      {tema.baslik}
-    </option>
-  ))}
-</select>
+                    value={yeniTemaId}
+                    onChange={(e) => setYeniTemaId(Number(e.target.value))}
+                    className="border p-2 rounded min-w-[200px]"
+                >
+                    <option value="">Tema Seçin</option>
+                    {temalar.map((tema) => (
+                        <option key={tema.id} value={tema.id}>
+                            {tema.baslik}
+                        </option>
+                    ))}
+                </select>
 
                 {duzenlenecek ? (
                     <>
@@ -226,7 +233,6 @@ const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
                             Güncelle
                         </button>
 
-                        
                         <button
                             onClick={cancelEdit}
                             className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
@@ -244,15 +250,15 @@ const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
                 )}
             </div>
 
-            {/* CrudTable kullanımı */}
+            {/* CrudTable kullanımı - temaBaslik da içeren tableData kullanılıyor */}
             <CrudTable 
-  data={tabloData} 
-  onEdit={(item) => {
-    const originalKural = gramer.find((k) => k.id === item.id);
-    if (originalKural) startEdit(originalKural);
-  }}
-  onDelete={handleDelete}
-/>   
+                data={tableData} 
+                onEdit={(item) => {
+                    const originalKural = gramer.find((k) => k.id === item.id);
+                    if (originalKural) startEdit(originalKural);
+                }}
+                onDelete={handleDelete}
+            />   
         </div>
     );
 }
