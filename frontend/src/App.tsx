@@ -19,98 +19,46 @@ import MetinTemaListPage from "./pages/user/MetinTemaListPage";
 import MetinTemaDetailPage from "./pages/user/MetinTemaDetailPage";
 import ProtectedRoute from "./components/adminDashboard/ProtectedRoute";
 import TemaPage from "./pages/admin/TemaPage";
+import AdminLayout from "./components/adminDashboard/AdminLayout";
 
 export default function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/gramerkurallar" element={<GramerListPage/>}/>
         <Route path="/gramer/:id" element={<GramerDetailPage />} />
-
         <Route path="/kelimetemalari" element={<KelimeTemaListPage />} />
         <Route path="/kelimeler/:id" element={<KelimeTemaDetailPage />} />
-
-
         <Route path="/metinTema" element={<MetinTemaListPage />} />
         <Route path="/metinler/:id" element={<MetinTemaDetailPage />} />
-      
         <Route path="/login" element={<LoginPage />} />
-        <Route
-  path="/admin"
-  element={
-    <ProtectedRoute>
-      <AdminDashboard />
-    </ProtectedRoute>
-  }
-/>
-        <Route path="/admin/kategoriler" element={
-    <ProtectedRoute>
-      <KategoriPage />
-    </ProtectedRoute>
-  }
-/>
 
-<Route path="/admin/konular" element={
-  <ProtectedRoute>
-    <KonuPage/>
-  </ProtectedRoute>
-} />
-
-<Route path="/admin/gramerkurallar" element={
-  <ProtectedRoute>
-    <GramerKuralPage/>
-  </ProtectedRoute>
-} />
-
-<Route path="/admin/ornekler" element={
-  <ProtectedRoute>
-    <OrnekPage/>
-  </ProtectedRoute>
-} />
-
-<Route path="/admin/kelimeTema" element={
-    <ProtectedRoute>
-      <KelimeTemaPage />
-    </ProtectedRoute>
-  }
-/>
-
-<Route path="/admin/kelimeler" element={
-    <ProtectedRoute>
-      <KelimePage />
-    </ProtectedRoute>
-  }
-/>
-
-
-<Route path="/admin/metinTema" element={
-    <ProtectedRoute>
-      <MetinTemaPage />
-    </ProtectedRoute>
-  }
-/>
-
-<Route path="/admin/metinler" element={
-    <ProtectedRoute>
-      <MetinPage />
-    </ProtectedRoute>
-  }
-/>
-
-<Route path="/admin/tema" element={
-  <ProtectedRoute>
-    <TemaPage />
-  </ProtectedRoute>
-} />
-
-
-
-
+        {/* Admin Routes with Layout */}
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* Bu route'lar AdminLayout içindeki Outlet'te render edilecek */}
+          
+          <Route path="kategoriler" element={<KategoriPage />} />
+          <Route path="konular" element={<KonuPage />} />
+          <Route path="gramerkurallar" element={<GramerKuralPage />} />
+          <Route path="ornekler" element={<OrnekPage />} />
+          <Route path="kelimeTema" element={<KelimeTemaPage />} />
+          <Route path="kelimeler" element={<KelimePage />} />
+          <Route path="metinTema" element={<MetinTemaPage />} />
+          <Route path="metinler" element={<MetinPage />} />
+          <Route path="tema" element={<TemaPage />} />
+        </Route>
 
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </Router>
-
   );
 }
