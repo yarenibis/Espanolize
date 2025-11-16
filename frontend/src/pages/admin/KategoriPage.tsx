@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../services/ApiService";
 import CrudTable from "../../components/adminDashboard/CrudTable";
-import Navbar from "../../components/adminDashboard/Navbar";
 
 interface Kategori {
   id: number;
@@ -86,7 +85,7 @@ export default function KategoriPage() {
 
   return (
     <div className="p-6">
-      <Navbar />
+
       <h1 className="text-2xl font-bold mb-4">Kategoriler Yönetimi</h1>
 
       {/* Ekle / Düzenle Alanı */}

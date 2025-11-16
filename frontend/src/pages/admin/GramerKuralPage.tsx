@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import api from "../../services/ApiService"
 import CrudTable from "../../components/adminDashboard/CrudTable"
-import Navbar from "../../components/adminDashboard/Navbar"
 import { useNavigate } from "react-router-dom"
 
 interface GramerKural {
@@ -166,7 +165,7 @@ export default function GramerKuralPage() {
     if (loading) {
         return (
             <div className="p-6">
-                <Navbar />
+      
                 <div className="flex justify-center items-center h-64">
                     <div className="text-lg">Yükleniyor...</div>
                 </div>
@@ -176,7 +175,7 @@ export default function GramerKuralPage() {
 
     return (
         <div className="p-6">
-            <Navbar />
+         
             <h1 className="text-2xl font-bold mb-4">Gramer Kural Yönetimi</h1>
 
             {/* Ekle / Düzenle Alanı */}

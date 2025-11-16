@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../services/ApiService";
 import CrudTable from "../../components/adminDashboard/CrudTable";
-import Navbar from "../../components/adminDashboard/Navbar";
 
 interface Kelime {
   id: number;
@@ -106,7 +105,6 @@ export default function KelimePage() {
 
   return (
     <div className="p-6">
-      <Navbar />
       <h1 className="text-2xl font-bold mb-4">Kelime Yönetimi</h1>
 
       <div className="flex gap-2 mb-4 flex-wrap">

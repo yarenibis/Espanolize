@@ -14,8 +14,7 @@ namespace api.src.Mapper.AdminMapper
             return new MetinTema
             {
                 Aciklama = request.Aciklama,
-                Baslik = request.Baslik,
-                TemaId=request.TemaId
+                Baslik = request.Baslik
             };
         }
     }

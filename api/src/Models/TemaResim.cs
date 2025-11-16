@@ -10,7 +10,7 @@ namespace api.src.Models
         public int Id { get; set; }
     public string ResimUrl { get; set; }
 
-    public int TemaId { get; set; }
-    public Tema Tema { get; set; }
+     public int OwnerId { get; set; }   
+    public int Category { get; set; }
     }
 }

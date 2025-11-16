@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../services/ApiService";
 import CrudTable from "../../components/adminDashboard/CrudTable";
-import Navbar from "../../components/adminDashboard/Navbar";
 
 interface Ornek {
   id: number;
@@ -149,7 +148,6 @@ export default function OrnekPage() {
 if (loading) {
         return (
             <div className="p-6">
-                <Navbar />
                 <div className="flex justify-center items-center h-64">
                     <div className="text-lg">Yükleniyor...</div>
                 </div>
@@ -161,7 +159,6 @@ if (loading) {
 
   return (
           <div className="p-6">
-              <Navbar />
               <h1 className="text-2xl font-bold mb-4">Konu Yönetimi</h1>
   
               {/* Ekle / Düzenle Alanı */}

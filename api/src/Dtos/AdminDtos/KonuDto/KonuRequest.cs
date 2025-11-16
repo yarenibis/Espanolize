@@ -13,7 +13,6 @@ namespace api.src.Dtos.AdminDtos.KonuDto
         public int CalismaSuresi { get; set; } // Dakika cinsinden
         public string Aciklama { get; set; }
 
-        // Navigation Properties
-        public int KategoriId { get; set; }
+ 
     }
 }

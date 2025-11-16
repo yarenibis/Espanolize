@@ -5,12 +5,11 @@ using api.src.Interface;
 using api.src.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using api.Models;
 using api.Interface;
 using api.Services;
+using api.src.Helpers;
 
 
 
@@ -92,7 +91,7 @@ builder.Services.AddAuthentication(options =>
 
 
 
-builder.Services.AddScoped<IKategori, KategoriRepository>();
+
 builder.Services.AddScoped<IKonu, KonuRepository>();
 builder.Services.AddScoped<IGramer, GramerRepository>();
 builder.Services.AddScoped<IOrnek, OrnekRepository>();
@@ -101,6 +100,7 @@ builder.Services.AddScoped<IKelime, KelimeRepository>();
 builder.Services.AddScoped<IKelimeTema, KelimeTemaRepository>();
 builder.Services.AddScoped<IMetinTema, MetinTemaRepository>();
 builder.Services.AddScoped<IMetin, MetinRepository>();
+builder.Services.AddScoped<ImageUploadHelper>();
 
 builder.Services.AddCors(options =>
 {

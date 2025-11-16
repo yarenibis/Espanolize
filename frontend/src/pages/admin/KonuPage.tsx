@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/ApiService";
-import Navbar from "../../components/adminDashboard/Navbar";
 import CrudTable from "../../components/adminDashboard/CrudTable";
 
 interface Konu {
@@ -170,7 +169,6 @@ export default function KonuPage() {
 if (loading) {
         return (
             <div className="p-6">
-                <Navbar />
                 <div className="flex justify-center items-center h-64">
                     <div className="text-lg">Yükleniyor...</div>
                 </div>
@@ -181,7 +179,6 @@ if (loading) {
 
    return (
         <div className="p-6">
-            <Navbar />
             <h1 className="text-2xl font-bold mb-4">Konu Yönetimi</h1>
 
             {/* Ekle / Düzenle Alanı */}

@@ -10,7 +10,6 @@ namespace api.src.Dtos.KullanıcıDtos.MetinTemaDto
     {
          public int Id { get; set; }
         public string Baslik { get; set; }
-         public int TemaId{ get; set; }
         public string Aciklama { get; set; }
 
         public List<MetinListDto> Metinler { get; set; } = new();

@@ -45,6 +45,7 @@ namespace api.src.Repository
         {
             return await _context.KelimeTemalari
             .Include(k => k.Kelimeler)
+            .Include(k=>k.DetayResimler)
             .ToListAsync();
         }
         

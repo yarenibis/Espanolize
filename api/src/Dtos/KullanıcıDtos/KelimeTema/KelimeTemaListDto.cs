@@ -9,7 +9,6 @@ namespace api.src.Dtos.KullanıcıDtos
     {
         public int Id { get; set; }
         public string Baslik{ get; set; }
-        public int TemaId{ get; set; }
         public string Aciklama { get; set; }
         public string? KapakResmiUrl { get; set; }
     }

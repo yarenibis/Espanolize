@@ -8,7 +8,10 @@ C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\api.dl
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\api.pdb
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Azure.Core.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Azure.Identity.dll
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\CloudinaryDotNet.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Humanizer.dll
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Microsoft.AspNetCore.OpenApi.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Microsoft.Build.Locator.dll
@@ -37,6 +40,7 @@ C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Micros
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Microsoft.SqlServer.Server.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Mono.TextTemplating.dll
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Newtonsoft.Json.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
@@ -155,8 +159,3 @@ C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\obj\Debug\net9.0\refint
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\obj\Debug\net9.0\api.pdb
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\obj\Debug\net9.0\api.genruntimeconfig.cache
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\obj\Debug\net9.0\ref\api.dll
-C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
-C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
-C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\CloudinaryDotNet.dll
-C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Newtonsoft.Json.dll
-C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\api.staticwebassets.runtime.json

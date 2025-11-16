@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import api from "../../services/ApiService";
-import Navbar from "../../components/adminDashboard/Navbar";
 
 interface Tema {
   id: number;
@@ -108,7 +107,6 @@ export default function TemaPage() {
   if (loading) {
     return (
       <div className="p-6 bg-gray-50 min-h-screen">
-        <Navbar />
         <div className="flex justify-center items-center h-64">
           <div className="text-lg">Yükleniyor...</div>
         </div>
@@ -118,7 +116,7 @@ export default function TemaPage() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <Navbar />
+ 
       
       {/* Başlık */}
       <div className="mb-8">

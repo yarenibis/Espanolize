@@ -13,9 +13,6 @@ namespace api.src.Models
     public int CalismaSuresi { get; set; } // Dakika cinsinden
     public string Aciklama { get; set; }
     
-    // Navigation Properties
-    public int KategoriId { get; set; }
-    public Kategori Kategori { get; set; }
     
     public List<GramerKural> Kurallar { get; set; }
 

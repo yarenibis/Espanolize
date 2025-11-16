@@ -12,7 +12,6 @@ namespace api.src.Dtos.KullanıcıDtos
         public int Id { get; set; }
         public string Baslik { get; set; }
         public string Aciklama { get; set; }
-        public int TemaId{ get; set; }
         public List<KelimeListDto> Kelimeler { get; set; } = new();
         public string? KapakResmiUrl { get; set; }   // ✅ Ekledik
     public List<string> DetayResimUrls { get; set; } = new(); 

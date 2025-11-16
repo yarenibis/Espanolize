@@ -18,8 +18,7 @@ namespace api.src.Mapper.KullanıcıMapper
                 Baslik = konu.Baslik,
                 Aciklama = konu.Aciklama,
                 CalismaSuresi = konu.CalismaSuresi,
-                Zorluk = konu.Zorluk,
-                KategoriId = konu.KategoriId
+                Zorluk = konu.Zorluk
             };
         }
 
@@ -32,7 +31,6 @@ namespace api.src.Mapper.KullanıcıMapper
                 Aciklama = konu.Aciklama,
                 CalismaSuresi = konu.CalismaSuresi,
                 Zorluk = konu.Zorluk,
-                KategoriId = konu.KategoriId,
                 Kurallar = konu.Kurallar?
                     .Select(k => k.ToGramerKuralListDto())
                     .ToList() ?? new List<GramerKuralListDto>()

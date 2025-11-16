@@ -12,8 +12,8 @@ using api.src.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251111132917_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251116175625_removeenum")]
+    partial class removeenum
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -243,6 +243,9 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("KapakResmiUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("KonuId")
                         .HasColumnType("int");
 
@@ -250,36 +253,11 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TemaId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("KonuId");
 
-                    b.HasIndex("TemaId");
-
                     b.ToTable("GramerKurallar");
-                });
-
-            modelBuilder.Entity("api.src.Models.Kategori", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Ad")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Sira")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Kategoriler");
                 });
 
             modelBuilder.Entity("api.src.Models.Kelime", b =>
@@ -323,12 +301,10 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TemaId")
-                        .HasColumnType("int");
+                    b.Property<string>("KapakResmiUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TemaId");
 
                     b.ToTable("KelimeTemalari");
                 });
@@ -352,16 +328,11 @@ namespace api.Migrations
                     b.Property<int>("CalismaSuresi")
                         .HasColumnType("int");
 
-                    b.Property<int>("KategoriId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Zorluk")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("KategoriId");
 
                     b.ToTable("Konular");
                 });
@@ -412,12 +383,10 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TemaId")
-                        .HasColumnType("int");
+                    b.Property<string>("KapakResmiUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TemaId");
 
                     b.ToTable("MetinTemalari");
                 });
@@ -452,26 +421,6 @@ namespace api.Migrations
                     b.ToTable("Ornekler");
                 });
 
-            modelBuilder.Entity("api.src.Models.Tema", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Baslik")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("KapakResmiUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Temalar");
-                });
-
             modelBuilder.Entity("api.src.Models.TemaResim", b =>
                 {
                     b.Property<int>("Id")
@@ -480,16 +429,17 @@ namespace api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ResimUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TemaId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TemaId");
 
                     b.ToTable("TemaResimleri");
                 });
@@ -553,14 +503,7 @@ namespace api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("api.src.Models.Tema", "Tema")
-                        .WithMany()
-                        .HasForeignKey("TemaId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Konu");
-
-                    b.Navigation("Tema");
                 });
 
             modelBuilder.Entity("api.src.Models.Kelime", b =>
@@ -574,27 +517,6 @@ namespace api.Migrations
                     b.Navigation("KelimeTemasi");
                 });
 
-            modelBuilder.Entity("api.src.Models.KelimeTemasi", b =>
-                {
-                    b.HasOne("api.src.Models.Tema", "Tema")
-                        .WithMany()
-                        .HasForeignKey("TemaId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Tema");
-                });
-
-            modelBuilder.Entity("api.src.Models.Konu", b =>
-                {
-                    b.HasOne("api.src.Models.Kategori", "Kategori")
-                        .WithMany("Konular")
-                        .HasForeignKey("KategoriId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Kategori");
-                });
-
             modelBuilder.Entity("api.src.Models.Metin", b =>
                 {
                     b.HasOne("api.src.Models.MetinTema", "MetinTema")
@@ -604,16 +526,6 @@ namespace api.Migrations
                         .IsRequired();
 
                     b.Navigation("MetinTema");
-                });
-
-            modelBuilder.Entity("api.src.Models.MetinTema", b =>
-                {
-                    b.HasOne("api.src.Models.Tema", "Tema")
-                        .WithMany()
-                        .HasForeignKey("TemaId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Tema");
                 });
 
             modelBuilder.Entity("api.src.Models.Ornek", b =>
@@ -627,25 +539,9 @@ namespace api.Migrations
                     b.Navigation("GramerKural");
                 });
 
-            modelBuilder.Entity("api.src.Models.TemaResim", b =>
-                {
-                    b.HasOne("api.src.Models.Tema", "Tema")
-                        .WithMany("DetayResimler")
-                        .HasForeignKey("TemaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tema");
-                });
-
             modelBuilder.Entity("api.src.Models.GramerKural", b =>
                 {
                     b.Navigation("Ornekler");
-                });
-
-            modelBuilder.Entity("api.src.Models.Kategori", b =>
-                {
-                    b.Navigation("Konular");
                 });
 
             modelBuilder.Entity("api.src.Models.KelimeTemasi", b =>
@@ -661,11 +557,6 @@ namespace api.Migrations
             modelBuilder.Entity("api.src.Models.MetinTema", b =>
                 {
                     b.Navigation("Metinler");
-                });
-
-            modelBuilder.Entity("api.src.Models.Tema", b =>
-                {
-                    b.Navigation("DetayResimler");
                 });
 #pragma warning restore 612, 618
         }

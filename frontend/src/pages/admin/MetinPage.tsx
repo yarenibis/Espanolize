@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import api from "../../services/ApiService";
-import Navbar from "../../components/adminDashboard/Navbar";
 import CrudTable from "../../components/adminDashboard/CrudTable";
 
 interface Metin {
@@ -119,7 +118,6 @@ export default function KelimePage() {
 
   return (
       <div className="p-6">
-        <Navbar />
         <h1 className="text-2xl font-bold mb-4">Kelime Yönetimi</h1>
   
         <div className="flex gap-2 mb-4 flex-wrap">

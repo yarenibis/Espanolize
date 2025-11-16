@@ -18,7 +18,6 @@ namespace api.src.Data
 
         }
 
-        public DbSet<Kategori> Kategoriler { get; set; }
         public DbSet<Konu> Konular { get; set; }
         public DbSet<GramerKural> GramerKurallar { get; set; }
         public DbSet<Ornek> Ornekler { get; set; }
@@ -27,7 +26,6 @@ namespace api.src.Data
         public DbSet<MetinTema> MetinTemalari { get; set; }
 
         public DbSet<Metin> Metinler { get; set; }
-        public DbSet<Tema> Temalar { get; set; }
         public DbSet<TemaResim> TemaResimleri { get; set; }
 
 
@@ -35,12 +33,7 @@ namespace api.src.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Sadece ilişkileri belirtmek yeterli
-            modelBuilder.Entity<Kategori>()
-                .HasMany(k => k.Konular)
-                .WithOne(k => k.Kategori)
-                .HasForeignKey(k => k.KategoriId)
-                .OnDelete(DeleteBehavior.Cascade);
+          
 
             modelBuilder.Entity<KelimeTemasi>()
                 .HasMany(k => k.Kelimeler)
@@ -67,31 +60,13 @@ namespace api.src.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<GramerKural>()
- .HasOne(g => g.Tema)
- .WithMany()
- .HasForeignKey(g => g.TemaId)
- .OnDelete(DeleteBehavior.SetNull);
+    .Ignore(g => g.DetayResimler);
 
-            modelBuilder.Entity<KelimeTemasi>()
-            .HasOne(k => k.Tema)
-            .WithMany()
-            .HasForeignKey(k => k.TemaId)
-            .OnDelete(DeleteBehavior.SetNull);
+modelBuilder.Entity<KelimeTemasi>()
+    .Ignore(k => k.DetayResimler);
 
-            modelBuilder.Entity<MetinTema>()
-            .HasOne(m => m.Tema)
-            .WithMany()
-            .HasForeignKey(m => m.TemaId)
-            .OnDelete(DeleteBehavior.SetNull);
-
-
-
-            modelBuilder.Entity<Tema>()
-                .HasMany(t => t.DetayResimler)
-                .WithOne(r => r.Tema)
-                .HasForeignKey(r => r.TemaId)
-                .OnDelete(DeleteBehavior.Cascade);
-
+modelBuilder.Entity<MetinTema>()
+    .Ignore(m => m.DetayResimler);
 
 
             var adminRole = new IdentityRole
