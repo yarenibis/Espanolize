@@ -17,6 +17,9 @@ namespace api.src.Data
         {
 
         }
+        public ApplicationDbContext()
+    {
+    }
 
         public DbSet<Konu> Konular { get; set; }
         public DbSet<GramerKural> GramerKurallar { get; set; }
@@ -27,13 +30,14 @@ namespace api.src.Data
 
         public DbSet<Metin> Metinler { get; set; }
         public DbSet<TemaResim> TemaResimleri { get; set; }
+        public DbSet<Tema> Temalar { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-          
+
 
             modelBuilder.Entity<KelimeTemasi>()
                 .HasMany(k => k.Kelimeler)
@@ -59,14 +63,29 @@ namespace api.src.Data
                 .HasForeignKey(o => o.GramerKuralId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Tema>()
+                .HasMany(t => t.DetayResimler)
+                .WithOne(r => r.Tema)
+                .HasForeignKey(r => r.TemaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<GramerKural>()
-    .Ignore(g => g.DetayResimler);
+               .HasOne(g => g.Tema)
+            .WithMany()
+            .HasForeignKey(g => g.TemaId)
+ .OnDelete(DeleteBehavior.SetNull);
 
-modelBuilder.Entity<KelimeTemasi>()
-    .Ignore(k => k.DetayResimler);
+            modelBuilder.Entity<KelimeTemasi>()
+            .HasOne(k => k.Tema)
+            .WithMany()
+            .HasForeignKey(k => k.TemaId)
+            .OnDelete(DeleteBehavior.SetNull);
 
-modelBuilder.Entity<MetinTema>()
-    .Ignore(m => m.DetayResimler);
+            modelBuilder.Entity<MetinTema>()
+            .HasOne(m => m.Tema)
+            .WithMany()
+            .HasForeignKey(m => m.TemaId)
+            .OnDelete(DeleteBehavior.SetNull);
 
 
             var adminRole = new IdentityRole

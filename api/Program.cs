@@ -9,7 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using api.Models;
 using api.Interface;
 using api.Services;
-using api.src.Helpers;
 
 
 
@@ -51,10 +50,7 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -100,7 +96,6 @@ builder.Services.AddScoped<IKelime, KelimeRepository>();
 builder.Services.AddScoped<IKelimeTema, KelimeTemaRepository>();
 builder.Services.AddScoped<IMetinTema, MetinTemaRepository>();
 builder.Services.AddScoped<IMetin, MetinRepository>();
-builder.Services.AddScoped<ImageUploadHelper>();
 
 builder.Services.AddCors(options =>
 {

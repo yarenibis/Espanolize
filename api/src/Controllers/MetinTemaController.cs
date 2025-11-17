@@ -94,151 +94,22 @@ namespace api.src.Controllers
             return Ok(updatedTema.ToMetinTemaListDto());
         }
 
-       // ----------------------------------------------------
-// 📌 METİN TEMASI SİL (RESİMLERLE BİRLİKTE)
-// ----------------------------------------------------
-[HttpDelete("{id}")]
-public async Task<IActionResult> DeleteMetinTema([FromRoute] int id)
-{
-    var tema = await _context.MetinTemalari
-        .Include(t => t.DetayResimler)
-        .FirstOrDefaultAsync(t => t.Id == id);
-
-    if (tema == null)
-        return NotFound($"ID {id} ile metin teması bulunamadı");
-
-    // 📁 Klasörü sil (ImageCategory yerine integer)
-    int category = 2; // Metin = 2
-
-    _imageHelper.DeleteCategoryFolder(category, id);
-
-    // 📦 DB’den Tema + Resimleri sil
-    if (tema.DetayResimler.Any())
-        _context.TemaResimleri.RemoveRange(tema.DetayResimler);
-
-    _context.MetinTemalari.Remove(tema);
-    await _context.SaveChangesAsync();
-
-    return NoContent();
-}
-
-        // ----------------------------------------------------
-// 📌 KAPAK RESMİ YÜKLE
-// ----------------------------------------------------
-[HttpPost("{id}/upload-cover")]
-public async Task<IActionResult> UploadCover(int id, IFormFile file)
-{
-    var tema = await _context.MetinTemalari.FindAsync(id);
-    if (tema == null)
-        return NotFound($"ID {id} ile metin teması bulunamadı");
-
-    if (file == null || file.Length == 0)
-        return BadRequest("Dosya bulunamadı.");
-
-    int category = 2; // Metin
-
-    try
-    {
-        var url = await _imageHelper.UploadCover(category, id, file);
-
-        tema.KapakResmiUrl = url;
-        await _context.SaveChangesAsync();
-
-        return Ok(new { kapakUrl = url });
-    }
-    catch (Exception ex)
-    {
-        return BadRequest($"Resim yükleme hatası: {ex.Message}");
-    }
-}
-
-
-       // ----------------------------------------------------
-// 📌 DETAY GALERİ RESİMLERİ YÜKLE
-// ----------------------------------------------------
-[HttpPost("{id}/upload-details")]
-public async Task<IActionResult> UploadDetails(int id, [FromQuery] int category, List<IFormFile> files)
-{
-    var model = await _context.GramerKurallar
-        .Include(g => g.DetayResimler)
-        .FirstOrDefaultAsync(g => g.Id == id);
-
-    if (model == null)
-        return NotFound();
-
-    if (files == null || files.Count == 0)
-        return BadRequest("Dosya yok.");
-
-    // Upload klasör: /uploads/{category}/{id}/gallery
-    var urls = await _imageHelper.UploadGallery(category, id, files);
-
-    foreach (var url in urls)
-    {
-        model.DetayResimler.Add(new TemaResim
+     [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMetinTema([FromRoute] int id)
         {
-            OwnerId = id,
-            Category = category,   // ❗ integer kaydediyoruz
-            ResimUrl = url
-        });
-    }
+            var konuModel = await _repository.GetByIdAsync(id);
 
-    await _context.SaveChangesAsync();
-
-    return Ok(urls);
-}
-
-
-       // ----------------------------------------------------
-// 📌 TEK DETAY RESMİ SİL
-// ----------------------------------------------------
-[HttpDelete("{id}/details")]
-public async Task<IActionResult> DeleteDetail(int id, [FromQuery] int category, [FromQuery] string url)
-{
-    var image = await _context.TemaResimleri
-        .FirstOrDefaultAsync(x =>
-            x.OwnerId == id &&
-            x.Category == category && // ❗ integer Category
-            x.ResimUrl == url);
-
-    if (image == null)
-        return NotFound("Görsel bulunamadı");
-
-    // Fiziksel dosya sil
-    _imageHelper.DeletePhysical(url);
-
-    // Veritabanından sil
-    _context.TemaResimleri.Remove(image);
-    await _context.SaveChangesAsync();
-
-    return Ok();
-}
-
-
-        // ----------------------------------------------------
-        // 📌 KAPAK RESMİ SİL
-        // ----------------------------------------------------
-        [HttpDelete("{id}/cover")]
-        public async Task<IActionResult> DeleteCover(int id)
-        {
-            var tema = await _context.MetinTemalari.FindAsync(id);
-            if (tema == null || string.IsNullOrEmpty(tema.KapakResmiUrl))
-                return NotFound("Kapak resmi bulunamadı");
-
-            try
+            if (konuModel == null )
             {
-                // Fiziksel dosyayı sil
-                _imageHelper.DeletePhysical(tema.KapakResmiUrl);
-
-                // DB'den URL'yi temizle
-                tema.KapakResmiUrl = null;
-                await _context.SaveChangesAsync();
-
-                return Ok();
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return BadRequest($"Kapak resmi silme hatası: {ex.Message}");
-            }
+
+            await _repository.DeleteAsync(id);
+            return NoContent();
         }
+    
+
+
+        
     }
 }

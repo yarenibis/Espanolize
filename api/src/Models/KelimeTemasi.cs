@@ -8,10 +8,9 @@ namespace api.src.Models
     public class KelimeTemasi
     {
         public int Id { get; set; }
-    public string Baslik { get; set; }
-    public string? Aciklama { get; set; }
-    public List<Kelime> Kelimeler { get; set; }
-    public string? KapakResmiUrl { get; set; }
-    public List<TemaResim> DetayResimler { get; set; } = new();
+        public string Aciklama { get; set; }
+        public List<Kelime> Kelimeler { get; set; }
+        public int? TemaId { get; set; }
+        public Tema Tema { get; set; }
     }
 }

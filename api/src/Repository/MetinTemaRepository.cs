@@ -69,7 +69,7 @@ namespace api.src.Repository
                 return null;
             }
             metinModel.Aciklama = request.Aciklama;
-            metinModel.Baslik = request.Baslik;
+            metinModel.TemaId=request.TemaId;
             await _context.SaveChangesAsync();
             return metinModel;
         }

@@ -10,9 +10,10 @@ namespace api.src.Dtos.KullanıcıDtos
     public class KelimeTemaDetayDto
     {
         public int Id { get; set; }
-        public string Baslik { get; set; }
+
         public string Aciklama { get; set; }
         public List<KelimeListDto> Kelimeler { get; set; } = new();
+        public int TemaId { get; set; }
         public string? KapakResmiUrl { get; set; }   // ✅ Ekledik
     public List<string> DetayResimUrls { get; set; } = new(); 
     }

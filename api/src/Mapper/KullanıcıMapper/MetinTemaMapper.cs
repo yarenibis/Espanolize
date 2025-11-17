@@ -16,8 +16,7 @@ namespace api.src.Mapper.KullanıcıMapper
             {
                 Id = tema.Id,
                 Aciklama = tema.Aciklama,
-                Baslik = tema.Baslik,
-                KapakResmiUrl = tema.KapakResmiUrl
+                KapakResmiUrl = tema.Tema.KapakResmiUrl
             };
         }
 
@@ -29,9 +28,8 @@ namespace api.src.Mapper.KullanıcıMapper
             {
                 Id = tema.Id,
                 Aciklama = tema.Aciklama,
-                Baslik = tema.Baslik,
-                KapakResmiUrl = tema.KapakResmiUrl,         // ✅ Detay sayfa kapak resmi
-                DetayResimUrls = tema.DetayResimler
+                KapakResmiUrl = tema.Tema.KapakResmiUrl,         // ✅ Detay sayfa kapak resmi
+                DetayResimUrls = tema.Tema.DetayResimler
                     ?.Select(r => r.ResimUrl)
                     .ToList() ?? new List<string>(), 
                 Metinler=tema.Metinler.Select(t=>t.ToMetinListDto()).ToList() ?? new List<MetinListDto>()

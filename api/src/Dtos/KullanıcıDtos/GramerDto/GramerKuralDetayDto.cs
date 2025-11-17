@@ -13,7 +13,9 @@ namespace api.src.Dtos.KullanıcıDtos.GramerDto
         public string Aciklama { get; set; }
         public int KonuId { get; set; }
         public List<OrnekListDto> Ornekler { get; set; } = new();
+        public int TemaId{ get; set; }
         public string? KapakResmiUrl { get; set; }   // ✅ Ekledik
     public List<string> DetayResimUrls { get; set; } = new(); 
+        
     }
 }

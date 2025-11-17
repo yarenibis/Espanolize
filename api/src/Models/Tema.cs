@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace api.src.Dtos.KullanıcıDtos
+namespace api.src.Models
 {
-    public class KelimeTemaListDto
+    public class Tema
     {
         public int Id { get; set; }
-        public int TemaId{ get; set; }
-        public string Aciklama { get; set; }
+        public string Baslik { get; set; }
         public string? KapakResmiUrl { get; set; }
+
+        public List<TemaResim> DetayResimler { get; set; } = new();
     }
 }

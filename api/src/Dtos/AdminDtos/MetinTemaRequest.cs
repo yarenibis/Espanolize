@@ -9,6 +9,6 @@ namespace api.src.Dtos.AdminDtos
     {
         public int TemaId{ get; set; }
         public string Aciklama { get; set; }
-        public string Baslik{ get; set; }
+  
     }
 }

@@ -45,7 +45,8 @@ namespace api.src.Repository
         {
             return await _context.KelimeTemalari
             .Include(k => k.Kelimeler)
-            .Include(k=>k.DetayResimler)
+            .Include(t=>t.Tema)
+            .ThenInclude(k=>k.DetayResimler)
             .ToListAsync();
         }
         
@@ -71,7 +72,7 @@ namespace api.src.Repository
                 return null;
             }
             temaModel.Aciklama = request.Aciklama;
-            temaModel.Baslik = request.Baslik;
+            temaModel.TemaId=request.TemaId;
             await _context.SaveChangesAsync();
             return temaModel;
         }

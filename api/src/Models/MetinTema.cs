@@ -8,10 +8,9 @@ namespace api.src.Models
     public class MetinTema
     {
         public int Id { get; set; }
-        public string Baslik { get; set; }
         public string Aciklama { get; set; }
         public List<Metin> Metinler { get; set; }
-        public string? KapakResmiUrl { get; set; }
-        public List<TemaResim> DetayResimler { get; set; } = new();
+        public int? TemaId { get; set; }
+        public Tema Tema { get; set; }
     }
 }

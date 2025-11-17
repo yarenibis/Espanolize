@@ -13,7 +13,7 @@ namespace api.src.Mapper.AdminMapper
         {
             return new KelimeTemasi
             {
-                Baslik = request.Baslik,
+                TemaId=request.TemaId,
                 Aciklama = request.Aciklama
             };
         }
