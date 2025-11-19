@@ -10,8 +10,8 @@ namespace api.src.Interface
     public interface IKonu
     {
          Task<List<Konu>> GetAllAsync();
-        Task<List<Konu>> GetAllWithKurallarAsync();
         Task<Konu?> GetByIdAsync(int id);
+       Task<Konu?> GetByIdWithKurallarAsync(int id);
         Task<Konu> CreateAsync(Konu konu);
         Task<Konu?> UpdateAsync(int id, KonuRequest request);
         Task<Konu?> DeleteAsync(int id);

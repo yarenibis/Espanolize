@@ -25,9 +25,20 @@ namespace api.src.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var konular = await _repository.GetAllWithKurallarAsync();
-            var konularDto = konular.Select(t => t.ToKonuDetayDto());
+            //konu listesi
+            var konular = await _repository.GetAllAsync();
+            var konularDto = konular.Select(t => t.ToKonuListDto());
             return Ok(konularDto);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var konu = await _repository.GetByIdWithKurallarAsync(id);
+            if (konu == null)
+                return NotFound();
+
+            return Ok(konu.ToKonuDetayDto());
         }
 
     }

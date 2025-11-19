@@ -11,7 +11,7 @@ namespace api.src.Dtos.AdminDtos.GramerKuralDto
         public string Aciklama { get; set; }
 
         public int KonuId { get; set; }
-        public int TemaId { get; set; }
+        
 
 
 

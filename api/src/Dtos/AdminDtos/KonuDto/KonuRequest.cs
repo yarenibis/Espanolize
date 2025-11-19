@@ -12,6 +12,7 @@ namespace api.src.Dtos.AdminDtos.KonuDto
         public string Zorluk { get; set; } // "Kolay", "Orta", "Zor"
         public int CalismaSuresi { get; set; } // Dakika cinsinden
         public string Aciklama { get; set; }
+        public int TemaId { get; set; }
 
  
     }

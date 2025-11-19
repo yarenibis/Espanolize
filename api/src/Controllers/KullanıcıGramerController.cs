@@ -27,21 +27,12 @@ namespace api.src.Controllers
         [HttpGet]
 public async Task<IActionResult> GetAll()
 {
-    var kurallar = await _repository.GetAllAsync();
+    var kurallar = await _repository.GetAllWithOrneklerAsync();
     var dto = kurallar.Select(t => t.ToGramerKuralListDto()); // sadece başlık, açıklama vs.
     return Ok(dto);
 }
 
 
-        [HttpGet("{id}")]
-public async Task<IActionResult> GetById(int id)
-{
-    var kural = await _repository.GetByIdWithOrneklerAsync(id);
-    if (kural == null)
-        return NotFound();
-
-    return Ok(kural.ToGramerKuralDetayDto());
-}
 
     }
 }

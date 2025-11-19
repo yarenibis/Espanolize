@@ -16,5 +16,8 @@ namespace api.src.Models
     
     public List<GramerKural> Kurallar { get; set; }
 
+
+    public int? TemaId { get; set; }
+        public Tema Tema { get; set; }
     }
 }

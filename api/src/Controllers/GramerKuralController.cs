@@ -13,7 +13,7 @@ namespace api.src.Controllers
 {
     [Route("api/admin/gramerkurallar")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+   // [Authorize(Roles = "Admin")]
     public class GramerKuralController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

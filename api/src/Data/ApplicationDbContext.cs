@@ -69,7 +69,7 @@ namespace api.src.Data
                 .HasForeignKey(r => r.TemaId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<GramerKural>()
+            modelBuilder.Entity<Konu>()
                .HasOne(g => g.Tema)
             .WithMany()
             .HasForeignKey(g => g.TemaId)

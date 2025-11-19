@@ -17,6 +17,8 @@ namespace api.src.Mapper.AdminMapper
                 Baslik = request.Baslik,
                 CalismaSuresi = request.CalismaSuresi,
                 Zorluk = request.Zorluk,
+                
+                TemaId=request.TemaId
             };
         }
     }

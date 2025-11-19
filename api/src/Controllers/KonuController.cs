@@ -15,7 +15,7 @@ namespace api.src.Controllers
     [Route("api/admin/konular")]
     [ApiController]
     [Authorize(Roles = "Admin")]
-    public class KonuController :ControllerBase
+    public class KonuController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly IKonu _repository;
@@ -64,14 +64,14 @@ namespace api.src.Controllers
             await _repository.CreateAsync(konuModel);
             return CreatedAtAction(nameof(GetById), new { id = konuModel.Id }, konuModel.ToKonuListDto());
         }
-        
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteKonu([FromRoute] int id)
         {
             var konuModel = await _repository.GetByIdAsync(id);
 
-            if (konuModel == null )
+            if (konuModel == null)
             {
                 return NotFound();
             }
@@ -79,6 +79,6 @@ namespace api.src.Controllers
             await _repository.DeleteAsync(id);
             return NoContent();
         }
-       
+
     }
 }

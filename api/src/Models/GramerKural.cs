@@ -17,7 +17,6 @@ namespace api.src.Models
 
         public List<Ornek> Ornekler { get; set; }
 
-        public int? TemaId { get; set; }
-        public Tema Tema { get; set; }
+        
     }
 }

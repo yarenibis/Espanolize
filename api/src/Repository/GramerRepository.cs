@@ -38,37 +38,39 @@ namespace api.src.Repository
             return kuralModel;
         }
 
+
+//admin
         public async Task<List<GramerKural>> GetAllAsync()
         {
-            return await _context.GramerKurallar.Include(g => g.Tema) 
+            return await _context.GramerKurallar
         .Include(g => g.Konu)
-        .Include(g => g.Ornekler)
         .ToListAsync();
         }
 
         public async Task<List<GramerKural>> GetAllWithOrneklerAsync()
         {
-            return await _context.GramerKurallar.Include(t => t.Ornekler)
-            .Include(t=>t.Tema)
-            .ThenInclude(s=>s.KapakResmiUrl)
+            return await _context.GramerKurallar.
+            Include(g => g.Konu).
+            Include(t => t.Ornekler)
+            
             .ToListAsync();
         }
-
+//kullanıcı için
         public async Task<GramerKural?> GetByIdWithOrneklerAsync(int id)
         {
-           return await _context.GramerKurallar.Include(g => g.Ornekler)
-        .Include(g => g.Tema) 
-            .ThenInclude(t => t.DetayResimler).FirstOrDefaultAsync(g => g.Id == id);
-          
+            return await _context.GramerKurallar
+            .Include(g => g.Ornekler)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
         }
 
 
+//admin için
         public async Task<GramerKural?> GetByIdAsync(int id)
         {
 
-             return await _context.GramerKurallar
-        .Include(g => g.Tema) 
-            .ThenInclude(t => t.DetayResimler).FirstOrDefaultAsync(g => g.Id == id);
+            return await _context.GramerKurallar
+         .FirstOrDefaultAsync(g => g.Id == id);
 
         }
 
@@ -82,7 +84,6 @@ namespace api.src.Repository
             kuralModel.Aciklama = request.Aciklama;
             kuralModel.KuralBaslik = request.KuralBaslik;
             kuralModel.KonuId = request.KonuId;
-            kuralModel.TemaId=request.TemaId;
             await _context.SaveChangesAsync();
             return kuralModel;
         }

@@ -14,7 +14,7 @@ namespace api.src.Repository
     public class KonuRepository : IKonu
     {
         ApplicationDbContext _context;
-        public  KonuRepository(ApplicationDbContext context)
+        public KonuRepository(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -39,19 +39,19 @@ namespace api.src.Repository
 
         public async Task<List<Konu>> GetAllAsync()
         {
-            return await _context.Konular.ToListAsync();
+            return await _context.Konular.Include(g => g.Tema).ToListAsync();
         }
 
-        public async Task<List<Konu>> GetAllWithKurallarAsync()
-        {
-            return await _context.Konular
-            .Include(k => k.Kurallar)
-            .ToListAsync();
-        }
 
         public async Task<Konu?> GetByIdAsync(int id)
         {
-            return await _context.Konular.FindAsync(id);
+            return await _context.Konular.Include(t => t.Tema).FirstOrDefaultAsync(t=>t.Id==id);
+        }
+
+
+        public async Task<Konu?> GetByIdWithKurallarAsync(int id)
+        {
+            return await _context.Konular.Include(t => t.Kurallar).Include(t => t.Tema).ThenInclude(t=>t.DetayResimler).FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<Konu?> UpdateAsync(int id, KonuRequest request)
@@ -65,6 +65,7 @@ namespace api.src.Repository
             konuModel.Baslik = request.Baslik;
             konuModel.CalismaSuresi = request.CalismaSuresi;
             konuModel.Zorluk = request.Zorluk;
+            konuModel.TemaId = request.TemaId;
             await _context.SaveChangesAsync();
             return konuModel;
 

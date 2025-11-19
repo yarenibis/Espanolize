@@ -12,5 +12,7 @@ namespace api.src.Dtos.KullanıcıDtos.KonuDto
         public string Zorluk { get; set; }
         public int CalismaSuresi { get; set; }
         public string Aciklama { get; set; }
+        public int TemaId{ get; set; }
+         public string? KapakResmiUrl { get; set; }
     }
 }
