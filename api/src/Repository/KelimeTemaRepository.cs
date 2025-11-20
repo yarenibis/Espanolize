@@ -26,7 +26,7 @@ namespace api.src.Repository
 
         public async Task<KelimeTemasi?> DeleteAsync(int id)
         {
-            var temaModel =await _context.KelimeTemalari.FirstOrDefaultAsync(k => k.Id == id);
+            var temaModel = await _context.KelimeTemalari.FirstOrDefaultAsync(k => k.Id == id);
             if (temaModel == null)
             {
                 return null;
@@ -38,41 +38,37 @@ namespace api.src.Repository
 
         public async Task<List<KelimeTemasi>> GetAllAsync()
         {
-            return await _context.KelimeTemalari.ToListAsync();
+            return await _context.KelimeTemalari.Include(g => g.Tema).ToListAsync();
         }
 
-        public async Task<List<KelimeTemasi>> GetAllWithKelimelerAsync()
-        {
-            return await _context.KelimeTemalari
-            .Include(k => k.Kelimeler)
-            .Include(t=>t.Tema)
-            .ThenInclude(k=>k.DetayResimler)
-            .ToListAsync();
-        }
-        
+
+
         public async Task<KelimeTemasi?> GetAllWithKelimelerAsync(int id)
         {
             return await _context.KelimeTemalari
+            .Include(x => x.Tema)
+            .ThenInclude(x=>x.DetayResimler)
         .Include(x => x.Kelimeler)
         .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<KelimeTemasi?> GetByIdAsync(int id)
         {
-             return await _context.KelimeTemalari.FindAsync(id);
+            return await _context.KelimeTemalari.Include(t => t.Tema)
+       .FirstOrDefaultAsync(t => t.Id == id);
         }
 
-       
+
 
         public async Task<KelimeTemasi?> UpdateAsync(int id, KelimeTemaRequest request)
         {
-            var temaModel =await _context.KelimeTemalari.FirstOrDefaultAsync(k => k.Id == id);
+            var temaModel = await _context.KelimeTemalari.FirstOrDefaultAsync(k => k.Id == id);
             if (temaModel == null)
             {
                 return null;
             }
             temaModel.Aciklama = request.Aciklama;
-            temaModel.TemaId=request.TemaId;
+            temaModel.TemaId = request.TemaId;
             await _context.SaveChangesAsync();
             return temaModel;
         }

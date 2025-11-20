@@ -13,9 +13,9 @@ namespace api.src.Dtos.KullanıcıDtos.KonuDto
         public string Zorluk { get; set; }
         public int CalismaSuresi { get; set; }
         public string Aciklama { get; set; }
-        public List<GramerKuralListDto> Kurallar { get; set; } = new();
-        public int TemaId{ get; set; }
+        public List<GramerKuralDetayDto> Kurallar { get; set; } = new();
+        public int TemaId { get; set; }
         public string? KapakResmiUrl { get; set; }   // ✅ Ekledik
-    public List<string> DetayResimUrls { get; set; } = new(); 
+        public List<string> DetayResimUrls { get; set; } = new();
     }
 }

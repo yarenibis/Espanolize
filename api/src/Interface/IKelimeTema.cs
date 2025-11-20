@@ -10,7 +10,6 @@ namespace api.src.Interface
     public interface IKelimeTema
     {
         Task<List<KelimeTemasi>> GetAllAsync();
-        Task<List<KelimeTemasi>> GetAllWithKelimelerAsync();
         Task<KelimeTemasi?> GetAllWithKelimelerAsync(int id);
         Task<KelimeTemasi?> GetByIdAsync(int id);
         Task<KelimeTemasi> CreateAsync(KelimeTemasi tema);

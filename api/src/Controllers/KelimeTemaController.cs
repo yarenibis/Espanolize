@@ -48,7 +48,7 @@ namespace api.src.Controllers
             if (tema == null)
                 return NotFound($"ID {id} ile tema bulunamadı");
 
-            return Ok(tema.ToKelimeTemaDetayDto());
+            return Ok(tema.ToKelimeTemaListDto());
         }
 
 

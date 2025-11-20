@@ -16,7 +16,8 @@ namespace api.src.Mapper.KullanıcıMapper
             {
                 Id = tema.Id,
                 Aciklama = tema.Aciklama,
-                KapakResmiUrl = tema.Tema?.KapakResmiUrl
+                KapakResmiUrl = tema.Tema?.KapakResmiUrl,
+                TemaId=tema.TemaId??0
             };
         }
 
@@ -26,7 +27,8 @@ namespace api.src.Mapper.KullanıcıMapper
             {
                 Id = tema.Id,
                 Aciklama = tema.Aciklama,
-                KapakResmiUrl = tema.Tema?.KapakResmiUrl,         
+                KapakResmiUrl = tema.Tema?.KapakResmiUrl,  
+                TemaId=tema.TemaId??0,       
                 DetayResimUrls = tema.Tema?.DetayResimler
                     ?.Select(r => r.ResimUrl)
                     .ToList() ?? new List<string>(), 

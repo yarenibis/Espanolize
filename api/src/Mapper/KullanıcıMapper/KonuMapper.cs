@@ -19,7 +19,7 @@ namespace api.src.Mapper.KullanıcıMapper
                 Aciklama = konu.Aciklama,
                 CalismaSuresi = konu.CalismaSuresi,
                 Zorluk = konu.Zorluk,
-                TemaId=konu.TemaId??0,
+                TemaId = konu.TemaId ?? 0,
                 KapakResmiUrl = konu.Tema?.KapakResmiUrl
             };
         }
@@ -33,14 +33,14 @@ namespace api.src.Mapper.KullanıcıMapper
                 Aciklama = konu.Aciklama,
                 CalismaSuresi = konu.CalismaSuresi,
                 Zorluk = konu.Zorluk,
-                TemaId=konu.TemaId??0,
-                KapakResmiUrl = konu.Tema?.KapakResmiUrl,         // ✅ Detay sayfa kapak resmi
+                TemaId = konu.TemaId ?? 0,
+                KapakResmiUrl = konu.Tema?.KapakResmiUrl,         
                 DetayResimUrls = konu.Tema?.DetayResimler
                     ?.Select(r => r.ResimUrl)
                     .ToList() ?? new List<string>(),
                 Kurallar = konu.Kurallar?
-                    .Select(k => k.ToGramerKuralListDto())
-                    .ToList() ?? new List<GramerKuralListDto>()
+                    .Select(k => k.ToGramerKuralDetayDto())
+                    .ToList() ?? new List<GramerKuralDetayDto>()
             };
         }
     }

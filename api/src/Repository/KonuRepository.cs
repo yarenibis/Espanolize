@@ -51,7 +51,11 @@ namespace api.src.Repository
 
         public async Task<Konu?> GetByIdWithKurallarAsync(int id)
         {
-            return await _context.Konular.Include(t => t.Kurallar).Include(t => t.Tema).ThenInclude(t=>t.DetayResimler).FirstOrDefaultAsync(t => t.Id == id);
+            return await _context.Konular.Include(t => t.Kurallar)
+            .ThenInclude(t=>t.Ornekler)
+            .Include(t => t.Tema)
+            .ThenInclude(t=>t.DetayResimler)
+            .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<Konu?> UpdateAsync(int id, KonuRequest request)
