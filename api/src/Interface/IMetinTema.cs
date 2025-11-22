@@ -10,7 +10,6 @@ namespace api.src.Interface
     public interface IMetinTema
     {
         Task<List<MetinTema>> GetAllAsync();
-        Task<List<MetinTema>> GetAllWithMetinlerAsync();
         Task<MetinTema?> GetByIdWithMetinlerAsync(int id);
         Task<MetinTema?> GetByIdAsync(int id);
         Task<MetinTema> CreateAsync(MetinTema tema);

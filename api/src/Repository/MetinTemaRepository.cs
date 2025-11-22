@@ -19,7 +19,7 @@ namespace api.src.Repository
         {
             _context = context;
         }
-        
+
         public async Task<MetinTema> CreateAsync(MetinTema tema)
         {
             await _context.MetinTemalari.AddAsync(tema);
@@ -29,7 +29,7 @@ namespace api.src.Repository
 
         public async Task<MetinTema?> DeleteAsync(int id)
         {
-            var metinModel=await _context.MetinTemalari.FirstOrDefaultAsync(t => t.Id == id);
+            var metinModel = await _context.MetinTemalari.FirstOrDefaultAsync(t => t.Id == id);
             if (metinModel == null)
             {
                 return null;
@@ -41,35 +41,34 @@ namespace api.src.Repository
 
         public async Task<List<MetinTema>> GetAllAsync()
         {
-            return await _context.MetinTemalari.ToListAsync();
+            return await _context.MetinTemalari.Include(g => g.Tema).ToListAsync();
         }
 
-        public async Task<List<MetinTema>> GetAllWithMetinlerAsync()
-        {
-            return await _context.MetinTemalari.Include(t => t.Metinler).ToListAsync();
-        }
+
 
         public async Task<MetinTema?> GetByIdAsync(int id)
         {
-            return await _context.MetinTemalari.FindAsync(id);
+            return await _context.MetinTemalari.Include(x => x.Tema).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<MetinTema?> GetByIdWithMetinlerAsync(int id)
         {
             return await _context.MetinTemalari
-            .Include(t => t.Metinler)
-            .FirstOrDefaultAsync(t => t.Id == id);
+            .Include(x => x.Tema)
+            .ThenInclude(x => x.DetayResimler)
+        .Include(x => x.Metinler)
+        .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<MetinTema?> UpdateAsync(int id, MetinTemaRequest request)
         {
-            var metinModel=await _context.MetinTemalari.FirstOrDefaultAsync(t => t.Id == id);
+            var metinModel = await _context.MetinTemalari.FirstOrDefaultAsync(t => t.Id == id);
             if (metinModel == null)
             {
                 return null;
             }
             metinModel.Aciklama = request.Aciklama;
-            metinModel.TemaId=request.TemaId;
+            metinModel.TemaId = request.TemaId;
             await _context.SaveChangesAsync();
             return metinModel;
         }

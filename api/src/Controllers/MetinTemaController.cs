@@ -21,53 +21,43 @@ namespace api.src.Controllers
     public class MetinTemaController : ControllerBase
     {
         private readonly IMetinTema _repository;
-        private readonly ImageUploadHelper _imageHelper;
         private readonly ApplicationDbContext _context;
 
         public MetinTemaController(
             ApplicationDbContext context, 
-            IMetinTema repository,
-            ImageUploadHelper imageHelper)
+            IMetinTema repository)
         {
             _context = context;
             _repository = repository;
-            _imageHelper = imageHelper;
         }
 
-        // ----------------------------------------------------
-        // 📌 TÜM METİN TEMALARINI GETİR
-        // ----------------------------------------------------
-        [HttpGet]
+         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var temalar = await _repository.GetAllAsync();
-            var temaDtos = temalar.Select(s => s.ToMetinTemaListDto());
+            var temaDtos = temalar.Select(t => t.ToMetinTemaListDto());
             return Ok(temaDtos);
         }
 
-        // ----------------------------------------------------
-        // 📌 TEK METİN TEMASI GETİR
-        // ----------------------------------------------------
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var tema = await _repository.GetByIdAsync(id);
             if (tema == null)
-                return NotFound($"ID {id} ile metin teması bulunamadı");
+                return NotFound($"ID {id} ile tema bulunamadı");
 
-            return Ok(tema.ToMetinTemaDetayDto());
+            return Ok(tema.ToMetinTemaListDto());
         }
 
-        // ----------------------------------------------------
-        // 📌 YENİ METİN TEMASI OLUŞTUR
-        // ----------------------------------------------------
+
         [HttpPost]
         public async Task<IActionResult> CreateTema([FromBody] MetinTemaRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var temaModel = request.CreateMetinDto();
+            var temaModel = request.CreateMetinTemaDto();
             await _repository.CreateAsync(temaModel);
 
             return CreatedAtAction(
@@ -77,24 +67,21 @@ namespace api.src.Controllers
             );
         }
 
-        // ----------------------------------------------------
-        // 📌 METİN TEMASI GÜNCELLE
-        // ----------------------------------------------------
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTema([FromRoute] int id, [FromBody] MetinTemaRequest updatedModel)
+        public async Task<IActionResult> UpdateTema([FromRoute] int id, [FromBody] MetinTemaRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var tema = await _repository.GetByIdAsync(id);
-            if (tema == null)
-                return NotFound($"ID {id} ile metin teması bulunamadı");
+            var updatedTema = await _repository.UpdateAsync(id, request);
+            if (updatedTema == null)
+                return NotFound($"ID {id} ile tema bulunamadı");
 
-            var updatedTema = await _repository.UpdateAsync(id, updatedModel);
             return Ok(updatedTema.ToMetinTemaListDto());
         }
 
-     [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMetinTema([FromRoute] int id)
         {
             var konuModel = await _repository.GetByIdAsync(id);
@@ -107,6 +94,7 @@ namespace api.src.Controllers
             await _repository.DeleteAsync(id);
             return NoContent();
         }
+
     
 
 

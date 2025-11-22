@@ -7,14 +7,14 @@ using api.src.Models;
 
 namespace api.src.Mapper.AdminMapper
 {
-    public static  class MetinTemaMapper
+    public static class MetinTemaMapper
     {
-        public static MetinTema CreateMetinDto(this MetinTemaRequest request)
+        public static MetinTema CreateMetinTemaDto(this MetinTemaRequest request)
         {
             return new MetinTema
             {
-                Aciklama = request.Aciklama,
-                TemaId=request.TemaId
+                TemaId = request.TemaId,
+                Aciklama = request.Aciklama
             };
         }
     }
