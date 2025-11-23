@@ -24,12 +24,7 @@ export default function Sidebar() {
       label: "Dashboard",
       onClick: () => navigate("/admin"),
     },
-    {
-      key: "/admin/kategoriler",
-      icon: <BookOutlined />,
-      label: "Kategoriler",
-      onClick: () => navigate("/admin/kategoriler"),
-    },
+    
     {
       key: "/admin/konular",
       icon: <FileTextOutlined />,

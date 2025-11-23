@@ -2,8 +2,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/user/HomePage";
 import LoginPage from "./pages/admin/LoginPage";
-import KategoriPage from "./pages/admin/KategoriPage";
-import AdminDashboard from "./pages/admin/Dashboard";
 import KonuPage from "./pages/admin/KonuPage";
 import GramerKuralPage from "./pages/admin/GramerKuralPage";
 import OrnekPage from "./pages/admin/OrnekPage";
@@ -46,7 +44,6 @@ export default function App() {
         >
           {/* Bu route'lar AdminLayout içindeki Outlet'te render edilecek */}
           
-          <Route path="kategoriler" element={<KategoriPage />} />
           <Route path="konular" element={<KonuPage />} />
           <Route path="gramerkurallar" element={<GramerKuralPage />} />
           <Route path="ornekler" element={<OrnekPage />} />

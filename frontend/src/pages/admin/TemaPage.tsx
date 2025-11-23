@@ -1,289 +1,571 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type JSX } from "react";
 import api from "../../services/ApiService";
+import CrudTable from "../../components/adminDashboard/CrudTable";
+import "./TemaPage.css";
 
 interface Tema {
   id: number;
   baslik: string;
-  kapakResmiUrl?: string | null;
-  detayResimler?: { id: number; resimUrl: string; dosyaAdi: string }[];
+  kapakResmiUrl?: string;
+  detayResimUrls?: string[];
+}
+
+interface TableRow {
+  id: number;
+  baslik: string;
+  kapakResmi: string;
+  detayResimSayisi: number;
+  resimOnizlemeleri: JSX.Element;
 }
 
 export default function TemaPage() {
   const [temalar, setTemalar] = useState<Tema[]>([]);
-  const [yeniBaslik, setYeniBaslik] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  async function load() {
+  const [yeniBaslik, setYeniBaslik] = useState("");
+  const [duzenlenecek, setDuzenlenecek] = useState<Tema | null>(null);
+  const [seciliTema, setSeciliTema] = useState<Tema | null>(null);
+
+  // Kapak resmi yükleme state
+  const [kapakResmi, setKapakResmi] = useState<File | null>(null);
+  const [detayResimler, setDetayResimler] = useState<File[]>([]);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Temaları yükle
+  async function fetchTemalar() {
     setLoading(true);
+    setError("");
     try {
-      const list = await api.get("/admin/tema");
-      console.log("Tema listesi:", list.data);
-      
-      const fullData = await Promise.all(
-        list.data.map(async (t: any) => {
-          const det = await api.get(`/admin/tema/${t.id}`);
-          console.log(`Tema ${t.id} detay:`, det.data);
-          return det.data;
-        })
-      );
-      setTemalar(fullData);
-    } catch (error) {
-      console.error("Temalar yüklenirken hata:", error);
+      const res = await api.get("/admin/tema");
+      setTemalar(res.data);
+    } catch (err) {
+      console.error("Temalar yüklenemedi:", err);
+      setError("Temalar yüklenirken bir hata oluştu.");
     } finally {
       setLoading(false);
     }
   }
 
-  useEffect(() => { 
-    load(); 
+  useEffect(() => {
+    fetchTemalar();
   }, []);
 
-  async function createTema() {
-    if (!yeniBaslik.trim()) return alert("Başlık gerekli!");
+  // Drag & Drop handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    
+    if (imageFiles.length > 0) {
+      setDetayResimler(prev => [...prev, ...imageFiles]);
+      setSuccess(`${imageFiles.length} resim dosyası eklendi!`);
+    }
+  };
+
+  // Tablo için düzenlenmiş data oluştur
+  const tabloData: TableRow[] = temalar.map(tema => {
+    // Resim önizlemelerini oluştur
+    const resimOnizlemeleri = (
+      <div className="table-image-previews">
+        {/* Kapak resmi */}
+        {tema.kapakResmiUrl && (
+          <img 
+            src={tema.kapakResmiUrl} 
+            alt="Kapak" 
+            className="table-image-small"
+            title="Kapak Resmi"
+          />
+        )}
+        
+        {/* Detay resimleri (ilk 3 tanesi) */}
+        {tema.detayResimUrls?.slice(0, 3).map((url, index) => (
+          <img 
+            key={index}
+            src={url} 
+            alt={`Detay ${index + 1}`} 
+            className="table-image-small"
+            title={`Detay Resim ${index + 1}`}
+          />
+        ))}
+        
+        {/* Daha fazla resim varsa sayı göster */}
+        {tema.detayResimUrls && tema.detayResimUrls.length > 3 && (
+          <div className="table-image-placeholder" title={`+${tema.detayResimUrls.length - 3} daha`}>
+            +{tema.detayResimUrls.length - 3}
+          </div>
+        )}
+        
+        {/* Hiç resim yoksa */}
+        {!tema.kapakResmiUrl && (!tema.detayResimUrls || tema.detayResimUrls.length === 0) && (
+          <div className="table-image-placeholder">
+            ❌
+          </div>
+        )}
+      </div>
+    );
+
+    return {
+      id: tema.id,
+      baslik: tema.baslik,
+      kapakResmi: tema.kapakResmiUrl ? "✅ Var" : "❌ Yok",
+      detayResimSayisi: tema.detayResimUrls?.length || 0,
+      resimOnizlemeleri
+    };
+  });
+
+  // Yeni tema ekle
+  async function handleAdd() {
+    if (!yeniBaslik.trim()) {
+      setError("Lütfen tema başlığını girin!");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
     try {
-      await api.post("/admin/tema", { baslik: yeniBaslik });
-      setYeniBaslik("");
-      load();
-    } catch (error) {
-      alert("Tema oluşturulurken hata oluştu!");
+      await api.post("/admin/tema", {
+        baslik: yeniBaslik,
+      });
+
+      resetForm();
+      await fetchTemalar();
+      setSuccess("Tema başarıyla eklendi!");
+    } catch (err) {
+      console.error("Ekleme hatası:", err);
+      setError("Ekleme işlemi başarısız!");
+    } finally {
+      setLoading(false);
     }
   }
 
-  async function uploadCover(id: number, file: File) {
-    if (!file) return;
-    try {
-      const form = new FormData();
-      form.append("file", file);
-      await api.post(`/admin/tema/${id}/upload-cover`, form);
-      load();
-    } catch (error) {
-      alert("Kapak resmi yüklenirken hata oluştu!");
-    }
-  }
+  // Tema sil
+  async function handleDelete(id: number) {
+    if (!window.confirm("Bu temayı ve tüm resimlerini silmek istediğinizden emin misiniz?")) return;
 
-  async function uploadDetails(id: number, files: FileList | null) {
-    if (!files || files.length === 0) return;
-    try {
-      const form = new FormData();
-      Array.from(files).forEach((f) => form.append("files", f));
-      await api.post(`/admin/tema/${id}/upload-details`, form);
-      load();
-    } catch (error) {
-      alert("Detay resimleri yüklenirken hata oluştu!");
-    }
-  }
-
-  async function deleteDetail(id: number, url: string) {
-    if (!confirm("Bu görseli silmek istediğinizden emin misiniz?")) return;
-    try {
-      await api.delete(`/admin/tema/${id}/details`, { params: { url } });
-      load();
-    } catch (error) {
-      alert("Görsel silinirken hata oluştu!");
-    }
-  }
-
-  async function deleteTema(id: number) {
-    if (!confirm("Tema ve tüm resimleri silinecek, emin misiniz?")) return;
+    setLoading(true);
     try {
       await api.delete(`/admin/tema/${id}`);
-      load();
-    } catch (error) {
-      alert("Tema silinirken hata oluştu!");
+      await fetchTemalar();
+      setSeciliTema(null);
+      setSuccess("Tema ve tüm resimleri başarıyla silindi!");
+    } catch (err) {
+      console.error("Silme hatası:", err);
+      setError("Silme işlemi başarısız!");
+    } finally {
+      setLoading(false);
     }
   }
 
-  // Dosya adını URL'den çıkaran fonksiyon
-  function getFileNameFromUrl(url: string): string {
+  // Kapak resmi yükle
+  async function handleKapakResmiYukle() {
+    if (!seciliTema || !kapakResmi) {
+      setError("Lütfen bir tema seçin ve kapak resmi yükleyin!");
+      return;
+    }
+
+    setUploadLoading(true);
+    setError("");
     try {
-      const urlObj = new URL(url);
-      const pathname = urlObj.pathname;
-      return pathname.split('/').pop() || 'dosya.jpg';
-    } catch {
-      return url.split('/').pop() || 'dosya.jpg';
+      const formData = new FormData();
+      formData.append("file", kapakResmi);
+
+      const res = await api.post(`/admin/tema/${seciliTema.id}/upload-cover`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      // Güncellenmiş temayı state'e ekle
+      const guncellenmisTemalar = temalar.map(t => 
+        t.id === seciliTema.id ? res.data : t
+      );
+      setTemalar(guncellenmisTemalar);
+      setSeciliTema(res.data);
+      setKapakResmi(null);
+      setSuccess("Kapak resmi başarıyla yüklendi!");
+    } catch (err) {
+      console.error("Kapak resmi yükleme hatası:", err);
+      setError("Kapak resmi yüklenirken bir hata oluştu!");
+    } finally {
+      setUploadLoading(false);
     }
   }
 
-  if (loading) {
+  // Detay resimleri yükle
+  async function handleDetayResimleriYukle() {
+    if (!seciliTema || detayResimler.length === 0) {
+      setError("Lütfen bir tema seçin ve detay resimleri yükleyin!");
+      return;
+    }
+
+    setUploadLoading(true);
+    setError("");
+    try {
+      const formData = new FormData();
+      detayResimler.forEach(file => {
+        formData.append("files", file);
+      });
+
+      const res = await api.post(`/admin/tema/${seciliTema.id}/upload-details`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      // Güncellenmiş temayı state'e ekle
+      const guncellenmisTemalar = temalar.map(t => 
+        t.id === seciliTema.id ? res.data : t
+      );
+      setTemalar(guncellenmisTemalar);
+      setSeciliTema(res.data);
+      setDetayResimler([]);
+      setSuccess("Detay resimleri başarıyla yüklendi!");
+    } catch (err) {
+      console.error("Detay resim yükleme hatası:", err);
+      setError("Detay resimleri yüklenirken bir hata oluştu!");
+    } finally {
+      setUploadLoading(false);
+    }
+  }
+
+  // Kapak resmini sil
+  async function handleKapakResmiSil() {
+    if (!seciliTema) return;
+
+    setUploadLoading(true);
+    try {
+      const res = await api.delete(`/admin/tema/${seciliTema.id}/cover`);
+
+      const guncellenmisTemalar = temalar.map(t => 
+        t.id === seciliTema.id ? res.data : t
+      );
+      setTemalar(guncellenmisTemalar);
+      setSeciliTema(res.data);
+      setSuccess("Kapak resmi başarıyla silindi!");
+    } catch (err) {
+      console.error("Kapak resmi silme hatası:", err);
+      setError("Kapak resmi silinirken bir hata oluştu!");
+    } finally {
+      setUploadLoading(false);
+    }
+  }
+
+  // Detay resmini sil
+  async function handleDetayResimSil(resimUrl: string) {
+    if (!seciliTema) return;
+
+    setUploadLoading(true);
+    try {
+      const res = await api.delete(`/admin/tema/${seciliTema.id}/details?url=${encodeURIComponent(resimUrl)}`);
+
+      const guncellenmisTemalar = temalar.map(t => 
+        t.id === seciliTema.id ? res.data : t
+      );
+      setTemalar(guncellenmisTemalar);
+      setSeciliTema(res.data);
+      setSuccess("Resim başarıyla silindi!");
+    } catch (err) {
+      console.error("Resim silme hatası:", err);
+      setError("Resim silinirken bir hata oluştu!");
+    } finally {
+      setUploadLoading(false);
+    }
+  }
+
+  // Formu sıfırla
+  function resetForm() {
+    setDuzenlenecek(null);
+    setYeniBaslik("");
+    setError("");
+  }
+
+  // Tema seç
+  function temaSec(tema: Tema) {
+    setSeciliTema(tema);
+    setError("");
+    setSuccess("");
+  }
+
+  // Seçili dosyaları temizle
+  function dosyalariTemizle() {
+    setKapakResmi(null);
+    setDetayResimler([]);
+  }
+
+  if (loading && temalar.length === 0) {
     return (
-      <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="tema-container">
         <div className="flex justify-center items-center h-64">
-          <div className="text-lg">Yükleniyor...</div>
+          <div className="loading-spinner" style={{ borderColor: "#667eea", borderTopColor: 'transparent' }}></div>
+          <span className="ml-3 text-lg">Yükleniyor...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
- 
-      
-      {/* Başlık */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">🎨 Tema Yönetimi</h1>
-        <p className="text-gray-600">Temaları oluşturun ve görsellerini yönetin</p>
-      </div>
-
-      {/* Yeni Tema Ekle */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Yeni Tema Ekle</h2>
-        <div className="flex gap-3">
-          <input
-            value={yeniBaslik}
-            onChange={(e) => setYeniBaslik(e.target.value)}
-            placeholder="Tema başlığı giriniz..."
-            className="border border-gray-300 p-3 rounded-lg flex-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-            onKeyPress={(e) => e.key === 'Enter' && createTema()}
-          />
-          <button
-            onClick={createTema}
-            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition flex items-center gap-2"
-          >
-            <span>➕</span>
-            Tema Ekle
-          </button>
-        </div>
-      </div>
-
-      {/* Debug Info */}
-      <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
-        <h3 className="font-semibold text-yellow-800">Debug Bilgisi:</h3>
-        <p className="text-yellow-700 text-sm">
-          Toplam {temalar.length} tema yüklendi. 
-          Detay resimleri olan temalar: {temalar.filter(t => t.detayResimler && t.detayResimler.length > 0).length}
+    <div className="tema-container">
+      {/* Header */}
+      <div className="tema-header">
+        <h1 className="tema-title">Tema Yönetimi</h1>
+        <p className="tema-subtitle">
+          Temaları ekleyin, düzenleyin ve resim yönetimi yapın
         </p>
       </div>
 
-      {/* Tema Listesi */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {temalar.map((tema) => (
-          <div
-            key={tema.id}
-            className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all"
-          >
-            {/* Kapak Görseli - Daha küçük */}
-            <div className="relative bg-gray-100">
-              <img
-                src={tema.kapakResmiUrl || "/api/placeholder/200/120?text=Kapak+Resmi+Yok"}
-                alt={tema.baslik}
-                className="w-full h-24 object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = "/api/placeholder/200/120?text=Resim+Yok";
-                }}
-              />
-              <label className="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded cursor-pointer hover:bg-opacity-90 transition flex items-center gap-1">
-                <span>📤</span>
-                Kapak Yükle
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => uploadCover(tema.id, e.target.files![0])}
-                  className="hidden"
-                />
-              </label>
-            </div>
-
-            {/* İçerik */}
-            <div className="p-4">
-              {/* Tema Başlığı */}
-              <h2 className="text-lg font-bold text-gray-800 mb-3 truncate border-b pb-2">
-                {tema.baslik}
-              </h2>
-
-              {/* API'den gelen veriyi kontrol et */}
-              <div className="text-xs text-gray-500 mb-2">
-                Tema ID: {tema.id} | 
-                Detay Resimleri: {tema.detayResimler ? tema.detayResimler.length : 0}
-              </div>
-
-              {/* Detay Görselleri */}
-              <div className="mb-3">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700 flex items-center gap-1">
-                    <span>🖼️</span>
-                    Detay Görselleri:
-                  </span>
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                    {tema.detayResimler ? tema.detayResimler.length : 0} adet
-                  </span>
-                </div>
-
-                {/* Görsel Listesi */}
-                <div className="space-y-1 mb-3 max-h-32 overflow-y-auto">
-                  {!tema.detayResimler || tema.detayResimler.length === 0 ? (
-                    <div className="text-center text-gray-400 text-sm py-2 bg-gray-50 rounded">
-                      Henüz görsel yüklenmemiş
-                    </div>
-                  ) : (
-                    tema.detayResimler.map((img) => (
-                      <div 
-                        key={img.id} 
-                        className="flex items-center justify-between bg-gray-50 p-2 rounded text-sm group hover:bg-gray-100"
-                      >
-                        <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <span className="text-blue-500">📷</span>
-                          <span className="truncate" title={img.dosyaAdi || getFileNameFromUrl(img.resimUrl)}>
-                            {img.dosyaAdi || getFileNameFromUrl(img.resimUrl)}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <a 
-                            href={img.resimUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-green-500 hover:text-green-700 text-xs"
-                            title="Görseli Görüntüle"
-                          >
-                            👁️
-                          </a>
-                          <button
-                            onClick={() => deleteDetail(tema.id, img.resimUrl)}
-                            className="text-red-500 hover:text-red-700 text-xs opacity-0 group-hover:opacity-100 transition px-1"
-                            title="Görseli Sil"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-
-                {/* Galeri Yükle Butonu */}
-                <label className="w-full bg-blue-50 text-blue-700 text-sm px-3 py-2 rounded cursor-pointer hover:bg-blue-100 transition flex items-center justify-center gap-2 border border-blue-200">
-                  <span>📎</span>
-                  Galeri Yükle
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={(e) => uploadDetails(tema.id, e.target.files)}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-
-              {/* Sil Butonu */}
-              <button
-                onClick={() => deleteTema(tema.id)}
-                className="w-full bg-red-50 text-red-700 hover:bg-red-100 px-3 py-2 rounded font-medium transition flex items-center justify-center gap-2 border border-red-200 mt-2 text-sm"
-              >
-                <span>🗑️</span>
-                Temayı Sil
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Temalar yoksa */}
-      {temalar.length === 0 && !loading && (
-        <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-          <div className="text-6xl mb-4">🎨</div>
-          <h3 className="text-xl font-semibold text-gray-600 mb-2">Henüz tema bulunmuyor</h3>
-          <p className="text-gray-500">Yukarıdaki formu kullanarak ilk temanızı oluşturun.</p>
+      {/* Hata ve Başarı Mesajları */}
+      {error && (
+        <div className="error-message">
+          {error}
         </div>
       )}
+      {success && (
+        <div className="success-message">
+          {success}
+        </div>
+      )}
+
+      {/* Tema Ekleme Formu */}
+      <div className="tema-form-container">
+        <h2 className="tema-form-title">
+          {duzenlenecek ? "📝 Tema Düzenle" : "➕ Yeni Tema Ekle"}
+        </h2>
+        
+        <div className="tema-form-grid">
+          <div className="form-group">
+            <label className="form-label">Tema Başlığı *</label>
+            <input
+              type="text"
+              placeholder="Tema başlığını girin"
+              value={yeniBaslik}
+              onChange={(e) => setYeniBaslik(e.target.value)}
+              className="form-input"
+              disabled={loading}
+            />
+          </div>
+        </div>
+
+        <div className="form-actions">
+          {duzenlenecek ? (
+            <>
+              <button
+                onClick={() => {}}
+                disabled={loading}
+                className="btn btn-primary"
+              >
+                {loading && <span className="loading-spinner"></span>}
+                {loading ? "Güncelleniyor..." : "✅ Güncelle"}
+              </button>
+              <button
+                onClick={resetForm}
+                disabled={loading}
+                className="btn btn-secondary"
+              >
+                İptal
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleAdd}
+              disabled={!yeniBaslik || loading}
+              className="btn btn-success"
+            >
+              {loading && <span className="loading-spinner"></span>}
+              {loading ? "Ekleniyor..." : "➕ Yeni Tema Ekle"}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Resim Yükleme Bölümü */}
+      {seciliTema && (
+        <div className="tema-form-container">
+          <h2 className="tema-form-title">
+            🖼️ "{seciliTema.baslik}" Teması - Resim Yönetimi
+          </h2>
+
+          {/* Kapak Resmi */}
+          <div className="file-upload-section">
+            <h3 className="file-upload-title">📸 Kapak Resmi</h3>
+            {seciliTema.kapakResmiUrl && (
+              <div className="cover-section">
+                <div className="cover-image-container">
+                  <img 
+                    src={seciliTema.kapakResmiUrl} 
+                    alt="Kapak resmi" 
+                    className="cover-image"
+                  />
+                  <div className="cover-actions">
+                    <button
+                      onClick={handleKapakResmiSil}
+                      disabled={uploadLoading}
+                      className="btn btn-danger"
+                    >
+                      {uploadLoading && <span className="loading-spinner"></span>}
+                      🗑️ Kapak Resmini Sil
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="file-input-container">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setKapakResmi(e.target.files?.[0] || null)}
+                className="file-input"
+              />
+              <div className="file-info">
+                Kapak resmi için tek bir resim seçin (JPG, PNG, GIF)
+              </div>
+            </div>
+            <button
+              onClick={handleKapakResmiYukle}
+              disabled={!kapakResmi || uploadLoading}
+              className="upload-button"
+            >
+              {uploadLoading && <span className="loading-spinner"></span>}
+              📤 Kapak Resmi Yükle
+            </button>
+          </div>
+
+          {/* Detay Resimleri */}
+          <div className="file-upload-section">
+            <h3 className="file-upload-title">🖼️ Detay Resimleri</h3>
+            
+            {/* Drag & Drop Alanı */}
+            <div 
+              className={`drag-drop-area ${isDragging ? 'dragging' : ''}`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => document.getElementById('detail-images')?.click()}
+            >
+              <div className="drag-drop-text">📁 Resimleri buraya sürükleyin veya tıklayın</div>
+              <div className="drag-drop-subtext">
+                JPG, PNG, GIF formatlarında birden fazla resim yükleyebilirsiniz
+              </div>
+            </div>
+
+            <input
+              id="detail-images"
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => setDetayResimler(Array.from(e.target.files || []))}
+              className="file-input"
+              style={{ display: 'none' }}
+            />
+
+            {/* Seçilen dosyalar */}
+            {detayResimler.length > 0 && (
+              <div className="file-info">
+                ✅ {detayResimler.length} resim seçildi:{" "}
+                {detayResimler.map((file, index) => (
+                  <span key={index} style={{ marginRight: '8px', background: '#e9ecef', padding: '2px 6px', borderRadius: '4px' }}>
+                    {file.name}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <button
+                onClick={handleDetayResimleriYukle}
+                disabled={detayResimler.length === 0 || uploadLoading}
+                className="upload-button"
+              >
+                {uploadLoading && <span className="loading-spinner"></span>}
+                📤 Detay Resimleri Yükle ({detayResimler.length})
+              </button>
+              
+              {detayResimler.length > 0 && (
+                <button
+                  onClick={dosyalariTemizle}
+                  className="btn btn-secondary"
+                >
+                  🗑️ Seçimleri Temizle
+                </button>
+              )}
+            </div>
+
+            {/* Detay Resim Galerisi */}
+            {seciliTema.detayResimUrls && seciliTema.detayResimUrls.length > 0 && (
+              <>
+                <h4 style={{ marginTop: '25px', marginBottom: '15px', color: '#495057' }}>
+                  📋 Mevcut Detay Resimleri ({seciliTema.detayResimUrls.length})
+                </h4>
+                <div className="image-gallery">
+                  {seciliTema.detayResimUrls.map((url, index) => (
+                    <div key={index} className="image-item">
+                      <img src={url} alt={`Detay ${index + 1}`} className="image-preview" />
+                      <div className="image-actions">
+                        <button
+                          onClick={() => handleDetayResimSil(url)}
+                          className="delete-image-btn"
+                          title="Resmi Sil"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Temalar Listesi */}
+      <div className="tema-form-container">
+        <h2 className="tema-form-title">📋 Mevcut Temalar</h2>
+        {loading ? (
+          <div className="empty-state">
+            <div className="loading-spinner" style={{ margin: '20px auto', borderColor: "#667eea", borderTopColor: 'transparent' }}></div>
+            <p>Yükleniyor...</p>
+          </div>
+        ) : temalar.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-state-icon">🎨</div>
+            <h3>Henüz tema bulunmuyor</h3>
+            <p>İlk temanızı eklemek için yukarıdaki formu kullanın.</p>
+          </div>
+        ) : (
+          <CrudTable
+            data={tabloData}
+            onEdit={(item) => {
+              const originalTema = temalar.find(t => t.id === item.id);
+              if (originalTema) {
+                temaSec(originalTema);
+                // Sayfayı resim yükleme bölümüne kaydır
+                setTimeout(() => {
+                  document.getElementById('resim-yukleme')?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }
+            }}
+            onDelete={handleDelete}
+          />
+        )}
+      </div>
+
+      {/* Anchor for scrolling */}
+      <div id="resim-yukleme"></div>
     </div>
   );
 }

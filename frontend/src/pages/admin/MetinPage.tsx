@@ -1,39 +1,58 @@
 import { useEffect, useState } from "react";
 import api from "../../services/ApiService";
 import CrudTable from "../../components/adminDashboard/CrudTable";
+import "./MetinPage.css";
 
 interface Metin {
   id: number;
   icerik: string;
   ceviri: string;
-  zorluk:string;
+  zorluk: string;
   metinTemaId: number;
 }
 
 interface MetinTema {
   id: number;
-  baslik: string;
+  aciklama: string;
 }
 
-export default function KelimePage() {
+interface TableRow {
+  id: number;
+  icerik: string;
+  ceviri: string;
+  zorluk: string;
+  tema: string;
+}
+
+export default function MetinPage() {
   const [metinler, setMetinler] = useState<Metin[]>([]);
-  const [temalar, setTemalar] = useState<MetinTema[]>([]);
+  const [metinTemalari, setMetinTemalari] = useState<MetinTema[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [yeniIcerik, setYeniIcerik] = useState("");
   const [yeniCeviri, setYeniCeviri] = useState("");
-  const [yeniZorluk, setYeniZorluk] = useState("");
-  const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
+  const [yeniZorluk, setYeniZorluk] = useState("Kolay");
+  const [yeniMetinTemaId, setYeniMetinTemaId] = useState<number | "">("");
 
   const [duzenlenecek, setDuzenlenecek] = useState<Metin | null>(null);
 
+  // Metinleri ve temaları yükle
   async function fetchAll() {
+    setLoading(true);
+    setError("");
     try {
-      const kelimeRes = await api.get("/admin/metinler");
-      const temaRes = await api.get("/admin/metinTema");
-      setMetinler(kelimeRes.data);
-      setTemalar(temaRes.data);
+      const [metinRes, temaRes] = await Promise.all([
+        api.get("/admin/metinler"),
+        api.get("/admin/metin-temalari")
+      ]);
+      setMetinler(metinRes.data);
+      setMetinTemalari(temaRes.data);
     } catch (err) {
       console.error("Veriler yüklenemedi:", err);
+      setError("Veriler yüklenirken bir hata oluştu.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -41,141 +60,273 @@ export default function KelimePage() {
     fetchAll();
   }, []);
 
+  // Tema ID'sine göre tema açıklamasını bul
+  const getTemaAciklama = (metinTemaId: number) => {
+    const tema = metinTemalari.find(t => t.id === metinTemaId);
+    return tema ? tema.aciklama : `Tema ID: ${metinTemaId}`;
+  };
 
+  // Zorluk seviyesine göre CSS class'ını döndür
+  const getZorlukClass = (zorluk: string) => {
+    switch (zorluk.toLowerCase()) {
+      case "kolay": return "zorluk-badge zorluk-kolay";
+      case "orta": return "zorluk-badge zorluk-orta";
+      case "zor": return "zorluk-badge zorluk-zor";
+      default: return "zorluk-badge zorluk-orta";
+    }
+  };
 
+  // Tablo için düzenlenmiş data oluştur
+  const tabloData: TableRow[] = metinler.map((metin) => ({
+    id: metin.id,
+    icerik: metin.icerik.length > 100 ? metin.icerik.substring(0, 100) + "..." : metin.icerik,
+    ceviri: metin.ceviri.length > 100 ? metin.ceviri.substring(0, 100) + "..." : metin.ceviri,
+    zorluk: metin.zorluk,
+    tema: getTemaAciklama(metin.metinTemaId)
+  }));
+
+  // Yeni metin ekle
   async function handleAdd() {
-    if (!yeniCeviri.trim() || !yeniIcerik.trim() || yeniTemaId === ""  || !yeniZorluk.trim())
-      return alert("Tüm alanlar zorunludur.");
+    if (!yeniIcerik.trim() || !yeniCeviri.trim() || yeniMetinTemaId === "") {
+      setError("Lütfen tüm alanları doldurun!");
+      return;
+    }
 
+    setLoading(true);
+    setError("");
     try {
       await api.post("/admin/metinler", {
-        ceviri: yeniCeviri,
         icerik: yeniIcerik,
-        zorluk:yeniZorluk,
-        metinTemaId: Number(yeniTemaId),
+        ceviri: yeniCeviri,
+        zorluk: yeniZorluk,
+        metinTemaId: Number(yeniMetinTemaId),
       });
 
-      setYeniCeviri("");
-      setYeniIcerik("");
-      setYeniZorluk("");
-      setYeniTemaId("");
-      fetchAll();
+      resetForm();
+      await fetchAll();
     } catch (err) {
       console.error("Ekleme hatası:", err);
+      setError("Ekleme işlemi başarısız!");
+    } finally {
+      setLoading(false);
     }
   }
 
-   
+  // Metin sil
   async function handleDelete(id: number) {
-    if (!window.confirm("Silmek istediğine emin misin?")) return;
+    if (!window.confirm("Bu metni silmek istediğinizden emin misiniz?")) return;
 
-    await api.delete(`/admin/metinler/${id}`);
-    fetchAll();
+    setLoading(true);
+    try {
+      await api.delete(`/admin/metinler/${id}`);
+      await fetchAll();
+    } catch (err) {
+      console.error("Silme hatası:", err);
+      setError("Silme işlemi başarısız!");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function startEdit(k: Metin) {
-    setDuzenlenecek(k);
-    setYeniCeviri(k.ceviri);
-    setYeniIcerik(k.icerik);
-    setYeniZorluk(k.zorluk)
-    setYeniTemaId(k.metinTemaId);
+  // Düzenleme moduna geç
+  function startEdit(metin: Metin) {
+    setDuzenlenecek(metin);
+    setYeniIcerik(metin.icerik);
+    setYeniCeviri(metin.ceviri);
+    setYeniZorluk(metin.zorluk);
+    setYeniMetinTemaId(metin.metinTemaId);
+    setError("");
   }
 
+  // Güncelleme işlemi
   async function handleUpdate() {
     if (!duzenlenecek) return;
 
-    await api.put(`/admin/metinler/${duzenlenecek.id}`, {
-      ceviri: yeniCeviri,
+    if (!yeniIcerik.trim() || !yeniCeviri.trim() || yeniMetinTemaId === "") {
+      setError("Lütfen tüm alanları doldurun!");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    try {
+      await api.put(`/admin/metinler/${duzenlenecek.id}`, {
         icerik: yeniIcerik,
-        zorluk:yeniZorluk,
-        metinTemaId: Number(yeniTemaId),
-    });
+        ceviri: yeniCeviri,
+        zorluk: yeniZorluk,
+        metinTemaId: Number(yeniMetinTemaId),
+      });
 
+      resetForm();
+      await fetchAll();
+    } catch (err) {
+      console.error("Güncelleme hatası:", err);
+      setError("Güncelleme işlemi başarısız!");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Formu sıfırla
+  function resetForm() {
     setDuzenlenecek(null);
-    setYeniCeviri("");
     setYeniIcerik("");
-    setYeniZorluk("");
-    setYeniTemaId("");
-    fetchAll();
-  }
-
-  function cancelEdit() {
-    setDuzenlenecek(null);
     setYeniCeviri("");
-      setYeniIcerik("");
-      setYeniZorluk("");
-    setYeniTemaId("");
+    setYeniZorluk("Kolay");
+    setYeniMetinTemaId("");
+    setError("");
   }
 
-  const tabloData = metinler.map((k) => ({
-    id: k.id,
-    ceviri: k.ceviri,
-    icerik: k.icerik,
-    zorluk:k.zorluk,
-    tema: temalar.find((t) => t.id === k.metinTemaId)?.baslik || "-",
-  }));
-
+  if (loading && metinler.length === 0) {
+    return (
+      <div className="metin-container">
+        <div className="flex justify-center items-center h-64">
+          <div className="loading-spinner" style={{ borderColor: "#667eea", borderTopColor: 'transparent' }}></div>
+          <span className="ml-3 text-lg">Yükleniyor...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Kelime Yönetimi</h1>
-  
-        <div className="flex gap-2 mb-4 flex-wrap">
-          <input
-            type="text"
-            placeholder="icerik"
-            value={yeniIcerik}
-            onChange={(e) => setYeniIcerik(e.target.value)}
-            className="border p-2 rounded flex-1 min-w-[150px]"
-          />
-          <input
-            type="text"
-            placeholder="çeviri"
-            value={yeniCeviri}
-            onChange={(e) => setYeniCeviri(e.target.value)}
-            className="border p-2 rounded flex-1 min-w-[150px]"
-          />
+    <div className="metin-container">
+      {/* Header */}
+      <div className="metin-header">
+        <h1 className="metin-title">Metin Yönetimi</h1>
+        <p className="metin-subtitle">
+          İspanyolca metinleri ve çevirilerini ekleyin, düzenleyin ve yönetin
+        </p>
+      </div>
 
-           <input
-            type="text"
-            placeholder="zorluk"
-            value={yeniZorluk}
-            onChange={(e) => setYeniZorluk(e.target.value)}
-            className="border p-2 rounded flex-1 min-w-[150px]"
-          />
+      {/* Hata Mesajı */}
+      {error && (
+        <div className="error-message">
+          {error}
+        </div>
+      )}
 
-          <select
-            className="border p-2 rounded min-w-[200px]"
-            value={yeniTemaId}
-            onChange={(e) => setYeniTemaId(Number(e.target.value))}
-          >
-            <option value="">Tema Seç</option>
-            {temalar.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.baslik}
-              </option>
-            ))}
-          </select>
-  
+      {/* Form */}
+      <div className="metin-form-container">
+        <h2 className="metin-form-title">
+          {duzenlenecek ? "📝 Metin Düzenle" : "➕ Yeni Metin Ekle"}
+        </h2>
+        
+        <div className="metin-form-grid">
+          <div className="form-group">
+            <label className="form-label">Zorluk Seviyesi *</label>
+            <select
+              value={yeniZorluk}
+              onChange={(e) => setYeniZorluk(e.target.value)}
+              className="form-select"
+              disabled={loading}
+            >
+              <option value="Kolay">Kolay</option>
+              <option value="Orta">Orta</option>
+              <option value="Zor">Zor</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Metin Teması *</label>
+            <select
+              value={yeniMetinTemaId}
+              onChange={(e) => setYeniMetinTemaId(Number(e.target.value))}
+              className="form-select"
+              disabled={loading}
+            >
+              <option value="">Metin Teması Seçin</option>
+              {metinTemalari.map((tema) => (
+                <option key={tema.id} value={tema.id}>
+                  {tema.aciklama}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group metin-form-full">
+            <label className="form-label">İspanyolca Metin *</label>
+            <textarea
+              placeholder="İspanyolca metni girin..."
+              value={yeniIcerik}
+              onChange={(e) => setYeniIcerik(e.target.value)}
+              className="form-textarea ispanyolca-metin"
+              disabled={loading}
+              rows={4}
+            />
+          </div>
+
+          <div className="form-group metin-form-full">
+            <label className="form-label">Türkçe Çeviri *</label>
+            <textarea
+              placeholder="Türkçe çeviriyi girin..."
+              value={yeniCeviri}
+              onChange={(e) => setYeniCeviri(e.target.value)}
+              className="form-textarea turkce-metin"
+              disabled={loading}
+              rows={4}
+            />
+          </div>
+        </div>
+
+        <div className="form-actions">
           {duzenlenecek ? (
             <>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleUpdate}>
-                Güncelle
+              <button
+                onClick={handleUpdate}
+                disabled={loading}
+                className="btn btn-primary"
+              >
+                {loading && <span className="loading-spinner"></span>}
+                {loading ? "Güncelleniyor..." : "✅ Güncelle"}
               </button>
-              <button className="bg-gray-400 text-white px-4 py-2 rounded" onClick={cancelEdit}>
+              <button
+                onClick={resetForm}
+                disabled={loading}
+                className="btn btn-secondary"
+              >
                 İptal
               </button>
             </>
           ) : (
-            <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={handleAdd}>
-              Ekle
+            <button
+              onClick={handleAdd}
+              disabled={!yeniIcerik || !yeniCeviri || yeniMetinTemaId === "" || loading}
+              className="btn btn-success"
+            >
+              {loading && <span className="loading-spinner"></span>}
+              {loading ? "Ekleniyor..." : "➕ Yeni Metin Ekle"}
             </button>
           )}
         </div>
-  
-        <CrudTable data={tabloData} onEdit={startEdit} onDelete={handleDelete} />
       </div>
-    );
 
-
+      {/* Tablo */}
+      <div className="metin-form-container">
+        <h2 className="metin-form-title">📋 Mevcut Metinler</h2>
+        {loading ? (
+          <div className="empty-state">
+            <div className="loading-spinner" style={{ margin: '20px auto', borderColor: "#667eea", borderTopColor: 'transparent' }}></div>
+            <p>Yükleniyor...</p>
+          </div>
+        ) : metinler.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-state-icon">📝</div>
+            <h3>Henüz metin bulunmuyor</h3>
+            <p>İlk metninizi eklemek için yukarıdaki formu kullanın.</p>
+          </div>
+        ) : (
+          <CrudTable
+            data={tabloData}
+            onEdit={(item) => {
+              const originalMetin = metinler.find(m => m.id === item.id);
+              if (originalMetin) {
+                startEdit(originalMetin);
+              }
+            }}
+            onDelete={handleDelete}
+          />
+        )}
+      </div>
+    </div>
+  );
 }

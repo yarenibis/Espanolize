@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../services/ApiService";
 import CrudTable from "../../components/adminDashboard/CrudTable";
+import "./OrnekPage.css";
 
 interface Ornek {
   id: number;
@@ -11,113 +12,139 @@ interface Ornek {
 }
 
 interface GramerKural {
-    id: number
-    kuralBaslik: string 
+  id: number;
+  kuralBaslik: string;
 }
 
 export default function OrnekPage() {
-  const [ornek, setOrnek] = useState<Ornek[]>([]);
-  const [gramer,setGramer] =useState<GramerKural[]>([]);
+  const [ornekler, setOrnekler] = useState<Ornek[]>([]);
+  const [gramerKurallar, setGramerKurallar] = useState<GramerKural[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [yeniIspanyolcaOrnek, setYeniIspanyolcaOrnek] = useState("");
   const [yeniCeviri, setYeniCeviri] = useState("");
   const [yeniAciklama, setYeniAciklama] = useState("");
   const [yeniGramerKuralId, setYeniGramerKuralId] = useState<number | "">("");
-  const [duzenlenecek, setDuzenlenecek] = useState<Ornek | null>(null);
-  const [loading, setLoading]=useState(true);
 
-  async function fetchData() {
+  const [duzenlenecek, setDuzenlenecek] = useState<Ornek | null>(null);
+
+  // Gramer kurallarını yükle
+  async function getGramerKurallar() {
     try {
-      const res = await api.get(`/admin/ornekler`);
-      setOrnek(res.data);
+      const res = await api.get("/admin/gramerkurallar");
+      setGramerKurallar(res.data);
     } catch (err) {
-      console.error("data alınamadı", err);
+      console.error("Gramer kuralları yüklenemedi:", err);
+      setError("Gramer kuralları yüklenirken bir hata oluştu.");
     }
   }
 
-
-  async function getGramer() {
+  // Örnekleri yükle
+  async function fetchOrnekler() {
     try {
-      const res = await api.get(`/admin/gramerkurallar`);
-      setGramer(res.data);
+      const res = await api.get("/admin/ornekler");
+      setOrnekler(res.data);
     } catch (err) {
-      console.error("data alınamadı", err);
+      console.error("Örnekler yüklenemedi:", err);
+      setError("Örnekler yüklenirken bir hata oluştu.");
     }
   }
 
   useEffect(() => {
     const loadData = async () => {
-            setLoading(true);
-            // Önce konuları, sonra kuralları yükle
-            await getGramer();
-            await fetchData();
-            setLoading(false);
-        };
-        loadData();
+      setLoading(true);
+      setError("");
+      try {
+        await Promise.all([getGramerKurallar(), fetchOrnekler()]);
+      } catch (err) {
+        setError("Veriler yüklenirken bir hata oluştu.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
   }, []);
 
-  const getGramerBaslik=(gramerKuralId: number)=>{
-    const res = gramer.find(t=>t.id ==gramerKuralId);
-    return res ? res.kuralBaslik : `Konu ID: ${gramerKuralId}`;
+  // Gramer kural ID'sine göre kural başlığını bul
+  const getGramerBaslik = (gramerKuralId: number) => {
+    const kural = gramerKurallar.find(t => t.id === gramerKuralId);
+    return kural ? kural.kuralBaslik : `Kural ID: ${gramerKuralId}`;
+  };
 
-  }
+  // Tablo için düzenlenmiş data oluştur
+  const tableData = ornekler.map(ornek => ({
+    id: ornek.id,
+    ispanyolcaOrnek: ornek.ispanyolcaOrnek,
+    ceviri: ornek.ceviri,
+    aciklama: ornek.aciklama.length > 100 ? ornek.aciklama.substring(0, 100) + "..." : ornek.aciklama,
+    kuralBaslik: getGramerBaslik(ornek.gramerKuralId)
+  }));
 
-  const tableData= ornek.map(gramer=>({
-    id: gramer.id,
-    ispanyolcaOrnek: gramer.ispanyolcaOrnek,
-    ceviri: gramer.ceviri,
-    aciklama: gramer.aciklama,
-    kuralBaslik: getGramerBaslik(gramer.gramerKuralId)
-  }))
-    
-
-
+  // Yeni örnek ekle
   async function handleAdd() {
-    if (
-      !yeniIspanyolcaOrnek.trim() ||
-      !yeniCeviri.trim() ||
-      !yeniAciklama.trim() ||
-      yeniGramerKuralId === ""
-    )
-      return alert("Tüm alanlar zorunludur!");
+    if (!yeniIspanyolcaOrnek.trim() || !yeniCeviri.trim() || !yeniAciklama.trim() || yeniGramerKuralId === "") {
+      setError("Lütfen tüm alanları doldurun!");
+      return;
+    }
 
+    setLoading(true);
+    setError("");
     try {
-      await api.post(`/admin/ornekler`, {
+      await api.post("/admin/ornekler", {
         ispanyolcaOrnek: yeniIspanyolcaOrnek,
         ceviri: yeniCeviri,
         aciklama: yeniAciklama,
         gramerKuralId: Number(yeniGramerKuralId),
       });
 
-      setYeniIspanyolcaOrnek("");
-      setYeniCeviri("");
-      setYeniAciklama("");
-      setYeniGramerKuralId("");
-      fetchData();
+      resetForm();
+      await fetchOrnekler();
     } catch (err) {
       console.error("Ekleme hatası:", err);
+      setError("Ekleme işlemi başarısız!");
+    } finally {
+      setLoading(false);
     }
   }
 
+  // Örnek sil
   async function handleDelete(id: number) {
-    if (!window.confirm("Bu örneği silmek istediğine emin misin?")) return;
+    if (!window.confirm("Bu örneği silmek istediğinizden emin misiniz?")) return;
+    
+    setLoading(true);
     try {
       await api.delete(`/admin/ornekler/${id}`);
-      fetchData();
+      await fetchOrnekler();
     } catch (err) {
-      console.error("Silme hatası", err);
+      console.error("Silme hatası:", err);
+      setError("Silme işlemi başarısız!");
+    } finally {
+      setLoading(false);
     }
   }
 
-  function StartEdit(o: Ornek) {
-    setDuzenlenecek(o);
-    setYeniIspanyolcaOrnek(o.ispanyolcaOrnek);
-    setYeniCeviri(o.ceviri);
-    setYeniAciklama(o.aciklama);
-    setYeniGramerKuralId(o.gramerKuralId);
+  // Düzenleme moduna geç
+  function startEdit(ornek: Ornek) {
+    setDuzenlenecek(ornek);
+    setYeniIspanyolcaOrnek(ornek.ispanyolcaOrnek);
+    setYeniCeviri(ornek.ceviri);
+    setYeniAciklama(ornek.aciklama);
+    setYeniGramerKuralId(ornek.gramerKuralId);
+    setError("");
   }
 
+  // Güncelleme işlemi
   async function handleUpdate() {
     if (!duzenlenecek) return;
+
+    if (!yeniIspanyolcaOrnek.trim() || !yeniCeviri.trim() || !yeniAciklama.trim() || yeniGramerKuralId === "") {
+      setError("Lütfen tüm alanları doldurun!");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
     try {
       await api.put(`/admin/ornekler/${duzenlenecek.id}`, {
         ispanyolcaOrnek: yeniIspanyolcaOrnek,
@@ -126,116 +153,174 @@ export default function OrnekPage() {
         gramerKuralId: Number(yeniGramerKuralId),
       });
 
-      setDuzenlenecek(null);
-      setYeniIspanyolcaOrnek("");
-      setYeniCeviri("");
-      setYeniAciklama("");
-      setYeniGramerKuralId("");
-      fetchData();
+      resetForm();
+      await fetchOrnekler();
     } catch (err) {
-      console.error("update hatası", err);
+      console.error("Güncelleme hatası:", err);
+      setError("Güncelleme işlemi başarısız!");
+    } finally {
+      setLoading(false);
     }
   }
 
-  function cancelEdit() {
+  // Formu sıfırla
+  function resetForm() {
     setDuzenlenecek(null);
     setYeniIspanyolcaOrnek("");
     setYeniCeviri("");
     setYeniAciklama("");
     setYeniGramerKuralId("");
+    setError("");
   }
 
-if (loading) {
-        return (
-            <div className="p-6">
-                <div className="flex justify-center items-center h-64">
-                    <div className="text-lg">Yükleniyor...</div>
-                </div>
-            </div>
-        );
-    }
-
-
+  if (loading && ornekler.length === 0) {
+    return (
+      <div className="ornek-container">
+        <div className="flex justify-center items-center h-64">
+          <div className="loading-spinner" style={{ borderColor: "#667eea", borderTopColor: 'transparent' }}></div>
+          <span className="ml-3 text-lg">Yükleniyor...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-          <div className="p-6">
-              <h1 className="text-2xl font-bold mb-4">Konu Yönetimi</h1>
-  
-              {/* Ekle / Düzenle Alanı */}
-              <div className="flex gap-2 mb-4 flex-wrap">
-                  <input
-                      type="text"
-                      placeholder="Örnek "
-                      value={yeniIspanyolcaOrnek}
-                      onChange={(e) => setYeniIspanyolcaOrnek(e.target.value)}
-                      className="border p-2 rounded flex-1 min-w-[200px]"
-                  />
-                  <input
-                      type="text"
-                      placeholder="Örnek açıklaması"
-                      value={yeniAciklama}
-                      onChange={(e) => setYeniAciklama(e.target.value)}
-                      className="border p-2 rounded flex-1 min-w-[200px]"
-                  />
+    <div className="ornek-container">
+      {/* Header */}
+      <div className="ornek-header">
+        <h1 className="ornek-title">Örnek Yönetimi</h1>
+        <p className="ornek-subtitle">
+          İspanyolca örnek cümleleri ekleyin, düzenleyin ve yönetin
+        </p>
+      </div>
 
-                  <input
-                      type="text"
-                      placeholder="Örnek çeviri"
-                      value={yeniCeviri}
-                      onChange={(e) => setYeniCeviri(e.target.value)}
-                      className="border p-2 rounded flex-1 min-w-[200px]"
-                  />
-                  
-                  
-                  <select
-                      value={yeniGramerKuralId}
-                      onChange={(e) => setYeniGramerKuralId(Number(e.target.value))}
-                      className="border p-2 rounded min-w-[200px]"
-                  >
-                      <option value="">Kural Seçin</option>
-                      {gramer.map((gramer) => (
-                          <option key={gramer.id} value={gramer.id}>
-                              {gramer.kuralBaslik}
-                          </option>
-                      ))}
-                  </select>
-  
-                  {duzenlenecek ? (
-                      <>
-                          <button
-                              onClick={handleUpdate}
-                              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-                          >
-                              Güncelle
-                          </button>
-                          <button
-                              onClick={cancelEdit}
-                              className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
-                          >
-                              İptal
-                          </button>
-                      </>
-                  ) : (
-                      <button
-                          onClick={handleAdd}
-                          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-                      >
-                          Ekle
-                      </button>
-                  )}
-              </div>
-  
-              {/* CrudTable kullanımı */}
-              <CrudTable 
-                  data={tableData} 
-                  onEdit={(item) => {
-                      const originalKural = ornek.find(k => k.id === item.id);
-                      if (originalKural) {
-                          StartEdit(originalKural);
-                      }
-                  }}
-                  onDelete={handleDelete}
-              />
+      {/* Hata Mesajı */}
+      {error && (
+        <div className="error-message">
+          {error}
+        </div>
+      )}
+
+      {/* Form */}
+      <div className="ornek-form-container">
+        <h2 className="ornek-form-title">
+          {duzenlenecek ? "📝 Örnek Düzenle" : "➕ Yeni Örnek Ekle"}
+        </h2>
+        
+        <div className="ornek-form-grid">
+          <div className="form-group">
+            <label className="form-label">İspanyolca Örnek *</label>
+            <input
+              type="text"
+              placeholder="İspanyolca örnek cümleyi girin"
+              value={yeniIspanyolcaOrnek}
+              onChange={(e) => setYeniIspanyolcaOrnek(e.target.value)}
+              className="form-input"
+              disabled={loading}
+            />
           </div>
-      );
+
+          <div className="form-group">
+            <label className="form-label">Türkçe Çeviri *</label>
+            <input
+              type="text"
+              placeholder="Türkçe çeviriyi girin"
+              value={yeniCeviri}
+              onChange={(e) => setYeniCeviri(e.target.value)}
+              className="form-input"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Gramer Kuralı *</label>
+            <select
+              value={yeniGramerKuralId}
+              onChange={(e) => setYeniGramerKuralId(Number(e.target.value))}
+              className="form-select"
+              disabled={loading}
+            >
+              <option value="">Gramer Kuralı Seçin</option>
+              {gramerKurallar.map((kural) => (
+                <option key={kural.id} value={kural.id}>
+                  {kural.kuralBaslik}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group ornek-form-full">
+            <label className="form-label">Açıklama *</label>
+            <textarea
+              placeholder="Örnek ile ilgili açıklama ve notları girin..."
+              value={yeniAciklama}
+              onChange={(e) => setYeniAciklama(e.target.value)}
+              className="form-textarea"
+              disabled={loading}
+              rows={3}
+            />
+          </div>
+        </div>
+
+        <div className="form-actions">
+          {duzenlenecek ? (
+            <>
+              <button
+                onClick={handleUpdate}
+                disabled={loading}
+                className="btn btn-primary"
+              >
+                {loading && <span className="loading-spinner"></span>}
+                {loading ? "Güncelleniyor..." : "✅ Güncelle"}
+              </button>
+              <button
+                onClick={resetForm}
+                disabled={loading}
+                className="btn btn-secondary"
+              >
+                İptal
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleAdd}
+              disabled={!yeniIspanyolcaOrnek || !yeniCeviri || !yeniAciklama || yeniGramerKuralId === "" || loading}
+              className="btn btn-success"
+            >
+              {loading && <span className="loading-spinner"></span>}
+              {loading ? "Ekleniyor..." : "➕ Yeni Örnek Ekle"}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Tablo */}
+      <div className="ornek-form-container">
+        <h2 className="ornek-form-title">📋 Mevcut Örnekler</h2>
+        {loading ? (
+          <div className="empty-state">
+            <div className="loading-spinner" style={{ margin: '20px auto', borderColor: "#667eea", borderTopColor: 'transparent' }}></div>
+            <p>Yükleniyor...</p>
+          </div>
+        ) : ornekler.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-state-icon">💬</div>
+            <h3>Henüz örnek bulunmuyor</h3>
+            <p>İlk örneğinizi eklemek için yukarıdaki formu kullanın.</p>
+          </div>
+        ) : (
+          <CrudTable
+            data={tableData}
+            onEdit={(item) => {
+              const originalOrnek = ornekler.find(o => o.id === item.id);
+              if (originalOrnek) {
+                startEdit(originalOrnek);
+              }
+            }}
+            onDelete={handleDelete}
+          />
+        )}
+      </div>
+    </div>
+  );
 }

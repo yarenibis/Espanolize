@@ -10,7 +10,6 @@ export default function HeaderBar() {
 
   const titles: Record<string, string> = {
     "/admin": "Dashboard",
-    "/admin/kategoriler": "Kategori Yönetimi",
     "/admin/konular": "Konu Yönetimi",
     "/admin/gramerkurallar": "Gramer Kuralları",
     "/admin/ornekler": "Örnek Yönetimi",
