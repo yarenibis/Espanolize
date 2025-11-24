@@ -5,8 +5,6 @@ import LoginPage from "./pages/admin/LoginPage";
 import KonuPage from "./pages/admin/KonuPage";
 import GramerKuralPage from "./pages/admin/GramerKuralPage";
 import OrnekPage from "./pages/admin/OrnekPage";
-import GramerListPage from "./pages/user/GramerListPage";
-import GramerDetailPage from "./pages/user/GramerDetailPage";
 import KelimeTemaPage from "./pages/admin/KelimeTemaPage";
 import KelimePage from "./pages/admin/KelimePage";
 import KelimeTemaListPage from "./pages/user/KelimeTemaListPage";
@@ -18,6 +16,8 @@ import MetinTemaDetailPage from "./pages/user/MetinTemaDetailPage";
 import ProtectedRoute from "./components/adminDashboard/ProtectedRoute";
 import TemaPage from "./pages/admin/TemaPage";
 import AdminLayout from "./components/adminDashboard/AdminLayout";
+import KonuListPage from "./pages/user/KonuListPage";
+import KonuDetailPage from "./pages/user/KonuDetailPage";
 
 export default function App() {
   return (
@@ -25,8 +25,8 @@ export default function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/gramerkurallar" element={<GramerListPage/>}/>
-        <Route path="/gramer/:id" element={<GramerDetailPage />} />
+        <Route path="/konular" element={<KonuListPage />} />
+        <Route path="/konular/:id" element={<KonuDetailPage />} />
         <Route path="/kelimetemalari" element={<KelimeTemaListPage />} />
         <Route path="/kelimeler/:id" element={<KelimeTemaDetailPage />} />
         <Route path="/metinTema" element={<MetinTemaListPage />} />

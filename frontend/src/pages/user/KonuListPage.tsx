@@ -1,18 +1,18 @@
-// KelimeTemaListPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOutlined, SearchOutlined, ClockCircleOutlined, UserOutlined } from "@ant-design/icons";
 import Navbar from "../../components/Navbar";
 import api from "../../services/ApiService";
-import "./KelimeTemaListPage.css";
+import "./KonuListPage.css";
 
-interface KelimeTema {
+interface Konu {
   id: number;
   baslik: string;
   aciklama: string;
   zorluk: "Kolay" | "Orta" | "Zor";
-  kelimeSayisi: number;
+  calismaSuresi: number;
   kapakResmiUrl?: string;
+  temaId?: number;
 }
 
 const getDifficultyColor = (zorluk: string) => {
@@ -33,51 +33,43 @@ const getDifficultyText = (zorluk: string) => {
   }
 };
 
-export default function KelimeTemaListPage() {
-  const [temalar, setTemalar] = useState<KelimeTema[]>([]);
+export default function KonuListPage() {
+  const [konular, setKonular] = useState<Konu[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchTemalar();
+    fetchKonular();
   }, []);
 
-  const fetchTemalar = async () => {
+  const fetchKonular = async () => {
     try {
-      console.log("Temalar yükleniyor...");
-      const res = await api.get("/kelimetemalari");
+      console.log("Konular yükleniyor...");
+      const res = await api.get("/konular");
       console.log("API yanıtı:", res.data);
-      
-      const normalized = res.data.map((t: any) => ({
-        id: t.id ?? t.Id,
-        baslik: t.baslik ?? t.Baslik,
-        aciklama: t.aciklama ?? t.Aciklama,
-        kapakResmiUrl: t.kapakResmiUrl ?? t.KapakResmiUrl,
-        kelimeSayisi: Math.floor(Math.random() * 30) + 15, // 15-45 arası rastgele
-        zorluk: ["Kolay", "Orta", "Zor"][Math.floor(Math.random() * 3)] as "Kolay" | "Orta" | "Zor"
-      }));
-      
-      setTemalar(normalized);
+      setKonular(res.data);
     } catch (error) {
-      console.error("Temalar yüklenirken hata:", error);
-      setTemalar([]);
+      console.error("Konular yüklenirken hata:", error);
+      // Hata durumunda boş array set et
+      setKonular([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredTemalar = temalar.filter((tema) =>
-    `${tema.baslik} ${tema.aciklama} ${tema.zorluk}`
+  const filteredKonular = konular.filter((konu) =>
+    `${konu.baslik} ${konu.aciklama} ${konu.zorluk}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   );
 
-  const handleTemaClick = (temaId: number) => {
-    console.log("Temaya tıklandı:", temaId);
-    navigate(`/kelimeler/${temaId}`);
+  const handleKonuClick = (konuId: number) => {
+    console.log("Konuya tıklandı:", konuId);
+    navigate(`/konular/${konuId}`);
   };
 
+  // Kapak resmi URL'sini düzenleme fonksiyonu
   const getImageUrl = (kapakResmiUrl: string | null | undefined) => {
     if (!kapakResmiUrl) {
       return "/api/placeholder/400/220?text=Resim+Yok";
@@ -91,70 +83,66 @@ export default function KelimeTemaListPage() {
   };
 
   return (
-    <div className="kelime-tema-container">
+    <div className="konu-list-container">
       <Navbar />
       
-      <div className="kelime-tema-content">
+      <div className="konu-list-content">
         {/* Header Section */}
-        <div className="kelime-tema-header">
-          <h1 className="kelime-tema-main-title">📚 Kelime Temaları</h1>
-          <p className="kelime-tema-subtitle">
-            Temaları keşfedin, ilgili kelimeleri anlamlarıyla birlikte öğrenin ve 
-            İspanyolca kelime dağarcığınızı geliştirin
+        <div className="konu-header">
+          <h1 className="konu-main-title">📚 İspanyolca Konuları</h1>
+          <p className="konu-subtitle">
+            Seviyenize uygun konuları keşfedin, interaktif içeriklerle İspanyolcanızı geliştirin
           </p>
         </div>
 
         {/* Search Section */}
         <div className="search-container">
-          <div className="search-wrapper">
-            <SearchOutlined className="search-icon" />
-            <input
-              type="text"
-              placeholder="Tema ara... (örn: Yiyecekler, Seyahat, Sağlık)"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-          </div>
+          <input
+            type="text"
+            placeholder="Konu ara... (örn: ser estar, fiiller, zamanlar)"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
         </div>
 
         {/* Loading State */}
         {loading && (
           <div className="loading-container">
             <div className="loading-spinner"></div>
-            <p className="loading-text">Temalar yükleniyor...</p>
+            <p>Konular yükleniyor...</p>
           </div>
         )}
 
         {/* Empty State */}
-        {!loading && filteredTemalar.length === 0 && (
+        {!loading && filteredKonular.length === 0 && (
           <div className="empty-state">
             <div className="empty-icon">📚</div>
             <h3 className="empty-text">
-              {searchTerm ? "Arama kriterlerinize uygun tema bulunamadı." : "Henüz hiç tema bulunmuyor."}
+              {searchTerm ? "Arama kriterlerinize uygun konu bulunamadı." : "Henüz hiç konu bulunmuyor."}
             </h3>
             <p className="empty-subtext">
-              {searchTerm ? "Farklı bir arama terimi deneyin." : "Yakında yeni temalar eklenecek."}
+              {searchTerm ? "Farklı bir arama terimi deneyin." : "Yakında yeni konular eklenecek."}
             </p>
           </div>
         )}
 
-        {/* Temalar Grid */}
-        {!loading && filteredTemalar.length > 0 && (
+        {/* Konular Grid */}
+        {!loading && filteredKonular.length > 0 && (
           <>
-            <div className="kelime-tema-grid">
-              {filteredTemalar.map((tema, index) => (
+            <div className="konu-grid">
+              {filteredKonular.map((konu, index) => (
                 <div
-                  key={tema.id}
-                  className="kelime-tema-card"
-                  onClick={() => handleTemaClick(tema.id)}
+                  key={konu.id}
+                  className="konu-card"
+                  onClick={() => handleKonuClick(konu.id)}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   {/* Card Cover */}
                   <div className="card-cover">
                     <img
-                      src={getImageUrl(tema.kapakResmiUrl)}
-                      alt={tema.baslik}
+                      src={getImageUrl(konu.kapakResmiUrl)}
+                      alt={konu.baslik}
                       className="card-image"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -162,8 +150,8 @@ export default function KelimeTemaListPage() {
                       }}
                     />
                     <div className="card-overlay">
-                      <span className={`difficulty-badge ${getDifficultyColor(tema.zorluk)}`}>
-                        {getDifficultyText(tema.zorluk)}
+                      <span className={`difficulty-badge ${getDifficultyColor(konu.zorluk)}`}>
+                        {getDifficultyText(konu.zorluk)}
                       </span>
                     </div>
                   </div>
@@ -174,29 +162,29 @@ export default function KelimeTemaListPage() {
                       <div className="card-icon">
                         <BookOutlined />
                       </div>
-                      <h3 className="card-title">{tema.baslik}</h3>
+                      <h3 className="card-title">{konu.baslik}</h3>
                     </div>
 
                     <p className="card-description">
-                      {tema.aciklama}
+                      {konu.aciklama}
                     </p>
 
                     <div className="card-meta">
                       <div className="meta-info">
                         <div className="meta-item">
-                          <BookOutlined className="meta-icon" />
-                          <span>{tema.kelimeSayisi} kelime</span>
+                          <ClockCircleOutlined className="meta-icon" />
+                          <span>{konu.calismaSuresi} dk</span>
                         </div>
                         <div className="meta-item">
                           <UserOutlined className="meta-icon" />
-                          <span>{tema.zorluk}</span>
+                          <span>{konu.zorluk}</span>
                         </div>
                       </div>
 
                       <div className="card-stats">
                         <div className="stat">
-                          <ClockCircleOutlined className="stat-icon" />
-                          <span>Kelime</span>
+                          <BookOutlined className="stat-icon" />
+                          <span>Konu</span>
                         </div>
                       </div>
                     </div>
@@ -206,10 +194,10 @@ export default function KelimeTemaListPage() {
             </div>
 
             {/* Footer Info */}
-            <div className="footer-info">
-              <p className="footer-text">
-                Toplam <span className="footer-highlight">{filteredTemalar.length} tema</span> bulundu • 
-                Seviyenize uygun temaları seçerek kelime dağarcığınızı geliştirin
+            <div style={{ textAlign: 'center', marginTop: '40px', color: '#718096' }}>
+              <p>
+                Toplam {filteredKonular.length} konu bulundu • 
+                Seviyenize uygun konuları seçerek çalışmaya başlayın
               </p>
             </div>
           </>

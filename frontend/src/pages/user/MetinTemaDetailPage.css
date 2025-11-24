@@ -1,0 +1,612 @@
+/* MetinTemaDetailPage.css */
+
+/* Container Styles */
+.metin-detail-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f8f9fc 100%);
+  position: relative;
+}
+
+.metin-detail-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.metin-detail-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* Loading State */
+.metin-detail-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f8f9fc 100%);
+}
+
+.loading-text {
+  color: #718096;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Error State */
+.metin-detail-error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f8f9fc 100%);
+}
+
+/* Header Section */
+.detail-header {
+  position: relative;
+  padding: 60px 40px 40px;
+  color: white;
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.header-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.header-background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
+  z-index: 2;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 30px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 3;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transform: translateX(-4px);
+}
+
+.header-content {
+  position: relative;
+  z-index: 3;
+}
+
+.title-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.title-icon {
+  font-size: 2.5rem;
+  opacity: 0.9;
+  margin-top: 8px;
+}
+
+.main-title {
+  color: white !important;
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.theme-description {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 1.3rem !important;
+  line-height: 1.6 !important;
+  margin: 8px 0 0 0 !important;
+  max-width: 800px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.theme-stats {
+  display: flex;
+  gap: 40px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.stat-difficulty {
+  font-size: 1.5rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Gallery Section */
+.gallery-section {
+  padding: 40px;
+  background: white;
+  margin: 20px 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.gallery-title {
+  text-align: center;
+  margin-bottom: 30px !important;
+  color: #2d3748 !important;
+  font-weight: 600 !important;
+}
+
+.gallery-carousel {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-slide {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+}
+
+.gallery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-dots {
+  bottom: 20px;
+}
+
+.gallery-dots li button {
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.gallery-dots li.slick-active button {
+  background: #10b981;
+}
+
+/* Metinler Section */
+.metinler-section {
+  padding: 40px;
+}
+
+.metinler-title {
+  text-align: center;
+  margin-bottom: 40px !important;
+  color: #2d3748 !important;
+  font-weight: 600 !important;
+}
+
+/* Empty State */
+.empty-metinler {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: #cbd5e0;
+  margin-bottom: 20px;
+}
+
+.empty-text {
+  font-size: 1.2rem;
+  color: #4a5568;
+  margin-bottom: 8px !important;
+  font-weight: 500;
+}
+
+.empty-subtext {
+  color: #a0aec0 !important;
+}
+
+/* Metinler List */
+.metinler-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Metin Item */
+.metin-item {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.metin-item:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.metin-item.expanded {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.metin-header {
+  padding: 24px;
+  cursor: pointer;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  transition: background-color 0.2s ease;
+}
+
+.metin-header:hover {
+  background: #f8fafc;
+}
+
+.metin-icon-container {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.metin-icon {
+  color: white;
+  font-size: 1.5rem;
+}
+
+.metin-info {
+  flex: 1;
+}
+
+.metin-baslik {
+  color: #2d3748 !important;
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  margin: 0 0 8px 0 !important;
+  line-height: 1.3;
+}
+
+.metin-aciklama {
+  color: #718096 !important;
+  line-height: 1.5 !important;
+  margin: 0 0 16px 0 !important;
+}
+
+.metin-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.meta-items {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.meta-icon {
+  font-size: 1rem;
+  color: #10b981;
+}
+
+.zorluk-tag {
+  border: none !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+.expand-icon {
+  display: flex;
+  align-items: center;
+}
+
+.expand-arrow {
+  font-size: 1.2rem;
+  color: #a0aec0;
+  transition: transform 0.3s ease;
+  transform: rotate(0deg);
+}
+
+.expand-arrow.expanded {
+  transform: rotate(180deg);
+  color: #10b981;
+}
+
+/* Metin İçerik */
+.metin-icerik {
+  border-top: 1px solid #f1f5f9;
+  background: #fafbfc;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+.icerik-container {
+  padding: 24px;
+}
+
+.metin-image-container {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.metin-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.metin-text-container {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.metin-text {
+  font-size: 1.1rem !important;
+  line-height: 1.7 !important;
+  color: #4a5568 !important;
+  white-space: pre-line;
+}
+
+/* Footer Actions */
+.footer-actions {
+  text-align: center;
+  padding: 40px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.metin-item:nth-child(1) { animation-delay: 0.1s; }
+.metin-item:nth-child(2) { animation-delay: 0.2s; }
+.metin-item:nth-child(3) { animation-delay: 0.3s; }
+.metin-item:nth-child(4) { animation-delay: 0.4s; }
+.metin-item:nth-child(5) { animation-delay: 0.5s; }
+.metin-item:nth-child(6) { animation-delay: 0.6s; }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .detail-header {
+    padding: 40px 24px 30px;
+    min-height: 350px;
+  }
+  
+  .main-title {
+    font-size: 2rem !important;
+  }
+  
+  .theme-description {
+    font-size: 1.1rem !important;
+  }
+  
+  .metinler-section,
+  .gallery-section {
+    padding: 30px 24px;
+  }
+  
+  .theme-stats {
+    gap: 30px;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .stat-difficulty {
+    font-size: 1.2rem;
+    padding: 6px 12px;
+  }
+  
+  .title-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .title-icon {
+    font-size: 2rem;
+    margin-top: 0;
+  }
+  
+  .gallery-slide {
+    height: 300px;
+  }
+  
+  .metin-header {
+    padding: 20px;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .metin-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .meta-items {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .expand-icon {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail-header {
+    padding: 30px 20px;
+    min-height: 300px;
+  }
+  
+  .metinler-section,
+  .gallery-section {
+    padding: 20px;
+  }
+  
+  .metin-item {
+    border-radius: 12px;
+  }
+  
+  .metin-baslik {
+    font-size: 1.2rem !important;
+  }
+  
+  .metin-text {
+    font-size: 1rem !important;
+  }
+  
+  .icerik-container {
+    padding: 20px;
+  }
+  
+  .metin-text-container {
+    padding: 20px;
+  }
+  
+  .gallery-slide {
+    height: 250px;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .metin-item,
+  .back-button,
+  .expand-arrow {
+    animation: none;
+    transition: none;
+  }
+  
+  .metin-item {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Focus styles for accessibility */
+.metin-item:focus,
+.back-button:focus {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+.preview-mask {
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

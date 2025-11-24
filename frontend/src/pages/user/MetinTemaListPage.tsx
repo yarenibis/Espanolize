@@ -1,80 +1,190 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BookOutlined, SearchOutlined, FileTextOutlined } from "@ant-design/icons";
 import api from "../../services/ApiService";
-import { Card, Row, Col, Typography, Input, Layout, Spin } from "antd";
-import { BookOutlined, SearchOutlined } from "@ant-design/icons";
-
-const { Title, Paragraph } = Typography;
-const { Content } = Layout;
+import "./MetinTemaListPage.css";
 
 interface MetinTema {
   id: number;
-  baslik: string;
+  temaId: number;
   aciklama: string;
+  kapakResmiUrl?: string;
 }
 
-export default function KelimeTemaListPage() {
+export default function MetinTemaListPage() {
   const [temalar, setTemalar] = useState<MetinTema[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get("/metinTema")
-      .then((res) => {
-        const normalized = res.data.map((t: any) => ({
-          id: t.id ?? t.Id,
-          baslik: t.baslik ?? t.Baslik,
-          aciklama: t.aciklama ?? t.Aciklama,
-        }));
-        setTemalar(normalized);
-      })
-      .finally(() => setLoading(false));
+    fetchTemalar();
   }, []);
 
-  const filtered = temalar.filter(t =>
-    `${t.baslik} ${t.aciklama}`.toLowerCase().includes(search.toLowerCase())
+  const fetchTemalar = async () => {
+    try {
+      console.log("Metin temaları yükleniyor...");
+      const res = await api.get("/metinTema");
+      console.log("API yanıtı:", res.data);
+      
+      const normalized = res.data.map((t: any) => ({
+        id: t.id ?? t.Id,
+        temaId: t.temaId ?? t.TemaId,
+        aciklama: t.aciklama ?? t.Aciklama,
+        kapakResmiUrl: t.kapakResmiUrl ?? t.KapakResmiUrl
+      }));
+      
+      setTemalar(normalized);
+    } catch (error) {
+      console.error("Metin temaları yüklenirken hata:", error);
+      setTemalar([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredTemalar = temalar.filter((tema) =>
+    `${tema.aciklama} ${tema.temaId}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
   );
+
+  const handleTemaClick = (temaId: number) => {
+    console.log("Metin temasına tıklandı:", temaId);
+    navigate(`/metinler/${temaId}`);
+  };
+
+  const getImageUrl = (url: string | null | undefined): string => {
+    if (!url) {
+      return "/api/placeholder/400/250?text=Resim+Yok";
+    }
+    
+    if (url.startsWith("http")) {
+      return url;
+    }
+    
+    return `http://localhost:5001${url}`;
+  };
 
   if (loading) {
     return (
-      <Layout style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>
-        <Spin size="large" />
-      </Layout>
+      <div className="metin-tema-loading">
+        <div className="loading-spinner"></div>
+        <p className="loading-text">Metin temaları yükleniyor...</p>
+      </div>
     );
   }
 
   return (
-    <Content style={{ padding: "32px 16px", maxWidth: 1100, margin: "0 auto" }}>
-      <Title level={1}>📚 Kelime Temaları</Title>
-      <Paragraph style={{ maxWidth: 600 }}>
-        Temayı seç, ilgili kelimeleri anlamlarıyla birlikte öğren.
-      </Paragraph>
+    <div className="metin-tema-container">
+      <div className="metin-tema-content">
+        {/* Header Section */}
+        <div className="metin-tema-header">
+          <h1 className="metin-tema-main-title">📖 Metin Temaları</h1>
+          <p className="metin-tema-subtitle">
+            Temaları keşfedin, İspanyolca metinleri okuyun ve dil becerilerinizi geliştirin
+          </p>
+        </div>
 
-      <Input
-        prefix={<SearchOutlined />}
-        placeholder="Tema ara..."
-        style={{ maxWidth: 400, margin: "20px 0" }}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+        {/* Search Section */}
+        <div className="search-container">
+          <div className="search-wrapper">
+            <SearchOutlined className="search-icon" />
+            <input
+              type="text"
+              placeholder="Metin teması ara... (örn: Hikayeler, Kültür, Günlük Yaşam)"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+        </div>
 
-      <Row gutter={[24, 24]}>
-        {filtered.map((tema) => (
-          <Col xs={24} sm={12} lg={8} key={tema.id}>
-            <Card
-              hoverable
-              onClick={() => navigate(`/metinler/${tema.id}`)}
-              style={{ borderRadius: 12 }}
-            >
-              <BookOutlined style={{ fontSize: 28, color: "#3B82F6" }} />
-              <Title level={4} style={{ marginTop: 12 }}>{tema.baslik}</Title>
-              <Paragraph type="secondary" ellipsis={{ rows: 2 }}>
-                {tema.aciklama}
-              </Paragraph>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-    </Content>
+        {/* Stats */}
+        <div className="stats-section">
+          <div className="stat-item">
+            <span className="stat-number">{temalar.length}</span>
+            <span className="stat-label">Toplam Tema</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-number">{temalar.length * 3}</span>
+            <span className="stat-label">Toplam Metin</span>
+          </div>
+        </div>
+
+        {/* Empty State */}
+        {!loading && filteredTemalar.length === 0 && (
+          <div className="empty-state">
+            <FileTextOutlined className="empty-icon" />
+            <h3 className="empty-text">
+              {searchTerm ? "Arama kriterlerinize uygun tema bulunamadı." : "Henüz hiç metin teması bulunmuyor."}
+            </h3>
+            <p className="empty-subtext">
+              {searchTerm ? "Farklı bir arama terimi deneyin." : "Yakında yeni metin temaları eklenecek."}
+            </p>
+          </div>
+        )}
+
+        {/* Temalar Grid */}
+        {!loading && filteredTemalar.length > 0 && (
+          <>
+            <div className="metin-tema-grid">
+              {filteredTemalar.map((tema, index) => (
+                <div
+                  key={tema.id}
+                  className="metin-tema-card"
+                  onClick={() => handleTemaClick(tema.id)}
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  {/* Card Cover */}
+                  <div className="card-cover">
+                    <img
+                      src={getImageUrl(tema.kapakResmiUrl)}
+                      alt={tema.aciklama}
+                      className="card-image"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "/api/placeholder/400/250?text=Resim+Yok";
+                      }}
+                    />
+                    <div className="card-overlay">
+                      <span className="theme-badge">Tema {tema.temaId}</span>
+                    </div>
+                  </div>
+
+                  {/* Card Content */}
+                  <div className="card-content">
+                    <div className="card-header">
+                      <div className="card-icon">
+                        <FileTextOutlined />
+                      </div>
+                      <h3 className="card-title">Tema {tema.temaId}</h3>
+                    </div>
+
+                    <p className="card-description">
+                      {tema.aciklama}
+                    </p>
+
+                    <div className="card-footer">
+                      <div className="learn-more">
+                        Metinleri Oku <BookOutlined />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Footer Info */}
+            <div className="footer-info">
+              <p className="footer-text">
+                Toplam <span className="footer-highlight">{filteredTemalar.length} metin teması</span> bulundu • 
+                Seviyenize uygun temaları seçerek okuma becerilerinizi geliştirin
+              </p>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

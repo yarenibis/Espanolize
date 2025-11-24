@@ -1,28 +1,44 @@
 import { Link } from "react-router-dom";
 import "./QuickLinks.css";
 
+interface QuickLink {
+  to: string;
+  icon: string;
+  title: string;
+  description: string;
+  gradient: string;
+  stats?: string;
+  badge?: string;
+}
+
 export default function QuickLinks() {
-  const quickLinks = [
+  const quickLinks: QuickLink[] = [
     {
-      to: "/gramerkurallar",
+      to: "/konular",
       icon: "📚",
-      title: "Gramer Kuralları",
-      description: "İspanyolca dil bilgisi kurallarını interaktif şekilde öğrenin",
-      color: "#667eea"
+      title: "Gramer Konuları",
+      description: "İspanyolca dil bilgisi konularını seviyelerine göre keşfedin",
+      gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      stats: "50+ Konu",
+      badge: "Yeni"
     },
     {
       to: "/kelimetemalari",
       icon: "🔤",
-      title: "Kelime Öğren",
-      description: "Tematik kelime listeleri ve öğrenme araçları",
-      color: "#764ba2"
+      title: "Kelime Temaları",
+      description: "Tematik kelime listeleri ile kelime dağarcığınızı geliştirin",
+      gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+      stats: "20+ Tema",
+      badge: "Popüler"
     },
     {
       to: "/metinTema",
       icon: "📖",
       title: "Okuma Metinleri",
-      description: "Farklı seviyelerde okuma parçaları ve alıştırmalar",
-      color: "#f093fb"
+      description: "Farklı seviyelerde okuma parçaları ve anlama alıştırmaları",
+      gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+      stats: "30+ Metin",
+      badge: "Etkileşimli"
     }
   ];
 
@@ -31,7 +47,9 @@ export default function QuickLinks() {
       <div className="container">
         <div className="section-header">
           <h2 className="section-title">Hızlı Erişim</h2>
-          <p className="section-subtitle">İhtiyacınız olan içeriğe hızlıca ulaşın</p>
+          <p className="section-subtitle">
+            İspanyolca öğrenme yolculuğunuzda ihtiyacınız olan tüm kaynaklar bir tık uzağınızda
+          </p>
         </div>
         
         <div className="quick-grid">
@@ -40,20 +58,68 @@ export default function QuickLinks() {
               key={link.to} 
               to={link.to} 
               className="quick-card"
-              style={{ '--card-color': link.color } as React.CSSProperties}
+              style={{ '--card-gradient': link.gradient } as React.CSSProperties}
               data-aos="fade-up"
-              data-aos-delay={index * 100}
+              data-aos-delay={index * 150}
             >
-              <div className="card-icon" style={{ backgroundColor: `${link.color}15` }}>
-                <span className="icon">{link.icon}</span>
+              {/* Card Badge */}
+              {link.badge && (
+                <div className="card-badge">
+                  {link.badge}
+                </div>
+              )}
+              
+              {/* Card Icon */}
+              <div className="card-icon-wrapper">
+                <div className="card-icon">
+                  <span className="icon">{link.icon}</span>
+                </div>
+                <div className="icon-glow"></div>
               </div>
-              <h3 className="card-title">{link.title}</h3>
-              <p className="card-description">{link.description}</p>
-              <div className="card-arrow">
-                <span>→</span>
+
+              {/* Card Content */}
+              <div className="card-content">
+                <h3 className="card-title">{link.title}</h3>
+                <p className="card-description">{link.description}</p>
+                
+                {/* Card Stats */}
+                {link.stats && (
+                  <div className="card-stats">
+                    <span className="stats-text">{link.stats}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Card Footer */}
+              <div className="card-footer">
+                <div className="card-arrow">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path 
+                      d="M5 12H19M19 12L12 5M19 12L12 19" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <span className="explore-text">Keşfet</span>
+              </div>
+
+              {/* Background Elements */}
+              <div className="card-bg-elements">
+                <div className="bg-circle-1"></div>
+                <div className="bg-circle-2"></div>
               </div>
             </Link>
           ))}
+        </div>
+
+        {/* Section Footer */}
+        <div className="section-footer">
+          <p className="footer-text">
+            Tüm içerikler alanında uzman eğitmenler tarafından hazırlanmıştır
+          </p>
         </div>
       </div>
     </section>

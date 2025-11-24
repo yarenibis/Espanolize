@@ -8,7 +8,7 @@ export default function Navbar() {
         <div className="logo">Espanolize</div>
 
         <ul className="nav-links">
-          <li><Link to="/gramerkurallar">Gramer</Link></li>
+          <li><Link to="/konular">Gramer</Link></li>
           <li><Link to="/kelimetemalari">Kelimeler</Link></li>
           <li><Link to="/metinTema">Metinler</Link></li>
         </ul>
