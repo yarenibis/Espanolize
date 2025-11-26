@@ -19,7 +19,6 @@ export default function QuickLinks() {
       title: "Gramer Konuları",
       description: "İspanyolca dil bilgisi konularını seviyelerine göre keşfedin",
       gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      stats: "50+ Konu",
       badge: "Yeni"
     },
     {
@@ -28,7 +27,6 @@ export default function QuickLinks() {
       title: "Kelime Temaları",
       description: "Tematik kelime listeleri ile kelime dağarcığınızı geliştirin",
       gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-      stats: "20+ Tema",
       badge: "Popüler"
     },
     {
@@ -37,7 +35,6 @@ export default function QuickLinks() {
       title: "Okuma Metinleri",
       description: "Farklı seviyelerde okuma parçaları ve anlama alıştırmaları",
       gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-      stats: "30+ Metin",
       badge: "Etkileşimli"
     }
   ];
@@ -46,7 +43,6 @@ export default function QuickLinks() {
     <section className="quick-links-section">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">Hızlı Erişim</h2>
           <p className="section-subtitle">
             İspanyolca öğrenme yolculuğunuzda ihtiyacınız olan tüm kaynaklar bir tık uzağınızda
           </p>
