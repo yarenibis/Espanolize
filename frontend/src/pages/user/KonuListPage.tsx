@@ -192,14 +192,6 @@ export default function KonuListPage() {
                 </div>
               ))}
             </div>
-
-            {/* Footer Info */}
-            <div style={{ textAlign: 'center', marginTop: '40px', color: '#718096' }}>
-              <p>
-                Toplam {filteredKonular.length} konu bulundu • 
-                Seviyenize uygun konuları seçerek çalışmaya başlayın
-              </p>
-            </div>
           </>
         )}
       </div>
