@@ -86,9 +86,6 @@ export default function KonuDetailPage() {
   return (
     <div className="lesson-container">
       <Navbar  />
-
-  
-
       <h1 className="lesson-title">{konu.baslik}</h1>
       <p className="lesson-description">{konu.aciklama}</p>
 

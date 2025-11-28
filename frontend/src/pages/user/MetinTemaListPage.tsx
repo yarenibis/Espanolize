@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { BookOutlined, SearchOutlined, FileTextOutlined } from "@ant-design/icons";
 import api from "../../services/ApiService";
 import "./MetinTemaListPage.css";
+import Navbar from "../../components/Navbar";
 
 interface MetinTema {
   id: number;
@@ -76,7 +77,9 @@ export default function MetinTemaListPage() {
   }
 
   return (
+
     <div className="metin-tema-container">
+      <Navbar />
       <div className="metin-tema-content">
         {/* Header Section */}
         <div className="metin-tema-header">
@@ -100,17 +103,7 @@ export default function MetinTemaListPage() {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="stats-section">
-          <div className="stat-item">
-            <span className="stat-number">{temalar.length}</span>
-            <span className="stat-label">Toplam Tema</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">{temalar.length * 3}</span>
-            <span className="stat-label">Toplam Metin</span>
-          </div>
-        </div>
+    
 
         {/* Empty State */}
         {!loading && filteredTemalar.length === 0 && (
@@ -165,22 +158,10 @@ export default function MetinTemaListPage() {
                       {tema.aciklama}
                     </p>
 
-                    <div className="card-footer">
-                      <div className="learn-more">
-                        Metinleri Oku <BookOutlined />
-                      </div>
-                    </div>
+                    
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* Footer Info */}
-            <div className="footer-info">
-              <p className="footer-text">
-                Toplam <span className="footer-highlight">{filteredTemalar.length} metin teması</span> bulundu • 
-                Seviyenize uygun temaları seçerek okuma becerilerinizi geliştirin
-              </p>
             </div>
           </>
         )}

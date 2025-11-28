@@ -204,14 +204,6 @@ export default function KelimeTemaListPage() {
                 </div>
               ))}
             </div>
-
-            {/* Footer Info */}
-            <div className="footer-info">
-              <p className="footer-text">
-                Toplam <span className="footer-highlight">{filteredTemalar.length} tema</span> bulundu • 
-                Seviyenize uygun temaları seçerek kelime dağarcığınızı geliştirin
-              </p>
-            </div>
           </>
         )}
       </div>
