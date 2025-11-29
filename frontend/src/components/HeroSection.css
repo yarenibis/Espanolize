@@ -2,12 +2,9 @@
 .hero-section {
   margin-top: 80px;
   padding: 100px 0;
-  background: linear-gradient(135deg, 
-    rgba(88, 0, 0, 0.03) 0%, 
-    rgba(145, 128, 34, 0.03) 50%, 
-    rgba(241, 242, 246, 0.02) 100%);
   position: relative;
   overflow: hidden;
+  
 }
 
 .hero-section::before {
@@ -17,7 +14,7 @@
   right: -150px;
   width: 800px;
   height: 800px;
-  background: radial-gradient(circle, rgba(170, 0, 0, 0.08) 0%, transparent 70%);
+
   border-radius: 50%;
   z-index: 0;
 }
@@ -29,7 +26,7 @@
   left: -200px;
   width: 700px;
   height: 700px;
-  background: radial-gradient(circle, rgba(255, 215, 0, 0.06) 0%, transparent 70%);
+
   border-radius: 50%;
   z-index: 0;
 }

@@ -149,7 +149,6 @@ export default function QuickLinks() {
         <div className="cards-category">
           <div className="category-header">
             <div className="category-title">
-              <BookOutlined className="category-icon" />
               <h2>Gramer Konuları</h2>
             </div>
             <Link to="/konular" className="view-all-link">
@@ -204,7 +203,6 @@ export default function QuickLinks() {
         <div className="cards-category">
           <div className="category-header">
             <div className="category-title">
-              <ReadOutlined className="category-icon" />
               <h2>Kelime Temaları</h2>
             </div>
             <Link to="/kelimetemalari" className="view-all-link">
@@ -259,7 +257,6 @@ export default function QuickLinks() {
         <div className="cards-category">
           <div className="category-header">
             <div className="category-title">
-              <FileTextOutlined className="category-icon" />
               <h2>Okuma Metinleri</h2>
             </div>
             <Link to="/metinTema" className="view-all-link">

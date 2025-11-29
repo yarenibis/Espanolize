@@ -17,20 +17,7 @@ export default function Footer() {
                 Modern yöntemlerle İspanyolca öğrenme platformu. 
                 Gramer, kelime ve okuma metinleriyle kapsamlı öğrenme deneyimi.
               </p>
-              <div className="social-links">
-                <a href="#" className="social-link" aria-label="Twitter">
-                  <span className="social-icon">🐦</span>
-                </a>
-                <a href="#" className="social-link" aria-label="Instagram">
-                  <span className="social-icon">📷</span>
-                </a>
-                <a href="#" className="social-link" aria-label="YouTube">
-                  <span className="social-icon">📺</span>
-                </a>
-                <a href="#" className="social-link" aria-label="LinkedIn">
-                  <span className="social-icon">💼</span>
-                </a>
-              </div>
+              
             </div>
           </div>
 
@@ -41,7 +28,6 @@ export default function Footer() {
               <Link to="/gramerkurallar" className="footer-link">Gramer Kuralları</Link>
               <Link to="/kelimetemalari" className="footer-link">Kelime Öğren</Link>
               <Link to="/metinTema" className="footer-link">Okuma Metinleri</Link>
-              <Link to="/alistirmalar" className="footer-link">Alıştırmalar</Link>
             </div>
           </div>
 
@@ -66,27 +52,7 @@ export default function Footer() {
               <a href="#" className="footer-link">Topluluk</a>
             </div>
           </div>
-
-          {/* Newsletter */}
-          <div className="footer-section">
-            <h4 className="footer-title">Bülten</h4>
-            <div className="newsletter">
-              <p className="newsletter-text">
-                Yeni içeriklerden ve güncellemelerden haberdar olun.
-              </p>
-              <div className="newsletter-form">
-                <input 
-                  type="email" 
-                  placeholder="E-posta adresiniz"
-                  className="newsletter-input"
-                />
-                <button className="newsletter-btn">
-                  <span>Abone Ol</span>
-                  <span className="btn-icon">✉️</span>
-                </button>
-              </div>
-            </div>
-          </div>
+          
         </div>
 
         {/* Footer Bottom */}

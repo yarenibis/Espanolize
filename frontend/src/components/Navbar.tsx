@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Navbar.css";
+import logo from "../assets/logo.png";
+import logo2 from"../assets/espanolize.png";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -18,14 +20,19 @@ export default function Navbar() {
     <>
       <nav className="navbar">
         <div className="nav-container">
-          {/* Logo Alanı */}
-          <Link to="/" className="logo-area" onClick={closeMobileMenu}>
-            <div className="logo-icon">ES</div>
-            <div className="logo-text">
-              <div className="logo-main">Espanolize</div>
-              <div className="logo-sub">LEARN SPANISH</div>
-            </div>
-          </Link>
+<Link to="/" className="logo-area" onClick={closeMobileMenu}>
+  
+  {/* PNG Logo */}
+  <img 
+    src={logo2}
+    alt="Logo"
+    className="logo-image"
+  />
+
+
+
+</Link>
+
 
           {/* Desktop Navigasyon */}
           <ul className="nav-links">

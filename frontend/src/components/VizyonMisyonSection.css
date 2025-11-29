@@ -1,0 +1,95 @@
+/* Vizyon & Misyon Section */
+.vm-section {
+  padding: 120px 20px;
+  background: #ffffff;
+  position: relative;
+}
+
+.vm-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Dekoratif PNG’ler */
+.vm-img {
+  position: absolute;
+  width: 160px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.vm-left {
+  top: -20px;
+  left: -40px;
+}
+
+.vm-right {
+  bottom: -10px;
+  right: -40px;
+}
+
+/* Başlık */
+.vm-title {
+  text-align: center;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin-bottom: 60px;
+}
+
+/* Kartlar */
+.vm-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+}
+
+.vm-card {
+  background: #f9fafb;
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  border: 1px solid #eceff3;
+  transition: 0.25s ease;
+}
+
+.vm-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+.vm-card-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #4c6ef5;
+}
+
+.vm-card-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #4a5568;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .vm-img {
+    width: 120px;
+    opacity: 0.2;
+  }
+
+  .vm-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .vm-img {
+    display: none; /* Mobilde gerek yok */
+  }
+
+  .vm-title {
+    font-size: 1.7rem;
+  }
+}

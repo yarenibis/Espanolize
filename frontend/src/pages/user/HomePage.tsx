@@ -5,6 +5,8 @@ import HeroSection from "../../components/HeroSection";
 import Navbar from "../../components/Navbar";
 import QuickLinks from "../../components/QuickLinks";
 import HomeAboutSection from "../../components/HomeAboutSection";
+import FeatureHighlights from "../../components/FeatureHighlights";
+import VizyonMisyonSection from "../../components/VizyonMisyonSection";
 
 
 
@@ -14,7 +16,9 @@ export default function HomePage() {
       <Navbar />
       <HeroSection />
       <HomeAboutSection/>
+      <FeatureHighlights />
       <QuickLinks />
+      <VizyonMisyonSection/>
       <Footer />
     </>
   );
