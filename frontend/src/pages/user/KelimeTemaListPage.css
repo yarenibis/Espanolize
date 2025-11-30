@@ -1,32 +1,34 @@
-/* KelimeTemaListPage.css — KonuListPage tasarımına göre sade ve modern */
-
+/* Sayfa arka planı tam ekran */
 .kelime-tema-container {
   min-height: 100vh;
   background: #f8fafc;
-  padding: 80px 0 40px;
+  padding-top: 80px; /* Navbar boşluğu */
 }
 
-/* İçerik */
+/* İçerik max 1200px */
 .kelime-tema-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 20px 40px;
 }
 
-/* ===============================
-   HEADER — KonuListPage ile aynı
-   =============================== */
+/* ===== HEADER FULL WIDTH ===== */
 .kelime-tema-header {
-  text-align: center;
-  margin-bottom: 50px;
-  min-height: 7vh;
+  width: 100%;
   background: linear-gradient(
       rgba(248, 250, 252, 0.8),
       rgba(248, 250, 252, 0.7)
     ),
     url('../../assets/España.jpg') center/cover fixed;
-  padding: 10px 0 40px;
-  position: relative;
+  padding: 20px 0 40px;
+  margin-bottom: 40px;
+}
+
+.kelime-tema-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: center;
 }
 
 .kelime-tema-main-title {
@@ -34,7 +36,6 @@
   font-weight: 700;
   color: #1a202c;
   margin-bottom: 16px;
-  line-height: 1.2;
 }
 
 .kelime-tema-subtitle {
@@ -42,15 +43,15 @@
   color: #718096;
   max-width: 500px;
   margin: 0 auto;
-  line-height: 1.6;
 }
 
-/* ===============================
-   SEARCH — sade & modern
-   =============================== */
+/* Search */
 .search-container {
   max-width: 500px;
-  margin: 0 auto 50px;
+  margin: 0 auto 40px;
+}
+
+.search-wrapper {
   position: relative;
 }
 
@@ -73,16 +74,14 @@
 
 .search-icon {
   position: absolute;
-  right: 20px;
+  right: 18px;
   top: 50%;
   transform: translateY(-50%);
   color: #a0aec0;
   font-size: 1.1rem;
 }
 
-/* ===============================
-   TEMALAR GRID
-   =============================== */
+/* Grid */
 .kelime-tema-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -90,9 +89,7 @@
   margin-bottom: 40px;
 }
 
-/* ===============================
-   CARD TASARIMI (KonuListPage ile aynı)
-   =============================== */
+/* Kart */
 .kelime-tema-card {
   background: white;
   border-radius: 12px;
@@ -112,7 +109,7 @@
   border-color: #4299e1;
 }
 
-/* Kapak Resmi */
+/* Card Cover */
 .card-cover {
   height: 160px;
   overflow: hidden;
@@ -126,13 +123,13 @@
   object-fit: cover;
 }
 
-/* Zorluk Rozeti */
 .card-overlay {
   position: absolute;
   top: 12px;
   right: 12px;
 }
 
+/* Difficulty Badge */
 .difficulty-badge {
   padding: 6px 12px;
   border-radius: 20px;
@@ -146,10 +143,12 @@
   background: #48bb78;
   color: white;
 }
+
 .difficulty-intermediate {
   background: #ed8936;
   color: white;
 }
+
 .difficulty-advanced {
   background: #f56565;
   color: white;
@@ -178,6 +177,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .card-icon svg {
@@ -189,9 +189,9 @@
   font-size: 1.3rem;
   font-weight: 600;
   color: #2d3748;
-  flex: 1;
 }
 
+/* Açıklama */
 .card-description {
   color: #718096;
   line-height: 1.5;
@@ -201,7 +201,7 @@
   overflow: hidden;
 }
 
-/* Meta Bilgi */
+/* Meta */
 .card-meta {
   display: flex;
   justify-content: space-between;
@@ -229,25 +229,32 @@
   color: #4299e1;
 }
 
-/* Footer */
+/* Footer Info */
 .footer-info {
   text-align: center;
-  margin-top: 40px;
-  padding: 20px;
+  margin-top: 20px;
+  padding: 10px;
   color: #718096;
+}
+html, body, #root {
+  height: 100%;
+  background: #f8fafc;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .kelime-tema-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+  .kelime-tema-content {
+    padding: 0 16px 30px;
   }
 
   .kelime-tema-main-title {
     font-size: 2rem;
+  }
+
+  .kelime-tema-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }

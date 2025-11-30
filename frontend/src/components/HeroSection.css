@@ -1,34 +1,37 @@
-/* Hero Section - İspanya Teması */
+/* Hero Section - Modern Blue Theme */
 .hero-section {
   margin-top: 80px;
   padding: 100px 0;
   position: relative;
+  background: #F8FAFC; /* Soft blue-gray background */
   overflow: hidden;
-  
 }
 
+/* Decorative Circles */
 .hero-section::before {
   content: '';
   position: absolute;
-  top: -300px;
-  right: -150px;
-  width: 800px;
-  height: 800px;
-
+  top: -250px;
+  right: -120px;
+  width: 700px;
+  height: 700px;
+  background: #DBEAFE; /* light blue */
   border-radius: 50%;
   z-index: 0;
+  opacity: 0.6;
 }
 
 .hero-section::after {
   content: '';
   position: absolute;
-  bottom: -400px;
-  left: -200px;
-  width: 700px;
-  height: 700px;
-
+  bottom: -300px;
+  left: -150px;
+  width: 650px;
+  height: 650px;
+  background: #EFF6FF; /* even lighter blue */
   border-radius: 50%;
   z-index: 0;
+  opacity: 0.8;
 }
 
 .hero-container {
@@ -51,31 +54,32 @@
   max-width: 560px;
 }
 
+/* Badge */
 .hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(170, 0, 0, 0.1);
-  border: 1px solid rgba(170, 0, 0, 0.2);
+  background: #DBEAFE;
+  border: 1px solid #BFDBFE;
   border-radius: 24px;
   padding: 8px 20px;
   margin-bottom: 32px;
-  backdrop-filter: blur(10px);
   font-size: 0.875rem;
   font-weight: 600;
-  color: #AA0000;
+  color: #1E40AF; /* primary dark blue */
 }
 
 .badge-icon {
   font-size: 1rem;
 }
 
+/* Title */
 .hero-title {
   font-size: clamp(2.75rem, 5vw, 3.75rem);
   font-weight: 700;
   line-height: 1.1;
   margin-bottom: 24px;
-  color: #1a202c;
+  color: #1E293B;
 }
 
 .title-line {
@@ -83,25 +87,18 @@
   margin-bottom: 8px;
 }
 
+/* Gradient Removed → Solid Blue Highlight */
 .title-gradient {
   display: block;
-  background: linear-gradient(135deg, #AA0000 0%, #C60B1E 50%, #FFD700 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #3B82F6; /* primary blue */
 }
 
+/* Description */
 .hero-description {
   font-size: 1.125rem;
   line-height: 1.7;
-  color: #4a5568;
+  color: #475569;
   margin-bottom: 40px;
-  font-weight: 400;
-}
-
-.hero-description strong {
-  color: #2d3748;
-  font-weight: 600;
 }
 
 /* Stats */
@@ -111,8 +108,8 @@
   gap: 32px;
   margin-bottom: 40px;
   padding: 32px 0;
-  border-top: 1px solid rgba(226, 232, 240, 0.8);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  border-top: 1px solid #E2E8F0;
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .stat-item {
@@ -124,20 +121,19 @@
 .stat-number {
   font-size: 2rem;
   font-weight: 700;
-  color: #AA0000;
-  line-height: 1;
+  color: #2563EB; /* brighter blue */
 }
 
 .stat-label {
   font-size: 0.875rem;
-  color: #718096;
+  color: #64748B;
   margin-top: 4px;
 }
 
 .stat-divider {
   width: 1px;
   height: 40px;
-  background: linear-gradient(180deg, transparent 0%, #e2e8f0 50%, transparent 100%);
+  background: #E2E8F0;
 }
 
 /* Buttons */
@@ -157,55 +153,38 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 1rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   border: 2px solid transparent;
-  position: relative;
-  overflow: hidden;
 }
 
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.7s;
-}
-
-.btn:hover::before {
-  left: 100%;
-}
-
+/* Primary Blue Button */
 .btn-primary {
-  background: linear-gradient(135deg, #AA0000 0%, #C60B1E 100%);
+  background: #3B82F6;
   color: white;
-  box-shadow: 0 8px 25px rgba(170, 0, 0, 0.25);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25);
 }
 
 .btn-primary:hover {
+  background: #2563EB;
   transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(170, 0, 0, 0.35);
 }
 
+/* Secondary Outline Button */
 .btn-secondary {
   background: white;
-  color: #AA0000;
-  border: 2px solid #e2e8f0;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  color: #2563EB;
+  border: 2px solid #DBEAFE;
 }
 
 .btn-secondary:hover {
-  background: #f7fafc;
-  border-color: #AA0000;
+  background: #F1F5F9;
+  border-color: #3B82F6;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
+/* Icons */
 .btn-icon {
   font-size: 1.1rem;
-  font-weight: 400;
 }
 
 /* Trust Indicators */
@@ -220,26 +199,18 @@
   align-items: center;
   gap: 12px;
   font-size: 0.875rem;
-  color: #718096;
+  color: #64748B;
   font-weight: 500;
-  padding: 8px 0;
 }
 
 .trust-icon {
   font-size: 1.25rem;
-  color: #AA0000;
+  color: #2563EB;
 }
 
-/* Visual Content */
+/* Visual Image */
 .hero-visual {
   position: relative;
-}
-
-.visual-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .hero-image {
@@ -248,253 +219,30 @@
   height: auto;
   border-radius: 24px;
   box-shadow: 
-    0 25px 50px rgba(170, 0, 0, 0.08),
+    0 25px 50px rgba(59, 130, 246, 0.1),
     0 0 0 1px rgba(255, 255, 255, 0.9);
-  filter: drop-shadow(0 20px 40px rgba(170, 0, 0, 0.1));
-  transform: perspective(1200px) rotateY(-8deg) rotateX(5deg);
-  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.hero-image:hover {
-  transform: perspective(1200px) rotateY(-4deg) rotateX(3deg);
-}
-
-/* Floating Elements - İspanyol Teması */
-.floating-element {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 16px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  font-size: 0.75rem;
-  color: #2d3748;
-  box-shadow: 
-    0 8px 32px rgba(170, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.6);
-  animation: float 8s ease-in-out infinite;
-  z-index: 2;
-  white-space: nowrap;
-}
-
-.element-icon {
-  font-size: 1rem;
-  color: #AA0000;
-}
-
-.element-1 {
-  top: 15%;
-  left: -20px;
-  animation-delay: 0s;
-  background: linear-gradient(135deg, rgba(170, 0, 0, 0.1) 0%, rgba(198, 11, 30, 0.1) 100%);
-}
-
-.element-2 {
-  top: 50%;
-  right: -30px;
-  animation-delay: 2.5s;
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 191, 0, 0.1) 100%);
-}
-
-.element-3 {
-  bottom: 20%;
-  left: -10px;
-  animation-delay: 5s;
-  background: linear-gradient(135deg, rgba(170, 0, 0, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%);
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg) scale(1);
-  }
-  33% {
-    transform: translateY(-15px) rotate(1deg) scale(1.02);
-  }
-  66% {
-    transform: translateY(-8px) rotate(-1deg) scale(1.01);
-  }
-}
-
-/* İspanyol Deseni */
+/* Remove Floating Elements – Soft Look */
+.floating-element,
+.flamenco-icon,
 .spanish-pattern {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  background: repeating-linear-gradient(
-    45deg,
-    #AA0000,
-    #AA0000 20px,
-    #FFD700 20px,
-    #FFD700 40px
-  );
-  opacity: 0.1;
-  z-index: 0;
+  display: none !important;
 }
 
-/* Flamenco İkonu */
-.flamenco-icon {
-  position: absolute;
-  bottom: 20px;
-  right: 30px;
-  font-size: 3rem;
-  opacity: 0.7;
-  animation: flamencoDance 3s infinite ease-in-out;
-  z-index: 2;
-}
-
-@keyframes flamencoDance {
-  0%, 100% { transform: rotate(-5deg) scale(1); }
-  25% { transform: rotate(5deg) scale(1.05); }
-  50% { transform: rotate(-3deg) scale(1); }
-  75% { transform: rotate(3deg) scale(1.05); }
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .hero-content {
-    gap: 60px;
-  }
-  
-  .hero-stats {
-    gap: 24px;
-  }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-  .hero-section {
-    margin-top: 70px;
-    padding: 80px 0;
-  }
-  
   .hero-content {
     grid-template-columns: 1fr;
     gap: 50px;
     text-align: center;
   }
-  
-  .hero-text-content {
-    max-width: 100%;
-  }
-  
+
   .hero-actions {
     justify-content: center;
   }
-  
-  .trust-indicators {
-    justify-content: center;
-  }
-  
-  .hero-stats {
-    justify-content: center;
-    gap: 24px;
-  }
-  
-  .hero-image {
-    transform: none;
-    max-width: 400px;
-  }
-  
-  .floating-element {
-    display: none;
-  }
-  
-  .flamenco-icon {
-    display: none;
-  }
-}
 
-@media (max-width: 480px) {
-  .hero-section {
-    padding: 60px 0;
-  }
-  
-  .hero-container {
-    padding: 0 20px;
-  }
-  
-  .hero-title {
-    font-size: 2.25rem;
-  }
-  
-  .hero-actions {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .btn {
-    width: 100%;
-    max-width: 280px;
-    justify-content: center;
-  }
-  
-  .hero-stats {
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .stat-divider {
-    width: 60px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%);
-  }
-  
-  .trust-indicators {
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-  }
-}
-
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .hero-section {
-    background: linear-gradient(135deg, 
-      rgba(170, 0, 0, 0.05) 0%, 
-      rgba(255, 215, 0, 0.05) 50%, 
-      rgba(45, 55, 72, 0.03) 100%);
-  }
-  
-  .hero-title .title-line {
-    color: #f7fafc;
-  }
-  
-  .hero-description {
-    color: #cbd5e0;
-  }
-  
-  .hero-description strong {
-    color: #e2e8f0;
-  }
-  
-  .floating-element {
-    background: rgba(45, 55, 72, 0.95);
-    color: #f7fafc;
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 
-      0 8px 32px rgba(170, 0, 0, 0.2),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
-  }
-  
-  .btn-secondary {
-    background: rgba(45, 55, 72, 0.8);
-    color: #e2e8f0;
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .btn-secondary:hover {
-    background: rgba(55, 65, 81, 0.8);
-    border-color: #AA0000;
-  }
-  
   .hero-image {
-    box-shadow: 
-      0 25px 50px rgba(170, 0, 0, 0.15),
-      0 0 0 1px rgba(45, 55, 72, 0.9);
+    max-width: 380px;
   }
 }

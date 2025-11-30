@@ -85,11 +85,10 @@ export default function KonuListPage() {
   return (
     <div className="konu-list-container">
       <Navbar />
-      
       <div className="konu-list-content">
         {/* Header Section */}
         <div className="konu-header">
-          <h1 className="konu-main-title">📚 İspanyolca Konuları</h1>
+          <h1 className="konu-main-title"> İspanyolca Konuları</h1>
           <p className="konu-subtitle">
             Seviyenize uygun konuları keşfedin, interaktif içeriklerle İspanyolcanızı geliştirin
           </p>

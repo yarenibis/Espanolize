@@ -1,7 +1,6 @@
 import "./HomeAboutSection.css";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import heroImg from "../assets/Viva España.jpg";
-import pngone from "../assets/png1.png";
+import heroImg from "../assets/Andalusian Dreams_ Discover the Grandeur of Plaza de España in Seville, Spain.jpg";
 
 export default function HomeAboutSection() {
   return (
@@ -11,24 +10,22 @@ export default function HomeAboutSection() {
       <div className="about-top">
         <div className="about-image-box">
           <img
-            src={pngone}
+            src={heroImg}
             alt="About"
             className="about-main-image"
           />
         </div>
 
         <div className="about-text-box">
-          <h2 className="about-title">We empower small business owners</h2>
+          <h2 className="about-title">We simplify Spanish with real-life learning</h2>
           <p className="about-desc">
-            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-            nisi ut aliquip ex ea commodo consequat.
+            Günlük hayattan seçilmiş metinler, sade anlatım ve kolay anlaşılır yapısıyla Espanolize, İspanyolcayı doğal akışında öğrenmeni sağlar.
+Karmaşıklıktan uzak, tamamen ihtiyaçlarına göre hazırlanmış içeriklerle hızlı ve kalıcı bir öğrenme deneyimi sunuyoruz. 
+“Bir dili gerçekten anlamanın yolu, onu günlük yaşamın içinden öğrenmekten geçer.
+Espanolize, herkes için erişilebilir ve etkili bir öğrenme yaklaşımı sunar.”
           </p>
 
-          <blockquote className="about-quote">
-            “Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.”
-          </blockquote>
+          
 
           
         </div>

@@ -1,6 +1,6 @@
 // src/components/VizyonMisyonSection.tsx
 import "./VizyonMisyonSection.css";
-import png from "../assets/png1.png";
+import png from "../assets/png4.png";
 
 export default function VizyonMisyonSection() {
   return (
@@ -27,20 +27,16 @@ export default function VizyonMisyonSection() {
           <div className="vm-cards">
             
             <div className="vm-card">
-              <h3 className="vm-card-title">🎯 Vizyonumuz</h3>
+              <h3 className="vm-card-title"> Vizyonumuz</h3>
               <p className="vm-card-text">
-                Her seviyeden kullanıcıya modern, etkili ve kişiselleştirilmiş 
-                bir İspanyolca öğrenme deneyimi sunmak.  
-                Öğrenmeyi eğlenceli, ulaşılabilir ve sürdürülebilir hale getirmek.
+                Global ölçekte, İspanyolca öğrenmek isteyen herkesin başvurduğu, yalın ve etkili içerikleriyle öne çıkan bir dijital öğrenme platformu olmak.
               </p>
             </div>
 
             <div className="vm-card">
-              <h3 className="vm-card-title">🚀 Misyonumuz</h3>
+              <h3 className="vm-card-title"> Misyonumuz</h3>
               <p className="vm-card-text">
-                Kelime, gramer ve okuma içeriklerini tek bir çatı altında sunarak 
-                kullanıcıların kısa sürede gerçek bir gelişim sağlamasına yardımcı olmak.  
-                Yapay zekâ destekli öğrenme araçlarıyla süreci hızlandırmak.
+                İspanyolcayı herkes için ulaşılabilir, anlaşılır ve günlük hayatla iç içe bir öğrenme deneyimi hâline getirmek.
               </p>
             </div>
 

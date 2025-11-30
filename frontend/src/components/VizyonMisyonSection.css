@@ -1,8 +1,12 @@
-/* Vizyon & Misyon Section */
+/* =============================
+   Vizyon & Misyon Section (Blue Theme)
+============================= */
+
 .vm-section {
-  padding: 120px 20px;
-  background: #ffffff;
+  padding: 70px 20px;
+  background: #F1F5FB; /* Açık mavi arka plan */
   position: relative;
+  overflow: hidden;
 }
 
 .vm-container {
@@ -11,12 +15,13 @@
   position: relative;
 }
 
-/* Dekoratif PNG’ler */
+/* Dekoratif PNG’ler (mavi temaya uygun opaklık) */
 .vm-img {
   position: absolute;
   width: 160px;
-  opacity: 0.25;
+  opacity: 0.7; 
   pointer-events: none;
+  filter: drop-shadow(0 4px 10px rgba(59, 130, 246, 0.15));
 }
 
 .vm-left {
@@ -34,49 +39,54 @@
   text-align: center;
   font-size: 2.4rem;
   font-weight: 800;
-  color: #2d3748;
-  margin-bottom: 60px;
+  color: #1e3a8a; /* Koyu mavi */
+  margin-bottom: 30px;
+  letter-spacing: -0.5px;
 }
 
-/* Kartlar */
+/* Kartlar grid */
 .vm-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 30px;
 }
 
+/* Kartlar */
 .vm-card {
-  background: #f9fafb;
+  background: #ffffff;
   border-radius: 18px;
   padding: 32px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  border: 1px solid #eceff3;
+  border: 1px solid #dbe2f1;
+  box-shadow: 0 4px 18px rgba(59, 130, 246, 0.10);
   transition: 0.25s ease;
 }
 
 .vm-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 14px 32px rgba(59, 130, 246, 0.18);
+  border-color: #93c5fd;
 }
 
+/* Kart Başlık */
 .vm-card-title {
   font-size: 1.4rem;
   font-weight: 700;
   margin-bottom: 12px;
-  color: #4c6ef5;
+  color: #2563EB; /* canlı mavi */
 }
 
+/* Kart Yazı */
 .vm-card-text {
   font-size: 1.05rem;
   line-height: 1.7;
-  color: #4a5568;
+  color: #475569; /* soft gri-mavi */
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .vm-img {
     width: 120px;
-    opacity: 0.2;
+    opacity: 0.18;
   }
 
   .vm-title {
@@ -86,7 +96,7 @@
 
 @media (max-width: 480px) {
   .vm-img {
-    display: none; /* Mobilde gerek yok */
+    display: none;
   }
 
   .vm-title {

@@ -1,75 +1,47 @@
+/* NAVBAR - Blue Theme */
 .navbar {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(18px);
   position: fixed;
   top: 0;
   width: 100%;
   height: 70px;
   padding: 16px 0;
-  box-shadow: 0 2px 20px rgba(170, 0, 0, 0.08);
+  box-shadow: 0 2px 20px rgba(59, 130, 246, 0.10); /* blue shadow */
   z-index: 1000;
-  border-bottom: 1px solid rgba(170, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+  overflow: visible;
 }
 
-/* PNG logoyu kontrol eden yapı */
+/* PNG Logo */
 .logo-image {
-  height: 70px;
+  height: 170px;
   width: auto;
   display: block;
+  object-fit: contain;
 }
 
-
-
-/* Logo alanı düzeni */
+/* Logo area */
 .logo-area {
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-
-
-
-.logo-text .logo-main {
-  font-size: 1.35rem;
-  font-weight: 800;
-}
-
-.logo-text .logo-sub {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin-top: -4px;
-}
-
-
-.nav-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Logo Alanı */
-.logo-area {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
 }
 
+/* If icon is used instead of PNG */
 .logo-icon {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #AA0000 0%, #C60B1E 50%, #FFD700 100%);
+  background: #3B82F6; /* primary blue */
   border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
   color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
   font-size: 18px;
-  box-shadow: 0 4px 15px rgba(170, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .logo-text {
@@ -79,41 +51,47 @@
 
 .logo-main {
   font-weight: 800;
-  font-size: 24px;
-  background: linear-gradient(135deg, #AA0000 0%, #C60B1E 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1;
+  font-size: 22px;
+  color: #1E40AF; /* dark blue text */
 }
 
 .logo-sub {
   font-size: 10px;
-  color: #AA0000;
+  color: #3B82F6;
+  margin-top: 1px;
   font-weight: 600;
   letter-spacing: 1px;
-  margin-top: 2px;
 }
 
-/* Navigasyon Linkleri */
+/* Container */
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+}
+
+/* Navigation Links */
 .nav-links {
   display: flex;
-  gap: 32px;
+  gap: 30px;
   list-style: none;
-  margin: 0;
-  padding: 0;
 }
 
 .nav-links a {
-  color: #2d3748;
+  color: #1e293b; /* slate-800 */
   text-decoration: none;
   font-weight: 600;
   font-size: 15px;
   padding: 8px 0;
   position: relative;
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 
+/* Link underline hover effect */
 .nav-links a::after {
   content: '';
   position: absolute;
@@ -121,53 +99,52 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(135deg, #AA0000 0%, #FFD700 100%);
-  transition: width 0.3s ease;
+  background: #3B82F6; /* blue underline */
+  transition: width 0.3s;
 }
 
 .nav-links a:hover {
-  color: #AA0000;
+  color: #2563EB; /* brighter blue */
 }
 
 .nav-links a:hover::after {
   width: 100%;
 }
 
+/* Active Route */
 .nav-links a.active {
-  color: #AA0000;
+  color: #2563EB;
 }
 
 .nav-links a.active::after {
   width: 100%;
 }
 
-/* Butonlar */
+/* Buttons */
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
 }
 
 .login-btn {
-  background: linear-gradient(135deg, #AA0000 0%, #C60B1E 100%);
+  background: #3B82F6;
   padding: 10px 24px;
   color: white;
-  border-radius: 12px;
+  border-radius: 10px;
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(170, 0, 0, 0.2);
-  border: 2px solid transparent;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 .login-btn:hover {
+  background: #2563EB;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(170, 0, 0, 0.3);
-  background: linear-gradient(135deg, #C60B1E 0%, #AA0000 100%);
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
 }
 
-/* Mobile Menu */
+/* Mobile Menu Button */
 .mobile-menu-btn {
   display: none;
   flex-direction: column;
@@ -175,30 +152,29 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px;
 }
 
 .mobile-menu-btn span {
   width: 24px;
   height: 3px;
-  background: linear-gradient(135deg, #AA0000 0%, #C60B1E 100%);
+  background: #3B82F6;
   border-radius: 2px;
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 
-/* Mobile Menu */
+/* MOBILE MENU */
 .mobile-menu {
   position: fixed;
   top: 72px;
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(12px);
   padding: 20px;
-  box-shadow: 0 4px 20px rgba(170, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
   transform: translateY(-100%);
   opacity: 0;
-  transition: all 0.3s ease;
+  transition: 0.3s ease;
   z-index: 999;
 }
 
@@ -207,125 +183,40 @@
   opacity: 1;
 }
 
+/* Mobile Nav Links */
 .mobile-nav-links {
   list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
 .mobile-nav-links a {
-  color: #2d3748;
+  padding: 12px 0;
   text-decoration: none;
   font-weight: 600;
-  font-size: 16px;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(170, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  color: #1e293b;
+  border-bottom: 1px solid #DBEAFE;
+  transition: 0.3s;
 }
 
 .mobile-nav-links a:hover {
-  color: #AA0000;
-  padding-left: 8px;
+  color: #2563EB;
+  padding-left: 6px;
 }
 
 .mobile-nav-actions {
   margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
-/* Responsive Tasarım */
+/* Responsive */
 @media (max-width: 768px) {
   .nav-links,
   .nav-actions {
     display: none;
   }
-  
+
   .mobile-menu-btn {
     display: flex;
   }
-  
-  .nav-container {
-    padding: 0 20px;
-  }
-  
-  .logo-main {
-    font-size: 20px;
-  }
-  
-  .logo-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar {
-    padding: 12px 0;
-  }
-  
-  .logo-main {
-    font-size: 18px;
-  }
-  
-  .logo-sub {
-    font-size: 9px;
-  }
-  
-  .logo-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
-  }
-}
-
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .navbar {
-    background: rgba(45, 35, 35, 0.95);
-    border-bottom-color: rgba(170, 0, 0, 0.2);
-    box-shadow: 0 2px 20px rgba(170, 0, 0, 0.15);
-  }
-  
-  .nav-links a {
-    color: #e2e8f0;
-  }
-  
-  .nav-links a:hover {
-    color: #FFD700;
-  }
-  
-  .mobile-menu {
-    background: rgba(45, 35, 35, 0.98);
-  }
-  
-  .mobile-nav-links a {
-    color: #e2e8f0;
-    border-bottom-color: rgba(170, 0, 0, 0.2);
-  }
-  
-  .mobile-nav-links a:hover {
-    color: #FFD700;
-  }
-}
-
-/* Animasyonlar */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.navbar {
-  animation: slideIn 0.5s ease-out;
 }

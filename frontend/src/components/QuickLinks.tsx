@@ -287,11 +287,7 @@ export default function QuickLinks() {
                     <h3 className="card-title">Tema {tema.temaId}</h3>
                     <p className="card-description">{tema.aciklama}</p>
                     
-                    <div className="card-footer">
-                      <div className="read-more">
-                        Metinleri Oku <FileTextOutlined />
-                      </div>
-                    </div>
+                   
                   </div>
                 </Link>
               ))}

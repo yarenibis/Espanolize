@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Navbar.css";
-import logo from "../assets/logo.png";
-import logo2 from"../assets/espanolize.png";
+import logo2 from"../assets/logo (2).png";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

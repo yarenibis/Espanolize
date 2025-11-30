@@ -1,15 +1,53 @@
-/* Feature Highlights Section */
+/* =============================
+   Feature Highlights - BLUE HERO STYLE
+============================= */
+
 .features-section {
-  padding: 80px 20px;
-  background: #998883;
+  padding: 100px 20px;
+  position: relative;
+  overflow: hidden;
+  background: #F8FAFC; /* açık mavi arka plan */
+}
+
+/* --- Floating Background Shapes (Hero ile uyumlu) --- */
+
+/* Büyük mavi blur dairesi - sağ yukarı */
+.features-section::before {
+  content: "";
+  position: absolute;
+  top: -180px;
+  right: -120px;
+  width: 420px;
+  height: 420px;
+  background: rgba(59, 130, 246, 0.15); /* soft blue */
+  filter: blur(140px);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+/* Alt sol blur */
+.features-section::after {
+  content: "";
+  position: absolute;
+  bottom: -160px;
+  left: -100px;
+  width: 380px;
+  height: 380px;
+  background: rgba(37, 99, 235, 0.13); /* deeper blue blur */
+  filter: blur(130px);
+  border-radius: 50%;
+  z-index: 0;
 }
 
 .features-container {
   max-width: 1100px;
   margin: 0 auto;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
+/* Titles */
 .features-title {
   font-size: 2.2rem;
   color: #1a202c;
@@ -23,35 +61,37 @@
   margin-bottom: 50px;
 }
 
-/* Grid System */
+/* Grid */
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 24px;
+  position: relative;
+  z-index: 1;
 }
 
-/* Card */
+/* Cards */
 .feature-card {
-  background: white;
+  background: #ffffffd6;
+  backdrop-filter: blur(6px);
   padding: 28px 20px;
-  border-radius: 14px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-radius: 16px;
+  border: 1px solid #dce2ea;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.10);
   transition: all 0.25s ease;
   text-align: center;
-  cursor: default;
 }
 
 .feature-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.15);
   border-color: #cbd5e1;
 }
 
 /* Icon */
 .feature-icon {
   font-size: 2.4rem;
-  color: #4c6ef5;
+  color: #2563EB;
   margin-bottom: 16px;
 }
 
@@ -59,18 +99,18 @@
 .feature-title {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #1e293b;
   margin-bottom: 10px;
 }
 
 /* Text */
 .feature-text {
-  color: #4a5568;
+  color: #475569;
   font-size: 0.95rem;
   line-height: 1.5;
 }
 
-/* Responsive */
+/* Mobile */
 @media (max-width: 480px) {
   .features-title {
     font-size: 1.8rem;
