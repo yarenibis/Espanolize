@@ -4,45 +4,59 @@ import png from "../assets/png4.png";
 
 export default function VizyonMisyonSection() {
   return (
-    <section className="vm-section">
+    <section 
+      className="vm-section"
+      aria-labelledby="vizyon-misyon-baslik"
+    >
       <div className="vm-container">
 
-        {/* PNG koymak için dekoratif köşeler */}
-        <img 
+        {/* Dekoratif PNG – SEO için gizlendi */}
+        <img
           src={png}
-          alt="decor" 
+          alt=""
+          aria-hidden="true"
           className="vm-img vm-left"
         />
 
-        <img 
+        <img
           src={png}
-          alt="decor" 
+          alt=""
+          aria-hidden="true"
           className="vm-img vm-right"
         />
 
-        {/* Metin alanı */}
         <div className="vm-content">
-          <h2 className="vm-title">Vizyon & Misyonumuz</h2>
+          {/* Ana Section Başlığı – SEO H2 */}
+          <h2 id="vizyon-misyon-baslik" className="vm-title">
+            Vizyon & Misyonumuz
+          </h2>
 
+          {/* Kartlar */}
           <div className="vm-cards">
-            
-            <div className="vm-card">
-              <h3 className="vm-card-title"> Vizyonumuz</h3>
-              <p className="vm-card-text">
-                Global ölçekte, İspanyolca öğrenmek isteyen herkesin başvurduğu, yalın ve etkili içerikleriyle öne çıkan bir dijital öğrenme platformu olmak.
-              </p>
-            </div>
 
-            <div className="vm-card">
-              <h3 className="vm-card-title"> Misyonumuz</h3>
+            {/* Vizyon Kartı */}
+            <article className="vm-card">
+              <h3 className="vm-card-title">Vizyonumuz</h3>
               <p className="vm-card-text">
-                İspanyolcayı herkes için ulaşılabilir, anlaşılır ve günlük hayatla iç içe bir öğrenme deneyimi hâline getirmek.
+                Global ölçekte, İspanyolca öğrenmek isteyen herkesin tercih ettiği,
+                sade, modern ve etkili içerikleriyle öne çıkan bir dijital öğrenme
+                platformu olmak.
               </p>
-            </div>
+            </article>
+
+            {/* Misyon Kartı */}
+            <article className="vm-card">
+              <h3 className="vm-card-title">Misyonumuz</h3>
+              <p className="vm-card-text">
+                İspanyolcayı herkes için ulaşılabilir, anlaşılır ve günlük yaşamın
+                doğal akışıyla uyumlu bir öğrenme deneyimine dönüştürmek; öğrenmeyi
+                kolaylaştıran içerikler sunmak.
+              </p>
+            </article>
 
           </div>
-
         </div>
+
       </div>
     </section>
   );
