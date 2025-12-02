@@ -1,260 +1,207 @@
-/* Sayfa arka planı tam ekran */
-.kelime-tema-container {
-  min-height: 100vh;
+/* ============================
+   Kelime Tema Page (SEO Friendly)
+============================ */
+
+.tema-page {
   background: #f8fafc;
-  padding-top: 80px; /* Navbar boşluğu */
+  padding-top: 80px;
 }
 
-/* İçerik max 1200px */
-.kelime-tema-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px 40px;
-}
-
-/* ===== HEADER FULL WIDTH ===== */
-.kelime-tema-header {
-  width: 100%;
-  background: linear-gradient(
-      rgba(248, 250, 252, 0.8),
-      rgba(248, 250, 252, 0.7)
-    ),
-    url('../../assets/España.jpg') center/cover fixed;
-  padding: 20px 0 40px;
-  margin-bottom: 40px;
-}
-
-.kelime-tema-header-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+/* ------- HEADER ------- */
+.tema-header {
   text-align: center;
+  padding: 40px 20px;
 }
 
-.kelime-tema-main-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #1a202c;
-  margin-bottom: 16px;
+.tema-header h1 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 10px;
 }
 
-.kelime-tema-subtitle {
-  font-size: 1.1rem;
-  color: #718096;
-  max-width: 500px;
+.tema-header p {
+  max-width: 540px;
   margin: 0 auto;
+  color: #fdfdfd;
+  font-size: 1.1rem;
 }
 
-/* Search */
-.search-container {
-  max-width: 500px;
-  margin: 0 auto 40px;
+/* ------- Search ------- */
+.tema-search {
+  max-width: 480px;
+  margin: 40px auto;
 }
 
-.search-wrapper {
-  position: relative;
-}
-
-.search-input {
+.tema-search input {
   width: 100%;
   height: 52px;
+  padding: 0 18px;
   border-radius: 12px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #d1d5db;
   font-size: 1rem;
-  padding: 0 50px 0 20px;
-  transition: all 0.3s ease;
-  background: white;
+  transition: 0.25s;
 }
 
-.search-input:focus {
+.tema-search input:focus {
+  border-color: #3b82f6;
   outline: none;
-  border-color: #4299e1;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
-.search-icon {
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #a0aec0;
-  font-size: 1.1rem;
+/* ------- Loading ------- */
+.loading-box {
+  text-align: center;
+  padding: 40px;
+  color: #64748b;
 }
 
-/* Grid */
-.kelime-tema-grid {
+.spinner {
+  width: 38px;
+  height: 38px;
+  border: 3px solid #dbeafe;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ------- Empty ------- */
+.empty-box {
+  text-align: center;
+  color: #64748b;
+  font-size: 1.05rem;
+  padding: 40px 0;
+}
+
+/* ------- Grid ------- */
+.tema-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
-  margin-bottom: 40px;
 }
 
-/* Kart */
-.kelime-tema-card {
+/* ------- Card ------- */
+.tema-card {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  cursor: pointer;
   border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: 0.25s ease;
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
-.kelime-tema-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  border-color: #4299e1;
+.tema-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 32px rgba(59, 130, 246, 0.15);
+  border-color: #3b82f6;
 }
 
-/* Card Cover */
-.card-cover {
-  height: 160px;
-  overflow: hidden;
-  position: relative;
-  background: #f7fafc;
+/* ------- Image ------- */
+.card-img {
+ position: relative;
+  height: 170px;
+  background: #e2e8f0;
 }
 
-.card-image {
+.card-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  
 }
 
-.card-overlay {
+.badge {
   position: absolute;
   top: 12px;
   right: 12px;
-}
-
-/* Difficulty Badge */
-.difficulty-badge {
   padding: 6px 12px;
-  border-radius: 20px;
+  border-radius: 12px;
   font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.difficulty-beginner {
-  background: #48bb78;
+  font-weight: 700;
   color: white;
 }
 
-.difficulty-intermediate {
-  background: #ed8936;
-  color: white;
+.badge-beginner {
+  background: #22c55e;
+}
+.badge-intermediate {
+  background: #f59e0b;
+}
+.badge-advanced {
+  background: #ef4444;
 }
 
-.difficulty-advanced {
-  background: #f56565;
-  color: white;
-}
-
-/* Card İçerik */
-.card-content {
-  padding: 24px;
+/* ------- Content ------- */
+.card-body {
+  padding: 20px;
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
-.card-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.card-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  background: #4299e1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.card-icon svg {
-  color: white;
-  font-size: 1.2rem;
-}
-
-.card-title {
+.card-body h2 {
   font-size: 1.3rem;
-  font-weight: 600;
-  color: #2d3748;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 10px;
 }
 
-/* Açıklama */
-.card-description {
-  color: #718096;
+.card-body p {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
   line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
-/* Meta */
-.card-meta {
+/* ------- Meta ------- */
+.meta {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid #f7fafc;
-}
-
-.meta-info {
-  display: flex;
-  gap: 12px;
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.875rem;
-  color: #718096;
-}
-
-.meta-icon {
+  color: #475569;
   font-size: 0.9rem;
-  color: #4299e1;
 }
 
-/* Footer Info */
-.footer-info {
-  text-align: center;
-  margin-top: 20px;
-  padding: 10px;
-  color: #718096;
-}
-html, body, #root {
-  height: 100%;
-  background: #f8fafc;
+.meta svg {
+  margin-right: 6px;
+  color: #3b82f6;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .kelime-tema-content {
-    padding: 0 16px 30px;
+/* ============================
+    RESPONSIVE
+============================ */
+@media (max-width: 1024px) {
+  .tema-header h1 {
+    font-size: 2.2rem;
   }
-
-  .kelime-tema-main-title {
+}
+@media (max-width: 768px) {
+  .tema-header h1 {
     font-size: 2rem;
   }
-
-  .kelime-tema-grid {
+  .tema-grid {
     grid-template-columns: 1fr;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tema-header h1 {
+    font-size: 1.7rem;
+  }
+  .tema-search input {
+    height: 46px;
+  }
+  .card-body h2 {
+    font-size: 1.15rem;
   }
 }

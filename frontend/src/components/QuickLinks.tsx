@@ -156,7 +156,7 @@ export default function QuickLinks() {
       <div className="container">
         <header className="quick-links-header">
           <h2 id="quick-links-heading" className="quick-links-title">
-            Hızlı erişim: İspanyolca içerikler
+            İspanyolca içerikler
           </h2>
           <p className="quick-links-subtitle">
             Gramer, kelime temaları ve okuma metinlerine ana sayfadan hızlıca

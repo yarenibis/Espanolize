@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../../services/ApiService";
-import { Layout, Typography, Spin, Button } from "antd";
+import { Spin, Button } from "antd";
 import { ArrowLeftOutlined, FileTextOutlined } from "@ant-design/icons";
 import "./MetinTemaDetailPage.css";
 import Navbar from "../../components/Navbar";
-
-const { Content } = Layout;
-const { Title, Paragraph, Text } = Typography;
+import Footer from "../../components/Footer";
 
 interface Metin {
   id: number;
@@ -45,58 +43,85 @@ export default function MetinTemaDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  /* -------- SEO OPTİMİZASYONU -------- */
+  useEffect(() => {
+    if (!tema) return;
+
+    document.title = `Tema ${tema.temaId} • İspanyolca Okuma Metinleri`;
+
+    const desc = document.querySelector('meta[name=description]') || document.createElement("meta");
+    desc.setAttribute("name", "description");
+    desc.setAttribute("content", tema.aciklama.slice(0, 150));
+    document.head.appendChild(desc);
+
+    const kw = document.querySelector('meta[name=keywords]') || document.createElement("meta");
+    kw.setAttribute("name", "keywords");
+    kw.setAttribute(
+      "content",
+      `ispanyolca okuma metinleri, tema ${tema.temaId}, ispanyolca metinler, ispanyolca çalışma, kısa ispanyolca metin`
+    );
+    document.head.appendChild(kw);
+  }, [tema]);
+
   if (loading) {
     return (
-      <Layout className="metin-loading">
-        <Spin size="large" />
-        <Paragraph>Metinler yükleniyor...</Paragraph>
-      </Layout>
+      <>
+        <Navbar />
+        <main className="metin-loading">
+          <Spin size="large" />
+          <p>Metinler yükleniyor...</p>
+        </main>
+      </>
     );
   }
 
   if (!tema) {
     return (
-      <div className="metin-error">
-        <Title level={2}>Tema Bulunamadı</Title>
-        <Paragraph>Geçerli bir metin teması seçin.</Paragraph>
-        <Link to="/metinler">
-          <Button type="primary" icon={<ArrowLeftOutlined />}>
-            Geri Dön
-          </Button>
-        </Link>
-      </div>
+      <>
+        <Navbar />
+        <main className="metin-error">
+          <h2>Tema Bulunamadı</h2>
+          <p>Geçerli bir metin teması seçin.</p>
+          <Link to="/metinler">
+            <Button type="primary" icon={<ArrowLeftOutlined />}>
+              Geri Dön
+            </Button>
+          </Link>
+        </main>
+      </>
     );
   }
 
   return (
-    <div className="metin-container">
-      <Navbar/>
-      <h1 className="tema-title">Tema {tema.temaId}</h1>
-      <p className="tema-aciklama">{tema.aciklama}</p>
+    <>
+      <Navbar />
 
-      <Content className="metin-content">
+      <main className="metin-container">
+        <header >
+          <h1 className="tema-title">Tema {tema.temaId}</h1>
+          <p className="tema-aciklama">{tema.aciklama}</p>
+        </header>
 
-        <div className="metin-list">
+        <section className="metin-list">
           {tema.metinler.map((metin) => (
-            <div key={metin.id} className="metin-item">
-
-              <div className="metin-header-static">
+            <article key={metin.id} className="metin-item">
+              <header className="metin-header-static">
                 <FileTextOutlined className="metin-header-icon" />
                 <div>
-                  <h3 className="metin-baslik">{metin.baslik}</h3>
+                  <h2 className="metin-baslik">{metin.baslik}</h2>
                   <p className="metin-aciklama">{metin.aciklama}</p>
                 </div>
-              </div>
+              </header>
 
               <div className="metin-icerik-static">
-                <Text className="metin-yazi">{metin.icerik}</Text>
+                <p className="metin-yazi">{metin.icerik}</p>
               </div>
-
-            </div>
+            </article>
           ))}
-        </div>
+        </section>
+      </main>
 
-      </Content>
-    </div>
+      <Footer />
+    </>
   );
 }

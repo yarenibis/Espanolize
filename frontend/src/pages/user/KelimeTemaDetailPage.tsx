@@ -1,19 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../../services/ApiService";
-import { Layout, Typography, Spin, Button, Image, Carousel } from "antd";
-import { ArrowLeftOutlined, SoundOutlined, CopyOutlined } from "@ant-design/icons";
+import { Spin, Button } from "antd";
+import { ArrowLeftOutlined, CopyOutlined } from "@ant-design/icons";
 import "./KelimeTemaDetailPage.css";
 import Navbar from "../../components/Navbar";
-
-const { Content } = Layout;
-const { Title, Paragraph, Text } = Typography;
+import Footer from "../../components/Footer";
 
 interface Kelime {
   id: number;
   ispanyolca: string;
   turkce: string;
-  kelimeTemasiId: number;
 }
 
 interface TemaDetay {
@@ -32,146 +29,148 @@ export default function KelimeTemaDetailPage() {
   const [copiedWord, setCopiedWord] = useState<number | null>(null);
 
   useEffect(() => {
-    api.get(`/kelimetemalari/${id}`)
+    api
+      .get(`/kelimetemalari/${id}`)
       .then((res) => {
         const t = res.data;
-        console.log("API Yanıtı:", t);
-        
+
         setTema({
           id: t.id ?? t.Id,
           aciklama: t.aciklama ?? t.Aciklama,
           temaId: t.temaId ?? t.TemaId,
           kapakResmiUrl: t.kapakResmiUrl ?? t.KapakResmiUrl,
           detayResimUrls: t.detayResimUrls ?? t.DetayResimUrls ?? [],
-          kelimeler: (t.kelimeler ?? t.Kelimeler)?.map((k: any) => ({
-            id: k.id ?? k.Id,
-            ispanyolca: k.ispanyolca ?? k.Ispanyolca,
-            turkce: k.turkce ?? k.Turkce,
-            kelimeTemasiId: k.kelimeTemasiId ?? k.KelimeTemasiId
-          })) ?? []
+          kelimeler:
+            (t.kelimeler ?? t.Kelimeler)?.map((k: any) => ({
+              id: k.id ?? k.Id,
+              ispanyolca: k.ispanyolca ?? k.Ispanyolca,
+              turkce: k.turkce ?? k.Turkce,
+            })) ?? [],
         });
-      })
-      .catch(error => {
-        console.error("API Hatası:", error);
       })
       .finally(() => setLoading(false));
   }, [id]);
 
-  const speakText = (text: string, lang: string) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang === 'es' ? 'es-ES' : 'tr-TR';
-      utterance.rate = 0.8;
-      window.speechSynthesis.speak(utterance);
+  // ⭐ SEO – Helmet YOK, tarayıcı başlık/meta güncellemesi
+  useEffect(() => {
+    if (!tema) return;
+
+    document.title = `Kelime Teması ${tema.temaId} • Espanolize`;
+
+    const descText = tema.aciklama.slice(0, 150);
+
+    let desc = document.querySelector('meta[name="description"]');
+    if (!desc) {
+      desc = document.createElement("meta");
+      desc.setAttribute("name", "description");
+      document.head.appendChild(desc);
     }
-  };
+    desc.setAttribute("content", descText);
+
+    let kw = document.querySelector('meta[name="keywords"]');
+    if (!kw) {
+      kw = document.createElement("meta");
+      kw.setAttribute("name", "keywords");
+      document.head.appendChild(kw);
+    }
+    kw.setAttribute(
+      "content",
+      `İspanyolca kelime teması, kelime listesi, ispanyolca öğren, tema ${tema.temaId}`
+    );
+  }, [tema]);
+
+  const getImageUrl = (url: string | null | undefined) =>
+    !url
+      ? "/api/placeholder/300/200?text=Resim+Yok"
+      : url.startsWith("http")
+      ? url
+      : `http://localhost:5001${url}`;
 
   const copyToClipboard = (text: string, wordId: number) => {
     navigator.clipboard.writeText(text).then(() => {
       setCopiedWord(wordId);
-      setTimeout(() => setCopiedWord(null), 2000);
+      setTimeout(() => setCopiedWord(null), 1500);
     });
-  };
-
-  const getImageUrl = (url: string | null | undefined): string => {
-    if (!url) {
-      return "/api/placeholder/300/200?text=Resim+Yok";
-    }
-    
-    if (url.startsWith("http")) {
-      return url;
-    }
-    
-    return `http://localhost:5001${url}`;
   };
 
   if (loading) {
     return (
-      <Layout className="kelime-detail-loading">
-        <Spin size="large" />
-        <Paragraph className="loading-text">Kelimeler yükleniyor...</Paragraph>
-      </Layout>
+      <>
+        <Navbar />
+        <main className="kelime-loading">
+          <Spin size="large" />
+          <p>Kelimeler yükleniyor...</p>
+        </main>
+      </>
     );
   }
 
   if (!tema) {
     return (
-      <div className="kelime-detail-error">
-        <Title level={2}>Tema Bulunamadı</Title>
-        <Paragraph>Lütfen geçerli bir tema seçin.</Paragraph>
-        <Link to="/kelimeler">
-          <Button type="primary" icon={<ArrowLeftOutlined />}>
-            Temalara Dön
-          </Button>
-        </Link>
-      </div>
+      <>
+        <Navbar />
+        <main className="kelime-error">
+          <h2>Tema bulunamadı</h2>
+          <p>Geçerli bir tema seçin.</p>
+          <Link to="/kelimeler">
+            <Button icon={<ArrowLeftOutlined />}>Temalara Dön</Button>
+          </Link>
+        </main>
+      </>
     );
   }
 
   return (
-    <div className="kelime-detail-container">
-      <Navbar/>
-      <h1 className="tema-title">Tema {tema.temaId}</h1>
-  <p className="tema-aciklama">{tema.aciklama}</p>
-      <Content className="kelime-detail-content">
-        
+    <>
+      <Navbar />
 
+      <main className="kelime-detail-container">
+        <header >
+          <h1 className="tema-title">Tema {tema.temaId}</h1>
+          <p className="tema-aciklama">{tema.aciklama}</p>
+        </header>
 
-
-        {/* Kelimeler Listesi */}
-        <div className="kelimeler-section">
-          
-          
+        <section className="kelimeler-section">
           <div className="kelimeler-list">
-  {tema.kelimeler.map((kelime, index) => (
-    <div key={kelime.id}>
-      
-      {/* Kelime Kartı */}
-      <div className="kelime-item">
-        <div className="kelime-content">
-          <div className="kelime-text">
-            <Text className="kelime-ispanyolca" strong>
-              {kelime.ispanyolca}
-            </Text>
-            <Text className="kelime-turkce">
-              {kelime.turkce}
-            </Text>
+            {tema.kelimeler.map((kelime, index) => (
+              <div key={kelime.id}>
+                {/* Kelime Kartı */}
+                <div className="kelime-item">
+                  <div className="kelime-text">
+                    <span className="kelime-es">{kelime.ispanyolca}</span>
+                    <span className="kelime-tr">{kelime.turkce}</span>
+                  </div>
+
+                  <button
+                    className={`copy-btn ${
+                      copiedWord === kelime.id ? "copied" : ""
+                    }`}
+                    onClick={() => copyToClipboard(kelime.ispanyolca, kelime.id)}
+                  >
+                    <CopyOutlined />
+                  </button>
+
+                  {copiedWord === kelime.id && (
+                    <div className="copy-feedback">Kopyalandı!</div>
+                  )}
+                </div>
+
+                {/* Araya serpiştirilen görsel */}
+                {tema.detayResimUrls[index] && (
+                  <img
+                    className="inline-image"
+                    src={getImageUrl(tema.detayResimUrls[index])}
+                    alt="detay"
+                    loading="lazy"
+                  />
+                )}
+              </div>
+            ))}
           </div>
+        </section>
+      </main>
 
-          <div className="kelime-actions">
-            <Button
-              type="text"
-              icon={<CopyOutlined />}
-              className={`action-btn ${copiedWord === kelime.id ? "copied" : ""}`}
-              onClick={() => copyToClipboard(kelime.ispanyolca, kelime.id)}
-              title="Kopyala"
-            />
-          </div>
-        </div>
-
-        {copiedWord === kelime.id && (
-          <div className="copy-feedback">Kopyalandı!</div>
-        )}
-      </div>
-
-      {/* 🔥 ARAYA SERPİŞTİRİLEN RESİM */}
-      {tema.detayResimUrls[index] && (
-        <div className="inline-image-wrapper">
-          <img
-            className="inline-image"
-            src={getImageUrl(tema.detayResimUrls[index])}
-            alt="detay"
-          />
-        </div>
-      )}
-    </div>
-  ))}
-</div>
-
-        </div>
-
-      
-      </Content>
-    </div>
+      <Footer />
+    </>
   );
 }

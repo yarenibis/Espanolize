@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOutlined, SearchOutlined, ClockCircleOutlined, UserOutlined } from "@ant-design/icons";
-import Navbar from "../../components/Navbar";
+import { BookOutlined, ClockCircleOutlined, UserOutlined } from "@ant-design/icons";
 import api from "../../services/ApiService";
+import Navbar from "../../components/Navbar";
 import "./KonuListPage.css";
+import Footer from "../../components/Footer";
 
 interface Konu {
   id: number;
@@ -12,26 +13,7 @@ interface Konu {
   zorluk: "Kolay" | "Orta" | "Zor";
   calismaSuresi: number;
   kapakResmiUrl?: string;
-  temaId?: number;
 }
-
-const getDifficultyColor = (zorluk: string) => {
-  switch (zorluk.toLowerCase()) {
-    case "kolay": return "difficulty-beginner";
-    case "orta": return "difficulty-intermediate";
-    case "zor": return "difficulty-advanced";
-    default: return "difficulty-beginner";
-  }
-};
-
-const getDifficultyText = (zorluk: string) => {
-  switch (zorluk.toLowerCase()) {
-    case "kolay": return "Başlangıç";
-    case "orta": return "Orta";
-    case "zor": return "İleri";
-    default: return zorluk;
-  }
-};
 
 export default function KonuListPage() {
   const [konular, setKonular] = useState<Konu[]>([]);
@@ -40,160 +22,114 @@ export default function KonuListPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchKonular = async () => {
+      try {
+        const { data } = await api.get("/konular");
+        setKonular(data);
+      } catch (error) {
+        console.error("Konular yüklenirken hata:", error);
+        setKonular([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchKonular();
   }, []);
 
-  const fetchKonular = async () => {
-    try {
-      console.log("Konular yükleniyor...");
-      const res = await api.get("/konular");
-      console.log("API yanıtı:", res.data);
-      setKonular(res.data);
-    } catch (error) {
-      console.error("Konular yüklenirken hata:", error);
-      // Hata durumunda boş array set et
-      setKonular([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const filteredKonular = konular.filter((konu) =>
-    `${konu.baslik} ${konu.aciklama} ${konu.zorluk}`
+    `${konu.baslik} ${konu.aciklama}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   );
 
-  const handleKonuClick = (konuId: number) => {
-    console.log("Konuya tıklandı:", konuId);
-    navigate(`/konular/${konuId}`);
+  const getDifficultyBadge = (level: string) => {
+    if (level === "Kolay") return "difficulty-beginner";
+    if (level === "Orta") return "difficulty-intermediate";
+    return "difficulty-advanced";
   };
 
-  // Kapak resmi URL'sini düzenleme fonksiyonu
-  const getImageUrl = (kapakResmiUrl: string | null | undefined) => {
-    if (!kapakResmiUrl) {
-      return "/api/placeholder/400/220?text=Resim+Yok";
-    }
-    
-    if (kapakResmiUrl.startsWith("http")) {
-      return kapakResmiUrl;
-    }
-    
-    return `http://localhost:5001${kapakResmiUrl}`;
-  };
+  const getImageUrl = (url?: string) =>
+    url?.startsWith("http")
+      ? url
+      : url
+      ? `http://localhost:5001${url}`
+      : "/api/placeholder/400/220?text=Resim+Yok";
 
   return (
-    <div className="konu-list-container">
+    <main className="konu-page">
       <Navbar />
-      <div className="konu-list-content">
-        {/* Header Section */}
-        <div className="konu-header">
-          <h1 className="konu-main-title"> İspanyolca Konuları</h1>
-          <p className="konu-subtitle">
-            Seviyenize uygun konuları keşfedin, interaktif içeriklerle İspanyolcanızı geliştirin
-          </p>
+
+      {/* SEO Başlık */}
+      <header className="konu-header">
+        <h1>İspanyolca Konuları</h1>
+        <p>Seviyene uygun gramer konularını keşfet ve öğrenmeni hızlandır.</p>
+      </header>
+
+      {/* Arama Alanı */}
+      <section className="search-wrapper">
+        <input
+          type="search"
+          value={searchTerm}
+          placeholder="Konu ara… (örn: ser estar, fiiller, zamanlar)"
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
+          aria-label="Konu arama"
+        />
+      </section>
+
+      {/* Yükleme */}
+      {loading && (
+        <div className="loading-box">
+          <div className="spinner"></div>
+          <p>Konular yükleniyor…</p>
         </div>
+      )}
 
-        {/* Search Section */}
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Konu ara... (örn: ser estar, fiiller, zamanlar)"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
+      {/* Hiç sonuç yok */}
+      {!loading && filteredKonular.length === 0 && (
+        <div className="empty-box">
+          <p>Arama sonucu bulunamadı.</p>
         </div>
+      )}
 
-        {/* Loading State */}
-        {loading && (
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-            <p>Konular yükleniyor...</p>
-          </div>
-        )}
+      {/* Konu Grid */}
+      <section className="konu-grid">
+        {!loading &&
+          filteredKonular.map((konu) => (
+            <article
+              key={konu.id}
+              className="konu-card"
+              onClick={() => navigate(`/konular/${konu.id}`)}
+            >
+              <div className="card-image-wrapper">
+                <img
+                  src={getImageUrl(konu.kapakResmiUrl)}
+                  alt={`${konu.baslik} konusu kapak görseli`}
+                  loading="lazy"
+                />
+                <span className={`difficulty-badge ${getDifficultyBadge(konu.zorluk)}`}>
+                  {konu.zorluk}
+                </span>
+              </div>
 
-        {/* Empty State */}
-        {!loading && filteredKonular.length === 0 && (
-          <div className="empty-state">
-            <div className="empty-icon">📚</div>
-            <h3 className="empty-text">
-              {searchTerm ? "Arama kriterlerinize uygun konu bulunamadı." : "Henüz hiç konu bulunmuyor."}
-            </h3>
-            <p className="empty-subtext">
-              {searchTerm ? "Farklı bir arama terimi deneyin." : "Yakında yeni konular eklenecek."}
-            </p>
-          </div>
-        )}
+              <div className="card-body">
+                <h2>{konu.baslik}</h2>
+                <p>{konu.aciklama}</p>
 
-        {/* Konular Grid */}
-        {!loading && filteredKonular.length > 0 && (
-          <>
-            <div className="konu-grid">
-              {filteredKonular.map((konu, index) => (
-                <div
-                  key={konu.id}
-                  className="konu-card"
-                  onClick={() => handleKonuClick(konu.id)}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {/* Card Cover */}
-                  <div className="card-cover">
-                    <img
-                      src={getImageUrl(konu.kapakResmiUrl)}
-                      alt={konu.baslik}
-                      className="card-image"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = "/api/placeholder/400/220?text=Resim+Yok";
-                      }}
-                    />
-                    <div className="card-overlay">
-                      <span className={`difficulty-badge ${getDifficultyColor(konu.zorluk)}`}>
-                        {getDifficultyText(konu.zorluk)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Card Content */}
-                  <div className="card-content">
-                    <div className="card-header">
-                      <div className="card-icon">
-                        <BookOutlined />
-                      </div>
-                      <h3 className="card-title">{konu.baslik}</h3>
-                    </div>
-
-                    <p className="card-description">
-                      {konu.aciklama}
-                    </p>
-
-                    <div className="card-meta">
-                      <div className="meta-info">
-                        <div className="meta-item">
-                          <ClockCircleOutlined className="meta-icon" />
-                          <span>{konu.calismaSuresi} dk</span>
-                        </div>
-                        <div className="meta-item">
-                          <UserOutlined className="meta-icon" />
-                          <span>{konu.zorluk}</span>
-                        </div>
-                      </div>
-
-                      <div className="card-stats">
-                        <div className="stat">
-                          <BookOutlined className="stat-icon" />
-                          <span>Konu</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="card-meta">
+                  <span>
+                    <ClockCircleOutlined /> {konu.calismaSuresi} dk
+                  </span>
+                  <span>
+                    <UserOutlined /> {konu.zorluk}
+                  </span>
                 </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
+              </div>
+            </article>
+          ))}
+      </section>
+      <Footer/>
+    </main>
   );
 }
