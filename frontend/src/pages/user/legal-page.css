@@ -1,0 +1,100 @@
+/* ===================================================
+   Legal Pages Global Container
+=================================================== */
+
+.legal-page {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 0 20px;
+  font-family: "Inter", sans-serif;
+  color: #1e293b;
+  line-height: 1.7;
+  animation: fadeIn 0.5s ease;
+}
+
+/* Page Titles */
+.legal-page h1 {
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #0f172a;
+}
+
+/* Subtitles */
+.legal-page h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-top: 28px;
+  margin-bottom: 12px;
+  color: #1e293b;
+}
+
+/* Texts */
+.legal-page p {
+  font-size: 16px;
+  color: #334155;
+  margin-bottom: 15px;
+}
+
+/* Lists */
+.legal-page ul {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.legal-page ul li {
+  margin-bottom: 7px;
+  font-size: 16px;
+  color: #334155;
+}
+
+/* Links */
+.legal-page a {
+  color: #0284c7;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.legal-page a:hover {
+  text-decoration: underline;
+}
+
+/* Highlight / Strong tag */
+.legal-page strong {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Subtle fade animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =============================================
+   Mobile Optimization
+============================================= */
+@media (max-width: 600px) {
+  .legal-page {
+    margin: 30px auto;
+  }
+
+  .legal-page h1 {
+    font-size: 28px;
+  }
+
+  .legal-page h2 {
+    font-size: 20px;
+  }
+
+  .legal-page p,
+  .legal-page ul li {
+    font-size: 15px;
+  }
+}

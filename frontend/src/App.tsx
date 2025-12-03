@@ -18,6 +18,10 @@ import TemaPage from "./pages/admin/TemaPage";
 import AdminLayout from "./components/adminDashboard/AdminLayout";
 import KonuListPage from "./pages/user/KonuListPage";
 import KonuDetailPage from "./pages/user/KonuDetailPage";
+import PrivacyPolicy from "./pages/user/PrivacyPolicy";
+import CookiePolicy from "./pages/user/CookiePolicy";
+import Terms from "./pages/user/Terms";
+import FAQ from "./pages/user/FAQ";
 
 export default function App() {
   return (
@@ -32,6 +36,10 @@ export default function App() {
         <Route path="/metinTema" element={<MetinTemaListPage />} />
         <Route path="/metinler/:id" element={<MetinTemaDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/gizlilik-politikasi" element={<PrivacyPolicy />} />
+  <Route path="/cerez-politikasi" element={<CookiePolicy />} />
+  <Route path="/kullanim-kosullari" element={<Terms />} />
+  <Route path="/sss" element={<FAQ />} />
 
         {/* Admin Routes with Layout */}
         <Route 

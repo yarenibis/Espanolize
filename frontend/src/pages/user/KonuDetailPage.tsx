@@ -29,7 +29,7 @@ export default function KonuDetailPage() {
     }
   };
 
-  // ⭐⭐ SEO — Tüm meta + title ayarlama (Helmet YOK)
+ 
   useEffect(() => {
     if (!konu) return;
 
