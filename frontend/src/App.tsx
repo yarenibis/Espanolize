@@ -23,6 +23,7 @@ import CookiePolicy from "./pages/user/CookiePolicy";
 import Terms from "./pages/user/Terms";
 import FAQ from "./pages/user/FAQ";
 import Contact from "./pages/user/Contact";
+import Hakkimizda from "./components/Hakkimizda";
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/kullanim-kosullari" element={<Terms />} />
         <Route path="/sss" element={<FAQ />} />
         <Route path="/iletisim" element={<Contact/>} />
+        <Route path="/hakkimizda" element={<Hakkimizda />} />
 
         {/* Admin Routes with Layout */}
         <Route 

@@ -23,13 +23,14 @@ const Footer: React.FC = () => {
           </section>
 
           {/* Hızlı Erişim */}
-          <nav className="footer-section" aria-label="Hızlı Erişim">
-            <h4 className="footer-title">Hızlı Erişim</h4>
+          <nav className="footer-section" aria-label="Kategoriler">
+            <h4 className="footer-title">Kategoriler</h4>
             <ul className="footer-links">
+              <li><Link to="/" className="footer-link">Ana Sayfa</Link></li>
+              <li><Link to="/hakkimizda" className="footer-link">Hakkımızda</Link></li>
               <li><Link to="/gramerkurallar" className="footer-link">Gramer Kuralları</Link></li>
               <li><Link to="/kelimetemalari" className="footer-link">Kelime Öğren</Link></li>
               <li><Link to="/metinTema" className="footer-link">Okuma Metinleri</Link></li>
-           
             </ul>
           </nav>
 
@@ -37,14 +38,13 @@ const Footer: React.FC = () => {
           <nav className="footer-section" aria-label="Yasal Bilgiler">
             <h4 className="footer-title">Yasal Bilgiler</h4>
             <ul className="footer-links">
-              
               <li><Link to="/gizlilik-politikasi" className="footer-link">Gizlilik Politikası</Link></li>
               <li><Link to="/kullanim-kosullari" className="footer-link">Kullanım Koşulları</Link></li>
               <li><Link to="/cerez-politikasi" className="footer-link">Çerez Politikası</Link></li>
             </ul>
           </nav>
 
-          {/* Hızlı Erişim */}
+          {/* Destek */}
           <nav className="footer-section" aria-label="Destek">
             <h4 className="footer-title">Destek</h4>
             <ul className="footer-links">
@@ -58,15 +58,12 @@ const Footer: React.FC = () => {
         {/* Alt bölüm */}
         <div className="footer-bottom">
           <div className="footer-bottom-content">
-
             <div className="copyright">
               © {currentYear} Espanolize • Tüm Hakları Saklıdır
             </div>
-
-            
-
           </div>
         </div>
+
       </div>
     </footer>
   );

@@ -43,6 +43,15 @@ export default function Navbar() {
                 Ana Sayfa
               </Link>
             </li>
+
+            <li>
+              <Link 
+                to="/hakkimizda" 
+                className={location.pathname === "/hakkimizda" ? "active" : ""}
+              >
+                Hakkımızda
+              </Link>
+            </li>
             <li>
               <Link 
                 to="/konular" 

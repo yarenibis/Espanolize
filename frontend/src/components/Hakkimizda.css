@@ -1,0 +1,123 @@
+/* src/pages/user/Hakkimizda.css */
+
+.about-container {
+  max-width: 960px;
+  margin: 60px auto;
+  padding: 0 20px 60px;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Hero section */
+.about-hero h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+
+.about-hero-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #475569;
+  margin-bottom: 30px;
+}
+
+/* Grid layout */
+.about-grid {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.about-extra {
+  display: grid;
+  gap: 24px;
+}
+
+/* Kartlar */
+.about-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  border: 1px solid #e2e8f0;
+}
+
+.about-card h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+
+.about-card p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #4b5563;
+  margin-bottom: 12px;
+}
+
+/* Listeler */
+.about-list {
+  list-style: disc;
+  padding-left: 20px;
+  margin: 8px 0 0;
+}
+
+.about-list li {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+/* İletişim kartı */
+.about-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about-contact-link {
+  align-self: flex-start;
+  margin-top: 4px;
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #3b82f6;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.about-contact-link:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .about-grid {
+    grid-template-columns: 1.2fr 1fr;
+  }
+
+  .about-extra {
+    grid-template-columns: 1.2fr 1fr;
+  }
+
+  .about-hero h1 {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-container {
+    margin: 40px auto;
+    padding-bottom: 40px;
+  }
+
+  .about-hero h1 {
+    font-size: 26px;
+  }
+}

@@ -34,7 +34,7 @@ const FAQ: React.FC = () => {
 
       <h2>İletişime nasıl geçebilirim?</h2>
       <p>
-        info@espanolize.com adresi üzerinden bize ulaşabilirsiniz.
+        info@espanolize.com adresi üzerinden veya iletişim sayfasından bize ulaşabilirsiniz.
       </p>
     </main>
     <Footer/>
