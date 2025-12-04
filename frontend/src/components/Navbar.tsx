@@ -67,6 +67,15 @@ export default function Navbar() {
                 Okuma Metinleri
               </Link>
             </li>
+
+            <li>
+              <Link 
+                to="/iletisim" 
+                className={location.pathname === "/iletisim" ? "active" : ""}
+              >
+                İletişim
+              </Link>
+            </li>
           </ul>
 
           {/* Desktop Butonlar */}

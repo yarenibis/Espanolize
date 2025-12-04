@@ -29,17 +29,27 @@ const Footer: React.FC = () => {
               <li><Link to="/gramerkurallar" className="footer-link">Gramer Kuralları</Link></li>
               <li><Link to="/kelimetemalari" className="footer-link">Kelime Öğren</Link></li>
               <li><Link to="/metinTema" className="footer-link">Okuma Metinleri</Link></li>
+           
             </ul>
           </nav>
 
           {/* Yasal Sayfalar */}
           <nav className="footer-section" aria-label="Yasal Bilgiler">
-            <h4 className="footer-title">Yasal</h4>
+            <h4 className="footer-title">Yasal Bilgiler</h4>
             <ul className="footer-links">
-              <li><Link to="/sss" className="footer-link">SSS</Link></li>
+              
               <li><Link to="/gizlilik-politikasi" className="footer-link">Gizlilik Politikası</Link></li>
               <li><Link to="/kullanim-kosullari" className="footer-link">Kullanım Koşulları</Link></li>
               <li><Link to="/cerez-politikasi" className="footer-link">Çerez Politikası</Link></li>
+            </ul>
+          </nav>
+
+          {/* Hızlı Erişim */}
+          <nav className="footer-section" aria-label="Destek">
+            <h4 className="footer-title">Destek</h4>
+            <ul className="footer-links">
+              <li><Link to="/sss" className="footer-link">SSS</Link></li>
+              <li><Link to="/iletisim" className="footer-link">İletişim</Link></li>
             </ul>
           </nav>
 
