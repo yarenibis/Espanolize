@@ -7,7 +7,7 @@ interface Ornek {
   id: number;
   ispanyolcaOrnek: string;
   ceviri: string;
-  aciklama: string;
+  aciklama?: string;
   gramerKuralId: number;
 }
 
@@ -74,16 +74,17 @@ export default function OrnekPage() {
 
   // Tablo için düzenlenmiş data oluştur
   const tableData = ornekler.map(ornek => ({
+    
     id: ornek.id,
     ispanyolcaOrnek: ornek.ispanyolcaOrnek,
     ceviri: ornek.ceviri,
-    aciklama: ornek.aciklama.length > 100 ? ornek.aciklama.substring(0, 100) + "..." : ornek.aciklama,
+    aciklama: ornek.aciklama ?? "",
     kuralBaslik: getGramerBaslik(ornek.gramerKuralId)
   }));
 
   // Yeni örnek ekle
   async function handleAdd() {
-    if (!yeniIspanyolcaOrnek.trim() || !yeniCeviri.trim() || !yeniAciklama.trim() || yeniGramerKuralId === "") {
+    if (!yeniIspanyolcaOrnek.trim() || !yeniCeviri.trim()  || yeniGramerKuralId === "") {
       setError("Lütfen tüm alanları doldurun!");
       return;
     }
@@ -129,7 +130,7 @@ export default function OrnekPage() {
     setDuzenlenecek(ornek);
     setYeniIspanyolcaOrnek(ornek.ispanyolcaOrnek);
     setYeniCeviri(ornek.ceviri);
-    setYeniAciklama(ornek.aciklama);
+    setYeniAciklama(ornek.aciklama ?? "");
     setYeniGramerKuralId(ornek.gramerKuralId);
     setError("");
   }
@@ -138,7 +139,7 @@ export default function OrnekPage() {
   async function handleUpdate() {
     if (!duzenlenecek) return;
 
-    if (!yeniIspanyolcaOrnek.trim() || !yeniCeviri.trim() || !yeniAciklama.trim() || yeniGramerKuralId === "") {
+    if (!yeniIspanyolcaOrnek.trim() || !yeniCeviri.trim()  || yeniGramerKuralId === "") {
       setError("Lütfen tüm alanları doldurun!");
       return;
     }
