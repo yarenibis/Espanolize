@@ -15,7 +15,6 @@
 .tema-title {
   font-size: 2.4rem;
   text-align: center;
-  padding-top: 50px;
   font-weight: 800;
   margin-bottom: 16px;
   color: #3b82f6;
@@ -26,7 +25,7 @@
 
 .tema-aciklama {
   font-size: 1.1rem;
-  color: #1E293B;
+  color: #475569;
   margin-bottom: 30px;
   line-height: 1.75;
 }

@@ -13,6 +13,12 @@ interface Kelime {
 interface KelimeTema {
   id: number;
   aciklama: string;
+  temaId: number;
+}
+
+interface Tema {
+  id: number;
+  baslik: string;  // ⭐ Tema başlığı
 }
 
 interface TableRow {
@@ -24,7 +30,8 @@ interface TableRow {
 
 export default function KelimePage() {
   const [kelimeler, setKelimeler] = useState<Kelime[]>([]);
-  const [temalar, setTemalar] = useState<KelimeTema[]>([]);
+  const [kelimeTemalari, setKelimeTemalari] = useState<KelimeTema[]>([]);
+  const [temalar, setTemalar] = useState<Tema[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -34,17 +41,21 @@ export default function KelimePage() {
 
   const [duzenlenecek, setDuzenlenecek] = useState<Kelime | null>(null);
 
-  // Kelimeleri ve temaları yükle
+  // Kelimeler + Kelime Temaları + Temalar yükleniyor
   async function fetchAll() {
     setLoading(true);
     setError("");
     try {
-      const [kelimeRes, temaRes] = await Promise.all([
+      const [kelimeRes, kelimeTemaRes, temaRes] = await Promise.all([
         api.get("/admin/kelimeler"),
-        api.get("/admin/kelime-temalari")
+        api.get("/admin/kelime-temalari"),
+        api.get("/admin/tema")  // ⭐ Tema başlıkları buradan geliyor
       ]);
+
       setKelimeler(kelimeRes.data);
+      setKelimeTemalari(kelimeTemaRes.data);
       setTemalar(temaRes.data);
+
     } catch (err) {
       console.error("Veriler yüklenemedi:", err);
       setError("Veriler yüklenirken bir hata oluştu.");
@@ -57,10 +68,13 @@ export default function KelimePage() {
     fetchAll();
   }, []);
 
-  // Tema ID'sine göre tema açıklamasını bul
-  const getTemaAciklama = (kelimeTemasiId: number) => {
-    const tema = temalar.find(t => t.id === kelimeTemasiId);
-    return tema ? tema.aciklama : `Tema ID: ${kelimeTemasiId}`;
+  // ⭐ Tema ID → Tema Başlığı eşleştirme
+  const getTemaBaslik = (kelimeTemasiId: number) => {
+    const kelimeTema = kelimeTemalari.find(kt => kt.id === kelimeTemasiId);
+    if (!kelimeTema) return "Tema bulunamadı";
+
+    const anaTema = temalar.find(t => t.id === kelimeTema.temaId);
+    return anaTema ? anaTema.baslik : "Başlık yok";
   };
 
   // Yeni kelime ekle
@@ -72,6 +86,7 @@ export default function KelimePage() {
 
     setLoading(true);
     setError("");
+
     try {
       await api.post("/admin/kelimeler", {
         ispanyolca: yeniIspanyolca,
@@ -92,7 +107,7 @@ export default function KelimePage() {
   // Kelime sil
   async function handleDelete(id: number) {
     if (!window.confirm("Bu kelimeyi silmek istediğinizden emin misiniz?")) return;
-
+    
     setLoading(true);
     try {
       await api.delete(`/admin/kelimeler/${id}`);
@@ -125,6 +140,7 @@ export default function KelimePage() {
 
     setLoading(true);
     setError("");
+
     try {
       await api.put(`/admin/kelimeler/${duzenlenecek.id}`, {
         ispanyolca: yeniIspanyolca,
@@ -142,7 +158,7 @@ export default function KelimePage() {
     }
   }
 
-  // Formu sıfırla
+  // Form sıfırla
   function resetForm() {
     setDuzenlenecek(null);
     setYeniIspanyolca("");
@@ -151,12 +167,12 @@ export default function KelimePage() {
     setError("");
   }
 
-  // Tablo için düzenlenmiş data oluştur
+  // ⭐ Tablo verisini oluştur
   const tabloData: TableRow[] = kelimeler.map((k) => ({
     id: k.id,
     ispanyolca: k.ispanyolca,
     turkce: k.turkce,
-    tema: getTemaAciklama(k.kelimeTemasiId)
+    tema: getTemaBaslik(k.kelimeTemasiId)
   }));
 
   if (loading && kelimeler.length === 0) {
@@ -172,7 +188,6 @@ export default function KelimePage() {
 
   return (
     <div className="kelime-container">
-      {/* Header */}
       <div className="kelime-header">
         <h1 className="kelime-title">Kelime Yönetimi</h1>
         <p className="kelime-subtitle">
@@ -180,14 +195,9 @@ export default function KelimePage() {
         </p>
       </div>
 
-      {/* Hata Mesajı */}
-      {error && (
-        <div className="error-message">
-          {error}
-        </div>
-      )}
+      {error && <div className="error-message">{error}</div>}
 
-      {/* Form */}
+      {/* ⭐ Form */}
       <div className="kelime-form-container">
         <h2 className="kelime-form-title">
           {duzenlenecek ? "📝 Kelime Düzenle" : "➕ Yeni Kelime Ekle"}
@@ -218,6 +228,7 @@ export default function KelimePage() {
             />
           </div>
 
+          {/* ⭐ Dropdown artık Tema Başlıklarını gösteriyor */}
           <div className="form-group">
             <label className="form-label">Kelime Teması *</label>
             <select
@@ -227,11 +238,15 @@ export default function KelimePage() {
               disabled={loading}
             >
               <option value="">Kelime Teması Seçin</option>
-              {temalar.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.aciklama}
-                </option>
-              ))}
+
+              {kelimeTemalari.map((kt) => {
+                const anaTema = temalar.find(t => t.id === kt.temaId);
+                return (
+                  <option key={kt.id} value={kt.id}>
+                    {anaTema ? anaTema.baslik : "Başlık yok"}
+                  </option>
+                );
+              })}
             </select>
           </div>
         </div>
@@ -239,19 +254,10 @@ export default function KelimePage() {
         <div className="form-actions">
           {duzenlenecek ? (
             <>
-              <button
-                onClick={handleUpdate}
-                disabled={loading}
-                className="btn btn-primary"
-              >
-                {loading && <span className="loading-spinner"></span>}
+              <button onClick={handleUpdate} className="btn btn-primary">
                 {loading ? "Güncelleniyor..." : "✅ Güncelle"}
               </button>
-              <button
-                onClick={resetForm}
-                disabled={loading}
-                className="btn btn-secondary"
-              >
+              <button onClick={resetForm} className="btn btn-secondary">
                 İptal
               </button>
             </>
@@ -261,39 +267,24 @@ export default function KelimePage() {
               disabled={!yeniIspanyolca || !yeniTurkce || yeniTemaId === "" || loading}
               className="btn btn-success"
             >
-              {loading && <span className="loading-spinner"></span>}
               {loading ? "Ekleniyor..." : "➕ Yeni Kelime Ekle"}
             </button>
           )}
         </div>
       </div>
 
-      {/* Tablo */}
+      {/* ⭐ Tablo */}
       <div className="kelime-form-container">
         <h2 className="kelime-form-title">📋 Mevcut Kelimeler</h2>
-        {loading ? (
-          <div className="empty-state">
-            <div className="loading-spinner" style={{ margin: '20px auto', borderColor: "#667eea", borderTopColor: 'transparent' }}></div>
-            <p>Yükleniyor...</p>
-          </div>
-        ) : kelimeler.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-state-icon">📚</div>
-            <h3>Henüz kelime bulunmuyor</h3>
-            <p>İlk kelimenizi eklemek için yukarıdaki formu kullanın.</p>
-          </div>
-        ) : (
-          <CrudTable
-            data={tabloData}
-            onEdit={(item) => {
-              const originalKelime = kelimeler.find(k => k.id === item.id);
-              if (originalKelime) {
-                startEdit(originalKelime);
-              }
-            }}
-            onDelete={handleDelete}
-          />
-        )}
+
+        <CrudTable
+          data={tabloData}
+          onEdit={(item) => {
+            const originalKelime = kelimeler.find(k => k.id === item.id);
+            if (originalKelime) startEdit(originalKelime);
+          }}
+          onDelete={handleDelete}
+        />
       </div>
     </div>
   );

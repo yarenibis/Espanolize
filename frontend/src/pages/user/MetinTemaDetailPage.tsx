@@ -25,44 +25,61 @@ interface MetinTemaDetay {
   metinler: Metin[];
 }
 
+interface Tema {
+  id: number;
+  baslik: string;
+  kapakResmiUrl?: string;
+}
+
 export default function MetinTemaDetailPage() {
   const { id } = useParams();
   const [tema, setTema] = useState<MetinTemaDetay | null>(null);
+  const [temaBaslik, setTemaBaslik] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
+  /* ----------- VERİ YÜKLEME ----------- */
   useEffect(() => {
-    api.get(`/metinTema/${id}`)
-      .then((res) => {
-        setTema({
-          id: res.data.id,
-          aciklama: res.data.aciklama,
-          temaId: res.data.temaId,
-          metinler: res.data.metinler || [],
-        });
-      })
-      .finally(() => setLoading(false));
+    const load = async () => {
+      try {
+        const res = await api.get(`/metinTema/${id}`);
+        const data = res.data;
+
+        const mapped: MetinTemaDetay = {
+          id: data.id,
+          aciklama: data.aciklama,
+          temaId: data.temaId,
+          metinler: data.metinler ?? []
+        };
+
+        setTema(mapped);
+
+        // ---- Tema başlığını çek ----
+        const temaRes = await api.get(`/tema/${mapped.temaId}`);
+        setTemaBaslik(temaRes.data.baslik);
+
+      } catch (err) {
+        console.error("Tema yüklenemedi", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
   }, [id]);
 
-  /* -------- SEO OPTİMİZASYONU -------- */
+  /* -------- SEO -------- */
   useEffect(() => {
     if (!tema) return;
 
-    document.title = `Tema ${tema.temaId} • İspanyolca Okuma Metinleri`;
+    document.title = `${temaBaslik} • İspanyolca Okuma Metinleri`;
 
     const desc = document.querySelector('meta[name=description]') || document.createElement("meta");
     desc.setAttribute("name", "description");
     desc.setAttribute("content", tema.aciklama.slice(0, 150));
     document.head.appendChild(desc);
+  }, [tema, temaBaslik]);
 
-    const kw = document.querySelector('meta[name=keywords]') || document.createElement("meta");
-    kw.setAttribute("name", "keywords");
-    kw.setAttribute(
-      "content",
-      `ispanyolca okuma metinleri, tema ${tema.temaId}, ispanyolca metinler, ispanyolca çalışma, kısa ispanyolca metin`
-    );
-    document.head.appendChild(kw);
-  }, [tema]);
-
+  /* -------- DURUMLAR -------- */
   if (loading) {
     return (
       <>
@@ -92,13 +109,14 @@ export default function MetinTemaDetailPage() {
     );
   }
 
+  /* -------- ANA TASARIM -------- */
   return (
     <>
       <Navbar />
 
       <main className="metin-container">
-        <header >
-          <h1 className="tema-title">Tema {tema.temaId}</h1>
+        <header>
+          <h1 className="tema-title">{temaBaslik}</h1>
           <p className="tema-aciklama">{tema.aciklama}</p>
         </header>
 

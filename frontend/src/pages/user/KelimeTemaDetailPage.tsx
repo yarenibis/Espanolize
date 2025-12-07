@@ -13,79 +13,73 @@ interface Kelime {
   turkce: string;
 }
 
-interface TemaDetay {
+interface KelimeTemaApi {
   id: number;
   aciklama: string;
   temaId: number;
-  kapakResmiUrl: string;
-  detayResimUrls: string[];
-  kelimeler: Kelime[];
+  kapakResmiUrl?: string;
+  detayResimUrls?: string[];
+  kelimeler: any[];
+}
+
+interface TemaApi {
+  id: number;
+  baslik: string;
+  kapakResmiUrl?: string;
 }
 
 export default function KelimeTemaDetailPage() {
   const { id } = useParams();
-  const [tema, setTema] = useState<TemaDetay | null>(null);
+  const [tema, setTema] = useState<KelimeTemaApi | null>(null);
+  const [temaBaslik, setTemaBaslik] = useState<string>("");
+
   const [loading, setLoading] = useState(true);
   const [copiedWord, setCopiedWord] = useState<number | null>(null);
 
+  // =============================
+  // 🚀 TEMA VE ANA TEMA BİLGİLERİNİ YÜKLE
+  // =============================
   useEffect(() => {
-    api
-      .get(`/kelimetemalari/${id}`)
-      .then((res) => {
+    const loadData = async () => {
+      try {
+        // 1) Kelime teması bilgisini al
+        const res = await api.get(`/kelimetemalari/${id}`);
         const t = res.data;
 
-        setTema({
+        const mappedTema: KelimeTemaApi = {
           id: t.id ?? t.Id,
           aciklama: t.aciklama ?? t.Aciklama,
           temaId: t.temaId ?? t.TemaId,
           kapakResmiUrl: t.kapakResmiUrl ?? t.KapakResmiUrl,
           detayResimUrls: t.detayResimUrls ?? t.DetayResimUrls ?? [],
-          kelimeler:
-            (t.kelimeler ?? t.Kelimeler)?.map((k: any) => ({
-              id: k.id ?? k.Id,
-              ispanyolca: k.ispanyolca ?? k.Ispanyolca,
-              turkce: k.turkce ?? k.Turkce,
-            })) ?? [],
-        });
-      })
-      .finally(() => setLoading(false));
+          kelimeler: (t.kelimeler ?? t.Kelimeler)?.map((k: any) => ({
+            id: k.id ?? k.Id,
+            ispanyolca: k.ispanyolca ?? k.Ispanyolca,
+            turkce: k.turkce ?? k.Turkce,
+          })),
+        };
+
+        setTema(mappedTema);
+
+        // 2) Ana temayı al → başlık buradan gelecek!
+        const temaRes = await api.get(`/tema/${mappedTema.temaId}`);
+        const anaTema: TemaApi = temaRes.data;
+
+        setTemaBaslik(anaTema.baslik);
+
+      } catch (err) {
+        console.error("Tema yüklenemedi:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, [id]);
 
-  // ⭐ SEO – Helmet YOK, tarayıcı başlık/meta güncellemesi
-  useEffect(() => {
-    if (!tema) return;
-
-    document.title = `Kelime Teması ${tema.temaId} • Espanolize`;
-
-    const descText = tema.aciklama.slice(0, 150);
-
-    let desc = document.querySelector('meta[name="description"]');
-    if (!desc) {
-      desc = document.createElement("meta");
-      desc.setAttribute("name", "description");
-      document.head.appendChild(desc);
-    }
-    desc.setAttribute("content", descText);
-
-    let kw = document.querySelector('meta[name="keywords"]');
-    if (!kw) {
-      kw = document.createElement("meta");
-      kw.setAttribute("name", "keywords");
-      document.head.appendChild(kw);
-    }
-    kw.setAttribute(
-      "content",
-      `İspanyolca kelime teması, kelime listesi, ispanyolca öğren, tema ${tema.temaId}`
-    );
-  }, [tema]);
-
-  const getImageUrl = (url: string | null | undefined) =>
-    !url
-      ? "/api/placeholder/300/200?text=Resim+Yok"
-      : url.startsWith("http")
-      ? url
-      : `http://localhost:5001${url}`;
-
+  // =============================
+  // 📌 Kopyalama işlemi
+  // =============================
   const copyToClipboard = (text: string, wordId: number) => {
     navigator.clipboard.writeText(text).then(() => {
       setCopiedWord(wordId);
@@ -93,6 +87,16 @@ export default function KelimeTemaDetailPage() {
     });
   };
 
+  const getImageUrl = (url?: string) =>
+    !url
+      ? "/api/placeholder/300/200?text=Resim+Yok"
+      : url.startsWith("http")
+      ? url
+      : `http://localhost:5001${url}`;
+
+  // =============================
+  // 📌 SAYFA DURUMLARI
+  // =============================
   if (loading) {
     return (
       <>
@@ -120,13 +124,19 @@ export default function KelimeTemaDetailPage() {
     );
   }
 
+  // =============================
+  // 📌 ASIL TASARIM
+  // =============================
   return (
     <>
       <Navbar />
 
       <main className="kelime-detail-container">
-        <header >
-          <h1 className="tema-title">Tema {tema.temaId}</h1>
+        <header>
+          <h1 className="tema-title">{temaBaslik}</h1>
+
+          
+
           <p className="tema-aciklama">{tema.aciklama}</p>
         </header>
 
@@ -134,7 +144,6 @@ export default function KelimeTemaDetailPage() {
           <div className="kelimeler-list">
             {tema.kelimeler.map((kelime, index) => (
               <div key={kelime.id}>
-                {/* Kelime Kartı */}
                 <div className="kelime-item">
                   <div className="kelime-text">
                     <span className="kelime-es">{kelime.ispanyolca}</span>
@@ -145,7 +154,9 @@ export default function KelimeTemaDetailPage() {
                     className={`copy-btn ${
                       copiedWord === kelime.id ? "copied" : ""
                     }`}
-                    onClick={() => copyToClipboard(kelime.ispanyolca, kelime.id)}
+                    onClick={() =>
+                      copyToClipboard(kelime.ispanyolca, kelime.id)
+                    }
                   >
                     <CopyOutlined />
                   </button>
@@ -155,13 +166,11 @@ export default function KelimeTemaDetailPage() {
                   )}
                 </div>
 
-                {/* Araya serpiştirilen görsel */}
-                {tema.detayResimUrls[index] && (
+                {tema.detayResimUrls && tema.detayResimUrls[index] && (
                   <img
                     className="inline-image"
                     src={getImageUrl(tema.detayResimUrls[index])}
                     alt="detay"
-                    loading="lazy"
                   />
                 )}
               </div>

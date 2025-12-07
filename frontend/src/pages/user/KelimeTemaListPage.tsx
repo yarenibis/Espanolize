@@ -8,15 +8,21 @@ import Footer from "../../components/Footer";
 
 interface KelimeTema {
   id: number;
-  baslik: string;
   aciklama: string;
-  zorluk: "Kolay" | "Orta" | "Zor";
+  temaId: number;
   kelimeSayisi: number;
+  kapakResmiUrl?: string;
+}
+
+interface Tema {
+  id: number;
+  baslik: string;
   kapakResmiUrl?: string;
 }
 
 export default function KelimeTemaListPage() {
   const [temalar, setTemalar] = useState<KelimeTema[]>([]);
+  const [anaTemalar, setAnaTemalar] = useState<Tema[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
@@ -24,43 +30,45 @@ export default function KelimeTemaListPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const { data } = await api.get("/kelimetemalari");
-        setTemalar(
-          data.map((t: any) => ({
-            id: t.id ?? t.Id,
-            baslik: t.baslik ?? t.Baslik,
-            aciklama: t.aciklama ?? t.Aciklama,
-            kapakResmiUrl: t.kapakResmiUrl ?? t.KapakResmiUrl,
-            kelimeSayisi: t.kelimeSayisi ?? t.KelimeSayisi ?? 20,
-            zorluk: t.zorluk ?? t.Zorluk ?? "Kolay",
-          }))
-        );
-      } catch {
+        const [temaRes, anaTemaRes] = await Promise.all([
+          api.get("/kelimetemalari"),
+          api.get("/tema")
+        ]);
+
+        setTemalar(temaRes.data);
+        setAnaTemalar(anaTemaRes.data);
+      } catch (err) {
+        console.error("Veriler yüklenemedi", err);
         setTemalar([]);
       } finally {
         setLoading(false);
       }
     };
+
     load();
   }, []);
 
-  const filtered = temalar.filter((t) =>
-    `${t.baslik} ${t.aciklama}`.toLowerCase().includes(search.toLowerCase())
-  );
+  // Tema başlığını bul
+  const getTemaBaslik = (id: number) => {
+    const tema = anaTemalar.find(t => t.id === id);
+    return tema?.baslik ?? `Tema ${id}`;
+  };
 
-  const getImageUrl = (url?: string) =>
-    url?.startsWith("http")
+  const getImageUrl = (tema: KelimeTema) => {
+    const found = anaTemalar.find(t => t.id === tema.temaId);
+    const url = found?.kapakResmiUrl ?? tema.kapakResmiUrl;
+    return url?.startsWith("http")
       ? url
       : url
       ? `http://localhost:5001${url}`
       : "/api/placeholder/400/220?text=Resim+Yok";
+  };
 
-  const badgeClass = (z: string) =>
-    z === "Kolay"
-      ? "badge-beginner"
-      : z === "Orta"
-      ? "badge-intermediate"
-      : "badge-advanced";
+  const filtered = temalar.filter(t =>
+    `${getTemaBaslik(t.temaId)} ${t.aciklama}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
   return (
     <main className="tema-page">
@@ -68,13 +76,13 @@ export default function KelimeTemaListPage() {
 
       <header className="tema-header">
         <h1>Kelime Temaları</h1>
-        <p>İspanyolca kelime dağarcığını geliştirmek için kategori temelli içerikler.</p>
+        <p>İspanyolca kelimeleri tema bazlı şekilde öğren.</p>
       </header>
 
       <section className="tema-search">
         <input
           type="search"
-          placeholder="Tema ara… (örn: yiyecekler)"
+          placeholder="Tema ara…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -83,13 +91,7 @@ export default function KelimeTemaListPage() {
       {loading && (
         <div className="loading-box">
           <div className="spinner"></div>
-          <p>Temalar yükleniyor…</p>
-        </div>
-      )}
-
-      {!loading && filtered.length === 0 && (
-        <div className="empty-box">
-          <p>Sonuç bulunamadı.</p>
+          <p>Yükleniyor…</p>
         </div>
       )}
 
@@ -102,33 +104,24 @@ export default function KelimeTemaListPage() {
               onClick={() => navigate(`/kelimeler/${tema.id}`)}
             >
               <div className="card-img">
-                <img
-                  src={getImageUrl(tema.kapakResmiUrl)}
-                  alt={`${tema.baslik} teması`}
-                  loading="lazy"
-                />
-                <span className={`badge ${badgeClass(tema.zorluk)}`}>
-                  {tema.zorluk}
-                </span>
+                <img src={getImageUrl(tema)} alt="tema" />
               </div>
 
               <div className="card-body">
-                <h2>{tema.baslik}</h2>
+                <h2>{getTemaBaslik(tema.temaId)}</h2>
                 <p>{tema.aciklama}</p>
 
                 <div className="meta">
                   <span>
                     <BookOutlined /> {tema.kelimeSayisi} kelime
                   </span>
-                  <span>
-                    <UserOutlined /> {tema.zorluk}
-                  </span>
                 </div>
               </div>
             </article>
           ))}
       </section>
-      <Footer/>
+
+      <Footer />
     </main>
   );
 }
