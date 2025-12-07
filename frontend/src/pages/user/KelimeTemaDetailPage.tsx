@@ -133,11 +133,11 @@ export default function KelimeTemaDetailPage() {
 
       <main className="kelime-detail-container">
         <header>
-          <h1 className="tema-title">{temaBaslik}</h1>
+          <h1 className="kelime-detail-title">{temaBaslik}</h1>
 
           
 
-          <p className="tema-aciklama">{tema.aciklama}</p>
+          <p className="kelime-detail-aciklama">{tema.aciklama}</p>
         </header>
 
         <section className="kelimeler-section">

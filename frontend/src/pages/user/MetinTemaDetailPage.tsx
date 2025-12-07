@@ -11,6 +11,7 @@ interface Metin {
   id: number;
   baslik: string;
   icerik: string;
+  ceviri:string;
   aciklama: string;
   zorluk: string;
   okumaSuresi: number;
@@ -116,8 +117,8 @@ export default function MetinTemaDetailPage() {
 
       <main className="metin-container">
         <header>
-          <h1 className="tema-title">{temaBaslik}</h1>
-          <p className="tema-aciklama">{tema.aciklama}</p>
+          <h1 className="metin-detail-title">{temaBaslik}</h1>
+          <p className="metin-detail-aciklama">{tema.aciklama}</p>
         </header>
 
         <section className="metin-list">
@@ -133,6 +134,10 @@ export default function MetinTemaDetailPage() {
 
               <div className="metin-icerik-static">
                 <p className="metin-yazi">{metin.icerik}</p>
+              </div>
+
+              <div className="metin-icerik-static">
+                <p className="metin-yazi">{metin.ceviri}</p>
               </div>
             </article>
           ))}

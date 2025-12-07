@@ -137,9 +137,6 @@ export default function QuickLinks() {
       <BookOutlined className="category-icon" />
       <h3 id="quick-gramer-heading">Gramer Konuları</h3>
     </div>
-    <Link to="/konular" className="view-all-link">
-      Tüm gramer konularını gör →
-    </Link>
   </div>
 
   {gramerKonulari.length > 0 ? (
@@ -179,9 +176,6 @@ export default function QuickLinks() {
               <ReadOutlined className="category-icon" />
               <h3>Kelime Temaları</h3>
             </div>
-            <Link to="/kelimetemalari" className="view-all-link">
-              Tümünü gör →
-            </Link>
           </div>
 
           <ul className="cards-grid">
@@ -214,9 +208,6 @@ export default function QuickLinks() {
               <FileTextOutlined className="category-icon" />
               <h3>Okuma Metinleri</h3>
             </div>
-            <Link to="/metinTema" className="view-all-link">
-              Tümünü gör →
-            </Link>
           </div>
 
           <ul className="cards-grid">

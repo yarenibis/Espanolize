@@ -16,6 +16,7 @@
 /* PNG Logo */
 .logo-image {
   height: 170px;
+  margin-top: 8px;
   width: auto;
   display: block;
   object-fit: contain;

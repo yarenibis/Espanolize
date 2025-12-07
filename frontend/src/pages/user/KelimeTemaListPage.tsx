@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOutlined, UserOutlined } from "@ant-design/icons";
+import { BookOutlined } from "@ant-design/icons";
 import Navbar from "../../components/Navbar";
 import api from "../../services/ApiService";
 import "./KelimeTemaListPage.css";
@@ -32,7 +32,7 @@ export default function KelimeTemaListPage() {
       try {
         const [temaRes, anaTemaRes] = await Promise.all([
           api.get("/kelimetemalari"),
-          api.get("/tema")
+          api.get("/tema"),
         ]);
 
         setTemalar(temaRes.data);
@@ -48,14 +48,13 @@ export default function KelimeTemaListPage() {
     load();
   }, []);
 
-  // Tema başlığını bul
   const getTemaBaslik = (id: number) => {
-    const tema = anaTemalar.find(t => t.id === id);
+    const tema = anaTemalar.find((t) => t.id === id);
     return tema?.baslik ?? `Tema ${id}`;
   };
 
   const getImageUrl = (tema: KelimeTema) => {
-    const found = anaTemalar.find(t => t.id === tema.temaId);
+    const found = anaTemalar.find((t) => t.id === tema.temaId);
     const url = found?.kapakResmiUrl ?? tema.kapakResmiUrl;
     return url?.startsWith("http")
       ? url
@@ -64,17 +63,17 @@ export default function KelimeTemaListPage() {
       : "/api/placeholder/400/220?text=Resim+Yok";
   };
 
-  const filtered = temalar.filter(t =>
+  const filtered = temalar.filter((t) =>
     `${getTemaBaslik(t.temaId)} ${t.aciklama}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
 
   return (
-    <main className="tema-page">
+    <main className="kelime-tema-page">
       <Navbar />
 
-      <header className="tema-header">
+      <header className="kelime-tema-header">
         <h1>Kelime Temaları</h1>
         <p>İspanyolca kelimeleri tema bazlı şekilde öğren.</p>
       </header>
@@ -82,16 +81,23 @@ export default function KelimeTemaListPage() {
       <section className="tema-search">
         <input
           type="search"
-          placeholder="Tema ara…"
+          placeholder="Tema ara… (örn: Aile, Hayvanlar, Yemekler)"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          aria-label="Tema arama"
         />
       </section>
 
       {loading && (
         <div className="loading-box">
           <div className="spinner"></div>
-          <p>Yükleniyor…</p>
+          <p>Temalar yükleniyor…</p>
+        </div>
+      )}
+
+      {!loading && filtered.length === 0 && (
+        <div className="empty-box">
+          <p>Aradığın tema bulunamadı.</p>
         </div>
       )}
 
@@ -104,7 +110,7 @@ export default function KelimeTemaListPage() {
               onClick={() => navigate(`/kelimeler/${tema.id}`)}
             >
               <div className="card-img">
-                <img src={getImageUrl(tema)} alt="tema" />
+                <img src={getImageUrl(tema)} alt={getTemaBaslik(tema.temaId)} />
               </div>
 
               <div className="card-body">

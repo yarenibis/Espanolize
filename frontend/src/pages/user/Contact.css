@@ -2,7 +2,7 @@
   max-width: 700px;
   margin: 50px auto;
   padding: 0 20px;
-  font-family: "Inter", sans-serif;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .contact-container h1 {

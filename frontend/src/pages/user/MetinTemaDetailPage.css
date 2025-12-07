@@ -12,15 +12,14 @@
 
 
 
-.tema-title {
-  font-size: 2.3rem;
-  font-weight: 800;
-  color: #3b82f6;
-  margin-bottom: 12px;
-  line-height: 1.2;
+.metin-detail-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 10px;
 }
 
-.tema-aciklama {
+.metin-detail-aciklama {
   font-size: 1.15rem;
   color: #4a5568;
   margin: 0 auto 25px;
