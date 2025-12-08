@@ -11,6 +11,7 @@ interface MetinTema {
   temaId: number;
   aciklama: string;
   kapakResmiUrl?: string;
+  zorluk: "Kolay" | "Orta" | "Zor" | "Bilinmiyor";
 }
 
 interface Tema {
@@ -27,40 +28,58 @@ export default function MetinTemaListPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await api.get("/metinTema");
+  const load = async () => {
+    try {
+      // 1) /metinTema ile sadece temel liste (id, temaId, aciklama) geliyor
+      const res = await api.get("/metinTema");
 
-        const normalized: MetinTema[] = res.data.map((t: any) => ({
-          id: t.id ?? t.Id,
-          temaId: t.temaId ?? t.TemaId,
-          aciklama: t.aciklama ?? t.Aciklama,
-          kapakResmiUrl: t.kapakResmiUrl ?? t.KapakResmiUrl,
-        }));
+      // 2) Listedeki her item için detay API çağrısı
+      const detailed = await Promise.all(
+        res.data.map(async (item: any) => {
+          const detail = await api.get(`/metinTema/${item.id}`);
 
-        setTemalar(normalized);
+          return {
+            id: item.id,
+            temaId: item.temaId ?? detail.data.temaId,
+            aciklama: item.aciklama ?? detail.data.aciklama,
+            kapakResmiUrl: item.kapakResmiUrl ?? detail.data.kapakResmiUrl,
+            zorluk:
+              detail.data.zorluk ??
+              detail.data.metinler?.[0]?.zorluk ??
+              "Bilinmiyor",
+          };
+        })
+      );
 
-        // === Tema başlıklarını çek ===
-        const ids = [...new Set(normalized.map(t => t.temaId))]; // benzersiz ID'ler
+      setTemalar(detailed);
 
-        const temaResponses = await Promise.all(ids.map(id => api.get(`/tema/${id}`)));
-        const temaList = temaResponses.map(r => ({
-          id: r.data.id,
-          baslik: r.data.baslik,
-          kapakResmiUrl: r.data.kapakResmiUrl
-        }));
+      // === Tema başlıklarını çek ===
+      const ids = [...new Set(detailed.map(t => t.temaId))];
+      const temaResponses = await Promise.all(ids.map(id => api.get(`/tema/${id}`)));
+      const temaList = temaResponses.map(r => ({
+        id: r.data.id,
+        baslik: r.data.baslik,
+        kapakResmiUrl: r.data.kapakResmiUrl
+      }));
+      setAnaTemalar(temaList);
 
-        setAnaTemalar(temaList);
+    } catch (err) {
+      console.error("Metin temaları yüklenemedi:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      } catch (err) {
-        console.error("Metin temaları yüklenemedi:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  load();
+}, []);
 
-    load();
-  }, []);
+
+  const getDifficultyClass = (level: string) => {
+  if (level === "Kolay") return "difficulty-beginner";
+  if (level === "Orta") return "difficulty-intermediate";
+  if (level === "Zor") return "difficulty-advanced";
+  return "difficulty-unknown";
+};
 
   // Tema başlığını bul
   const getTemaBaslik = (id: number) => {
@@ -133,6 +152,9 @@ export default function MetinTemaListPage() {
                   alt={getTemaBaslik(tema.temaId)}
                   loading="lazy"
                 />
+                <span className={`difficulty-badge ${getDifficultyClass(tema.zorluk)}`}>
+    {tema.zorluk}
+  </span>
               </div>
 
               <div className="card-body">

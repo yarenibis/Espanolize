@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Navbar.css";
-import logo2 from"../assets/logo (2).png";
+import logo2 from "../assets/logo (2).png";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -15,29 +15,34 @@ export default function Navbar() {
     setIsMobileMenuOpen(false);
   };
 
+
+  useEffect(() => {
+  const handleResize = () => {
+    if (window.innerWidth > 768) {
+      setIsMobileMenuOpen(false);
+    }
+  };
+
+  window.addEventListener("resize", handleResize);
+  
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+
   return (
     <>
       <nav className="navbar">
         <div className="nav-container">
-<Link to="/" className="logo-area" onClick={closeMobileMenu}>
-  
-  {/* PNG Logo */}
-  <img 
-    src={logo2}
-    alt="Logo"
-    className="logo-image"
-  />
 
+          {/* Logo */}
+          <Link to="/" className="logo-area" onClick={closeMobileMenu}>
+            <img src={logo2} alt="Logo" className="logo-image" />
+          </Link>
 
-
-</Link>
-
-
-          {/* Desktop Navigasyon */}
+          {/* Desktop Menü */}
           <ul className="nav-links">
             <li>
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className={location.pathname === "/" ? "active" : ""}
               >
                 Ana Sayfa
@@ -45,32 +50,35 @@ export default function Navbar() {
             </li>
 
             <li>
-              <Link 
-                to="/hakkimizda" 
+              <Link
+                to="/hakkimizda"
                 className={location.pathname === "/hakkimizda" ? "active" : ""}
               >
                 Hakkımızda
               </Link>
             </li>
+
             <li>
-              <Link 
-                to="/konular" 
+              <Link
+                to="/konular"
                 className={location.pathname === "/konular" ? "active" : ""}
               >
                 Gramer Konuları
               </Link>
             </li>
+
             <li>
-              <Link 
-                to="/kelimetemalari" 
+              <Link
+                to="/kelimetemalari"
                 className={location.pathname === "/kelimetemalari" ? "active" : ""}
               >
                 Kelime Temaları
               </Link>
             </li>
+
             <li>
-              <Link 
-                to="/metinTema" 
+              <Link
+                to="/metinTema"
                 className={location.pathname === "/metinTema" ? "active" : ""}
               >
                 Okuma Metinleri
@@ -78,8 +86,8 @@ export default function Navbar() {
             </li>
 
             <li>
-              <Link 
-                to="/iletisim" 
+              <Link
+                to="/iletisim"
                 className={location.pathname === "/iletisim" ? "active" : ""}
               >
                 İletişim
@@ -87,15 +95,8 @@ export default function Navbar() {
             </li>
           </ul>
 
-          {/* Desktop Butonlar */}
-          <div className="nav-actions">
-            <Link to="/login" className="login-btn">
-              Giriş Yap
-            </Link>
-          </div>
-
-          {/* Mobile Menu Butonu */}
-          <button 
+          {/* Mobile Menü Butonu */}
+          <button
             className="mobile-menu-btn"
             onClick={toggleMobileMenu}
             aria-label="Menüyü aç/kapat"
@@ -107,56 +108,59 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menü */}
       <div className={`mobile-menu ${isMobileMenuOpen ? "active" : ""}`}>
         <ul className="mobile-nav-links">
           <li>
-            <Link 
-              to="/" 
-              className={location.pathname === "/" ? "active" : ""}
+            <Link
+              to="/"
               onClick={closeMobileMenu}
+              className={location.pathname === "/" ? "active" : ""}
             >
               Ana Sayfa
             </Link>
           </li>
+
           <li>
-            <Link 
-              to="/konular" 
-              className={location.pathname === "/konular" ? "active" : ""}
+            <Link
+              to="/konular"
               onClick={closeMobileMenu}
+              className={location.pathname === "/konular" ? "active" : ""}
             >
               Gramer Konuları
             </Link>
           </li>
+
           <li>
-            <Link 
-              to="/kelimetemalari" 
-              className={location.pathname === "/kelimetemalari" ? "active" : ""}
+            <Link
+              to="/kelimetemalari"
               onClick={closeMobileMenu}
+              className={location.pathname === "/kelimetemalari" ? "active" : ""}
             >
               Kelime Temaları
             </Link>
           </li>
+
           <li>
-            <Link 
-              to="/metinTema" 
-              className={location.pathname === "/metinTema" ? "active" : ""}
+            <Link
+              to="/metinTema"
               onClick={closeMobileMenu}
+              className={location.pathname === "/metinTema" ? "active" : ""}
             >
               Okuma Metinleri
             </Link>
           </li>
+
+          <li>
+            <Link
+              to="/iletisim"
+              onClick={closeMobileMenu}
+              className={location.pathname === "/iletisim" ? "active" : ""}
+            >
+              İletişim
+            </Link>
+          </li>
         </ul>
-        
-        <div className="mobile-nav-actions">
-          <Link 
-            to="/login" 
-            className="login-btn"
-            onClick={closeMobileMenu}
-          >
-            Giriş Yap
-          </Link>
-        </div>
       </div>
     </>
   );

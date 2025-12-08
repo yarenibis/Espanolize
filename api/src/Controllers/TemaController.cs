@@ -9,7 +9,7 @@ using api.src.Mapper.KullanıcıMapper;
 
 [Route("api/admin/tema")]
 [ApiController]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class TemaController : ControllerBase
 {
     private readonly ApplicationDbContext _context;

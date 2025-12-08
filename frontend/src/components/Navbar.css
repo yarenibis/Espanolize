@@ -121,23 +121,7 @@
   width: 100%;
 }
 
-/* Buttons */
-.nav-actions {
-  display: flex;
-  align-items: center;
-}
 
-.login-btn {
-  background: #3B82F6;
-  padding: 10px 24px;
-  color: white;
-  border-radius: 10px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 14px;
-  transition: 0.3s ease;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
-}
 
 .login-btn:hover {
   background: #2563EB;
@@ -206,18 +190,28 @@
   padding-left: 6px;
 }
 
-.mobile-nav-actions {
-  margin-top: 20px;
-}
 
-/* Responsive */
+
 @media (max-width: 768px) {
-  .nav-links,
-  .nav-actions {
+  .nav-links {
     display: none;
   }
-
   .mobile-menu-btn {
     display: flex;
+  }
+  .logo-image {
+    height: 120px;
+  }
+}
+
+/* 480px — Küçük telefon */
+@media (max-width: 480px) {
+  .logo-image {
+    height: 95px;
+    margin-top: 2px;
+  }
+
+  .mobile-nav-links a {
+    font-size: 14px;
   }
 }

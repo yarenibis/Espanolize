@@ -6,7 +6,7 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-  if (!token || role !== "Admin") {
+  if (!token || role !== "admin") {
     return <Navigate to="/login" replace />;
   }
 
