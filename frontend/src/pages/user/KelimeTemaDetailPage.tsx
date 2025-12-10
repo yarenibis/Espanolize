@@ -134,9 +134,6 @@ export default function KelimeTemaDetailPage() {
       <main className="kelime-detail-container">
         <header>
           <h1 className="kelime-detail-title">{temaBaslik}</h1>
-
-          
-
           <p className="kelime-detail-aciklama">{tema.aciklama}</p>
         </header>
 

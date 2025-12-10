@@ -6,8 +6,7 @@ export default function VizyonMisyonSection() {
   return (
     <section 
       className="vm-section"
-      aria-labelledby="vizyon-misyon-baslik"
-    >
+      aria-labelledby="vizyon-misyon-baslik">
       <div className="vm-container">
 
         {/* Dekoratif PNG – SEO için gizlendi */}

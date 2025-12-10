@@ -119,8 +119,8 @@ export default function QuickLinks() {
     return (
       <section className="quick-links-section">
         <div className="container">
-          <div className="loading-state">
-            <div className="loading-spinner" />
+          <div className="quick-loading-state">
+            <div className="quick-loading-spinner" />
             <p>İçerikler yükleniyor…</p>
           </div>
         </div>

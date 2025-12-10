@@ -33,10 +33,10 @@ export default function FeatureHighlights() {
     >
       <div className="features-container">
         <h2 className="features-title" id="features-heading">
-          Espanolize Platform Özellikleri
+          Españolize Platform Özellikleri
         </h2>
         <p className="features-subtitle">
-          Espanolize, İspanyolca gramer, kelime ve okuma pratiğini{" "}
+          Españolize, İspanyolca gramer, kelime ve okuma pratiğini{" "}
           <strong>tek bir platformda</strong> birleştirerek, online İspanyolca
           öğrenme sürecini daha hızlı, anlaşılır ve sürdürülebilir hale getirir.
         </p>

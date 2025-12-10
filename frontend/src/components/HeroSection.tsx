@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import "./HeroSection.css";
-import heroImg from "../assets/Spain Azulejo Azuleios Espana Madrid Sticker.jpg";
+import heroImg from "../assets/espanolize (3).png";
 
 export default function HeroSection() {
   return (

@@ -30,39 +30,6 @@
   text-decoration: none;
 }
 
-/* If icon is used instead of PNG */
-.logo-icon {
-  width: 40px;
-  height: 40px;
-  background: #3B82F6; /* primary blue */
-  border-radius: 10px;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
-  font-size: 18px;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.logo-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.logo-main {
-  font-weight: 800;
-  font-size: 22px;
-  color: #1E40AF; /* dark blue text */
-}
-
-.logo-sub {
-  font-size: 10px;
-  color: #3B82F6;
-  margin-top: 1px;
-  font-weight: 600;
-  letter-spacing: 1px;
-}
 
 /* Container */
 .nav-container {
