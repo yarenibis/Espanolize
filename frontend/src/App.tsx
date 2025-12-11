@@ -1,29 +1,30 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/user/HomePage";
-import LoginPage from "./pages/admin/LoginPage";
-import KonuPage from "./pages/admin/KonuPage";
-import GramerKuralPage from "./pages/admin/GramerKuralPage";
-import OrnekPage from "./pages/admin/OrnekPage";
-import KelimeTemaPage from "./pages/admin/KelimeTemaPage";
-import KelimePage from "./pages/admin/KelimePage";
-import KelimeTemaListPage from "./pages/user/KelimeTemaListPage";
-import KelimeTemaDetailPage from "./pages/user/KelimeTemaDetailPage";
-import MetinTemaPage from "./pages/admin/MetinTemaPage";
-import MetinPage from "./pages/admin/MetinPage";
-import MetinTemaListPage from "./pages/user/MetinTemaListPage";
-import MetinTemaDetailPage from "./pages/user/MetinTemaDetailPage";
-import ProtectedRoute from "./components/adminDashboard/ProtectedRoute";
-import TemaPage from "./pages/admin/TemaPage";
-import AdminLayout from "./components/adminDashboard/AdminLayout";
-import KonuListPage from "./pages/user/KonuListPage";
-import KonuDetailPage from "./pages/user/KonuDetailPage";
-import PrivacyPolicy from "./pages/user/PrivacyPolicy";
-import CookiePolicy from "./pages/user/CookiePolicy";
-import Terms from "./pages/user/Terms";
-import FAQ from "./pages/user/FAQ";
-import Contact from "./pages/user/Contact";
-import Hakkimizda from "./components/Hakkimizda";
+import HomePage from "./pages/user/Home/HomePage";
+import LoginPage from "./pages/admin/Login/LoginPage";
+import KonuPage from "./pages/admin/Konu/KonuPage";
+import KelimeTemaPage from "./pages/admin/Kelime/KelimeTemaPage";
+import KelimePage from "./pages/admin/Kelime/KelimePage";
+import KelimeTemaListPage from "./pages/user/Kelime/KelimeTemaListPage";
+import KelimeTemaDetailPage from "./pages/user/Kelime/KelimeTemaDetailPage";
+import MetinTemaPage from "./pages/admin/Metin/MetinTemaPage";
+import MetinPage from "./pages/admin/Metin/MetinPage";
+import MetinTemaListPage from "./pages/user/Metin/MetinTemaListPage";
+import MetinTemaDetailPage from "./pages/user/Metin/MetinTemaDetailPage";
+import ProtectedRoute from "./pages/admin/Dashboard/ProtectedRoute";
+import TemaPage from "./pages/admin/Tema/TemaPage";
+import AdminLayout from "./pages/admin/Dashboard/AdminLayout";
+import KonuListPage from "./pages/user/Konu/KonuListPage";
+import KonuDetailPage from "./pages/user/Konu/KonuDetailPage";
+import PrivacyPolicy from "./pages/user/Home/PrivacyPolicy";
+import CookiePolicy from "./pages/user/Home/CookiePolicy";
+import Terms from "./pages/user/Home/Terms";
+import FAQ from "./pages/user/Home/FAQ";
+import Contact from "./pages/user/Contact/Contact";
+import Hakkimizda from "./pages/user/Home/Hakkimizda";
+import GramerKuralPage from "./pages/admin/Kural/GramerKuralPage";
+import OrnekPage from "./pages/admin/Ornek/OrnekPage";
+import Dashboard from "./pages/admin/Dashboard/Dashboard";
 
 export default function App() {
   return (
@@ -55,7 +56,7 @@ export default function App() {
           }
         >
           {/* Bu route'lar AdminLayout içindeki Outlet'te render edilecek */}
-          
+          <Route index element={<Dashboard />} />
           <Route path="konular" element={<KonuPage />} />
           <Route path="gramerkurallar" element={<GramerKuralPage />} />
           <Route path="ornekler" element={<OrnekPage />} />

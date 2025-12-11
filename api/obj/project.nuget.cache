@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "2S/DqEMHkXo=",
+  "dgSpecHash": "Je38W4miqXM=",
   "success": true,
   "projectFilePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,8 @@
     "C:\\Users\\yaren\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
     "C:\\Users\\yaren\\.nuget\\packages\\cloudinarydotnet\\1.27.8\\cloudinarydotnet.1.27.8.nupkg.sha512",
     "C:\\Users\\yaren\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\yaren\\.nuget\\packages\\magick.net-q8-anycpu\\10.0.0\\magick.net-q8-anycpu.10.0.0.nupkg.sha512",
+    "C:\\Users\\yaren\\.nuget\\packages\\magick.net.core\\10.0.0\\magick.net.core.10.0.0.nupkg.sha512",
     "C:\\Users\\yaren\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.0\\microsoft.aspnetcore.authentication.jwtbearer.9.0.0.nupkg.sha512",
     "C:\\Users\\yaren\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\9.0.0\\microsoft.aspnetcore.cryptography.internal.9.0.0.nupkg.sha512",
     "C:\\Users\\yaren\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\9.0.0\\microsoft.aspnetcore.cryptography.keyderivation.9.0.0.nupkg.sha512",
@@ -142,5 +144,186 @@
     "C:\\Users\\yaren\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "C:\\Users\\yaren\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-6hgw-6x87-578x",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-6hjr-v6g4-3fm8",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-9ccg-6pjw-x645",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-9pp9-cfwx-54rm",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1901",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known low severity vulnerability, https://github.com/advisories/GHSA-cfh4-9f7v-fhrc",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-cjc8-g9w8-chfw",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1901",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known low severity vulnerability, https://github.com/advisories/GHSA-fff3-4rp7-px97",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1901",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known low severity vulnerability, https://github.com/advisories/GHSA-fh55-q5pj-pxgw",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1901",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known low severity vulnerability, https://github.com/advisories/GHSA-hm4x-r5hc-794f",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-j7hp-h8jx-5ppr",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-mxvv-97wh-cfmm",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-q3hc-j9x5-mp9m",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qh3h-j545-h8c9",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qp29-wxp5-wh82",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'Magick.NET-Q8-AnyCPU' 10.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-vmhh-8rxq-fp9g",
+      "projectPath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\yaren\\vscodeProjects\\LanguageApp\\Espanolize\\api\\api.csproj",
+      "libraryId": "Magick.NET-Q8-AnyCPU",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    }
+  ]
 }

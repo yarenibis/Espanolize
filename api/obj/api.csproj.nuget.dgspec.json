@@ -55,6 +55,10 @@
               "target": "Package",
               "version": "[1.27.8, )"
             },
+            "Magick.NET-Q8-AnyCPU": {
+              "target": "Package",
+              "version": "[10.0.0, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[9.0.0, )"

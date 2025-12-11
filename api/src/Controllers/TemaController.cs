@@ -6,6 +6,8 @@ using api.src.Mapper.AdminMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using api.src.Mapper.KullanıcıMapper;
+using ImageMagick;
+using ImageMagick.Formats;
 
 [Route("api/admin/tema")]
 [ApiController]
@@ -21,7 +23,6 @@ public class TemaController : ControllerBase
         _env = env;
     }
 
-
     private string UploadRoot =>
         Path.Combine(_env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), "uploads", "themes");
 
@@ -34,6 +35,7 @@ public class TemaController : ControllerBase
         var relative = fullUrl.Replace(baseUrl, "").Replace("/", Path.DirectorySeparatorChar.ToString());
         return Path.Combine(_env.WebRootPath ?? "", relative);
     }
+
 
     // ----------------- 📜 TÜM TEMALAR -----------------
     [HttpGet]
@@ -65,7 +67,8 @@ public class TemaController : ControllerBase
         return Ok(tema.ToTemaListDto());
     }
 
-    // ----------------- 🖼️ KAPAK RESMİ YÜKLE -----------------
+
+    // ----------------- 🖼️ KAPAK RESMİ WEBP FORMATINDA YÜKLE -----------------
     [HttpPost("{id}/upload-cover")]
     public async Task<IActionResult> UploadCover([FromRoute] int id, IFormFile file)
     {
@@ -76,12 +79,22 @@ public class TemaController : ControllerBase
         var dir = Path.Combine(UploadRoot, id.ToString());
         Directory.CreateDirectory(dir);
 
-        var ext = Path.GetExtension(file.FileName);
-        var name = $"cover_{Guid.NewGuid():N}{ext}";
+        // webp dosya adı
+        var name = $"cover_{Guid.NewGuid():N}.webp";
         var phys = Path.Combine(dir, name);
 
-        using (var fs = System.IO.File.Create(phys))
-            await file.CopyToAsync(fs);
+        // 📌 WebP'ye dönüştürme
+        using (var input = file.OpenReadStream())
+        using (var image = new MagickImage(input))
+        {
+            var define = new WebPWriteDefines
+            {
+                AlphaQuality = 75,
+                Lossless = false
+            };
+
+            image.Write(phys, define);
+        }
 
         var relativePath = $"/uploads/themes/{id}/{name}";
         tema.KapakResmiUrl = BuildPublicUrl(relativePath);
@@ -95,7 +108,8 @@ public class TemaController : ControllerBase
         return Ok(full.ToTemaDetayDto());
     }
 
-    // ----------------- 🖼️ ÇOKLU DETAY GÖRSEL YÜKLE -----------------
+
+    // ----------------- 🖼️ ÇOKLU DETAY GÖRSELİ WEBP FORMATINDA YÜKLE -----------------
     [HttpPost("{id}/upload-details")]
     public async Task<IActionResult> UploadDetails([FromRoute] int id, List<IFormFile> files)
     {
@@ -111,14 +125,24 @@ public class TemaController : ControllerBase
         {
             if (file.Length == 0) continue;
 
-            var ext = Path.GetExtension(file.FileName);
-            var name = $"img_{Guid.NewGuid():N}{ext}";
+            var name = $"img_{Guid.NewGuid():N}.webp";
             var phys = Path.Combine(dir, name);
 
-            using var fs = System.IO.File.Create(phys);
-            await file.CopyToAsync(fs);
+            // 📌 WebP dönüştür
+            using (var input = file.OpenReadStream())
+            using (var image = new MagickImage(input))
+            {
+                var define = new WebPWriteDefines
+                {
+                    AlphaQuality = 75,
+                    Lossless = false
+                };
+
+                image.Write(phys, define);
+            }
 
             var relativePath = $"/uploads/themes/{id}/gallery/{name}";
+
             tema.DetayResimler.Add(new TemaResim
             {
                 TemaId = id,
@@ -135,9 +159,10 @@ public class TemaController : ControllerBase
         return Ok(updated.ToTemaDetayDto());
     }
 
+
     // ----------------- 🧹 KAPAK TEMİZLE -----------------
     [HttpDelete("{id}/cover")]
-    public async Task<IActionResult> RemoveCover([FromRoute] int id)
+    public async Task<IActionResult> RemoveCover(int id)
     {
         var tema = await _context.Temalar.FindAsync(id);
         if (tema == null) return NotFound();
@@ -159,9 +184,10 @@ public class TemaController : ControllerBase
         return Ok(dto.ToTemaDetayDto());
     }
 
+
     // ----------------- 🗑️ GALERİDEN TEK GÖRSEL SİL -----------------
     [HttpDelete("{id}/details")]
-    public async Task<IActionResult> DeleteDetail([FromRoute] int id, [FromQuery] string url)
+    public async Task<IActionResult> DeleteDetail(int id, [FromQuery] string url)
     {
         var tema = await _context.Temalar
             .Include(t => t.DetayResimler)
@@ -185,9 +211,10 @@ public class TemaController : ControllerBase
         return Ok(dto.ToTemaDetayDto());
     }
 
+
     // ----------------- 🧨 TÜM TEMA VE DOSYALARI SİL -----------------
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteTema([FromRoute] int id)
+    public async Task<IActionResult> DeleteTema(int id)
     {
         var tema = await _context.Temalar
             .Include(t => t.DetayResimler)
@@ -196,15 +223,11 @@ public class TemaController : ControllerBase
         if (tema == null)
             return NotFound("Tema bulunamadı.");
 
-        // 📁 Fiziksel klasörü sil
         var themeFolder = Path.Combine(UploadRoot, id.ToString());
-        if (Directory.Exists(themeFolder))
-        {
-            try { Directory.Delete(themeFolder, recursive: true); }
-            catch (Exception ex) { Console.WriteLine($"Klasör silinirken hata: {ex.Message}"); }
-        }
 
-        // 📦 DB'den kayıtları sil
+        if (Directory.Exists(themeFolder))
+            Directory.Delete(themeFolder, recursive: true);
+
         if (tema.DetayResimler.Any())
             _context.TemaResimleri.RemoveRange(tema.DetayResimler);
 

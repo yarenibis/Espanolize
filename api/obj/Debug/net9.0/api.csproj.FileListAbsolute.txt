@@ -160,3 +160,11 @@ C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\obj\Debug\net9.0\api.pd
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\obj\Debug\net9.0\api.genruntimeconfig.cache
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\obj\Debug\net9.0\ref\api.dll
 C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\api.staticwebassets.runtime.json
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Magick.NET-Q8-AnyCPU.dll
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\Magick.NET.Core.dll
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\runtimes\linux-musl-x64\native\Magick.Native-Q8-x64.dll.so
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\runtimes\linux-x64\native\Magick.Native-Q8-x64.dll.so
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\runtimes\osx-x64\native\Magick.Native-Q8-x64.dll.dylib
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\runtimes\win-arm64\native\Magick.Native-Q8-arm64.dll
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\runtimes\win-x64\native\Magick.Native-Q8-x64.dll
+C:\Users\yaren\vscodeProjects\LanguageApp\Espanolize\api\bin\Debug\net9.0\runtimes\win-x86\native\Magick.Native-Q8-x86.dll

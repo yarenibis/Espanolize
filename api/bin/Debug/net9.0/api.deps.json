@@ -9,6 +9,7 @@
       "api/1.0.0": {
         "dependencies": {
           "CloudinaryDotNet": "1.27.8",
+          "Magick.NET-Q8-AnyCPU": "10.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "9.0.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "9.0.0",
           "Microsoft.AspNetCore.OpenApi": "9.0.0",
@@ -75,6 +76,57 @@
           "lib/net6.0/Humanizer.dll": {
             "assemblyVersion": "2.14.0.0",
             "fileVersion": "2.14.1.48190"
+          }
+        }
+      },
+      "Magick.NET-Q8-AnyCPU/10.0.0": {
+        "dependencies": {
+          "Magick.NET.Core": "10.0.0"
+        },
+        "runtime": {
+          "lib/netstandard21/Magick.NET-Q8-AnyCPU.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.0.0"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/linux-musl-x64/native/Magick.Native-Q8-x64.dll.so": {
+            "rid": "linux-musl-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/linux-x64/native/Magick.Native-Q8-x64.dll.so": {
+            "rid": "linux-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/osx-x64/native/Magick.Native-Q8-x64.dll.dylib": {
+            "rid": "osx-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-arm64/native/Magick.Native-Q8-arm64.dll": {
+            "rid": "win-arm64",
+            "assetType": "native",
+            "fileVersion": "7.1.0.26"
+          },
+          "runtimes/win-x64/native/Magick.Native-Q8-x64.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "7.1.0.26"
+          },
+          "runtimes/win-x86/native/Magick.Native-Q8-x86.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "7.1.0.26"
+          }
+        }
+      },
+      "Magick.NET.Core/10.0.0": {
+        "runtime": {
+          "lib/netstandard21/Magick.NET.Core.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.0.0"
           }
         }
       },
@@ -1452,6 +1504,20 @@
       "sha512": "sha512-lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw==",
       "path": "humanizer.core/2.14.1",
       "hashPath": "humanizer.core.2.14.1.nupkg.sha512"
+    },
+    "Magick.NET-Q8-AnyCPU/10.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-CR0CHNCOIRuaF0Kl9WFdbY+xZ+ETej9arMyuPlo1F4Fbn2O2fbBwjyz8v7S0VLQ+7n+jh9tEIQJQsNBTuos2IA==",
+      "path": "magick.net-q8-anycpu/10.0.0",
+      "hashPath": "magick.net-q8-anycpu.10.0.0.nupkg.sha512"
+    },
+    "Magick.NET.Core/10.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9uhWIPL/kujwJL1cmzfE6qZnEgGJcLHDl6s4sCZn2+mh44Fl2sgwcxzRvmbhR6pL6tKFeqwQPv/YeUnKVWOSNQ==",
+      "path": "magick.net.core/10.0.0",
+      "hashPath": "magick.net.core.10.0.0.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Authentication.JwtBearer/9.0.0": {
       "type": "package",

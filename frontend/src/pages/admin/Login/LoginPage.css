@@ -1,0 +1,84 @@
+/* Login Page Container */
+.login-container {
+  height: 100vh;
+  background: #f3f4f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card */
+.login-card {
+  width: 340px;
+  background: #ffffff;
+  padding: 30px 60px; /* daha geniş padding */
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.10);
+  animation: fadeIn 0.4s ease;
+}
+
+/* Title */
+.login-title {
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 24px; /* aşağıdan daha fazla boşluk */
+  color: #111827;
+}
+
+/* Input */
+.login-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px; /* köşeler daha yumuşak */
+  margin-bottom: 18px; /* inputlar arası boşluk arttırıldı */
+  font-size: 14px;
+  background: #fafafa;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* Error */
+.login-error {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: -10px;
+  margin-bottom: 14px;
+}
+
+/* Button */
+.login-button {
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  padding: 12px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 4px;
+}
+
+.login-button:hover {
+  background: #1e40af;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
