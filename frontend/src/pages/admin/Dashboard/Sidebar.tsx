@@ -82,6 +82,9 @@ export default function Sidebar() {
       onCollapse={(value) => setCollapsed(value)}
       theme="light"
       width={250}
+      collapsedWidth={0}          // Küçük ekranlarda sidebar gizlenecek
+      breakpoint="lg"             // lg = 992px, altına düşerse otomatik collapse
+      onBreakpoint={(broken) => setCollapsed(broken)}
     >
       <div
         style={{

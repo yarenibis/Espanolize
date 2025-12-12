@@ -310,6 +310,7 @@ export default function OrnekPage() {
             <p>İlk örneğinizi eklemek için yukarıdaki formu kullanın.</p>
           </div>
         ) : (
+          <div className="table-responsive">
           <CrudTable
             data={tableData}
             onEdit={(item) => {
@@ -319,7 +320,7 @@ export default function OrnekPage() {
               }
             }}
             onDelete={handleDelete}
-          />
+          /> </div>
         )}
       </div>
     </div>

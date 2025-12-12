@@ -341,6 +341,7 @@ export default function KonuPage() {
             <p>İlk konunuzu eklemek için yukarıdaki formu kullanın.</p>
           </div>
         ) : (
+          <div className="table-responsive">
           <CrudTable
             data={tabloData}
             onEdit={(item) => {
@@ -350,7 +351,7 @@ export default function KonuPage() {
               }
             }}
             onDelete={handleDelete}
-          />
+          /> </div>
         )}
       </div>
     </div>

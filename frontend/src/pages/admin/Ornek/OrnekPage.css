@@ -185,6 +185,10 @@
   .ornek-container {
     padding: 15px;
   }
+  .table-responsive {
+  width: 100%;
+  overflow-x: auto; /* Yatay kaydırma */
+}
   
   .ornek-form-grid {
     grid-template-columns: 1fr;

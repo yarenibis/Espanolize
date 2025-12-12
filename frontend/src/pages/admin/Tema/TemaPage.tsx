@@ -14,7 +14,6 @@ interface TableRow {
   id: number;
   baslik: string;
   kapakResmi: string;
-  detayResimSayisi: number;
   resimOnizlemeleri: JSX.Element;
 }
 
@@ -123,7 +122,6 @@ export default function TemaPage() {
       id: tema.id,
       baslik: tema.baslik,
       kapakResmi: tema.kapakResmiUrl ? "✅ Var" : "❌ Yok",
-      detayResimSayisi: tema.detayResimUrls?.length || 0,
       resimOnizlemeleri
     };
   });
@@ -547,6 +545,7 @@ export default function TemaPage() {
             <p>İlk temanızı eklemek için yukarıdaki formu kullanın.</p>
           </div>
         ) : (
+          <div className="table-responsive">
           <CrudTable
             data={tabloData}
             onEdit={(item) => {
@@ -560,7 +559,7 @@ export default function TemaPage() {
               }
             }}
             onDelete={handleDelete}
-          />
+          /> </div>
         )}
       </div>
 

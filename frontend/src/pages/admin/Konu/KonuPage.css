@@ -201,7 +201,11 @@
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
+ 
+  .table-responsive {
+  width: 100%;
+  overflow-x: auto; /* Yatay kaydırma */
+}
   .konu-header {
     padding: 20px;
   }

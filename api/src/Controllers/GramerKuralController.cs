@@ -7,7 +7,6 @@ using api.src.Mapper.AdminMapper;
 using api.src.Mapper.KullanıcıMapper;
 using api.src.Models;
 using Microsoft.EntityFrameworkCore;
-using api.src.Helpers;
 
 namespace api.src.Controllers
 {

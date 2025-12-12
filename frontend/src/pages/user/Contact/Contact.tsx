@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import emailjs from "@emailjs/browser";
+import DOMPurify from "dompurify";
 import "./Contact.css";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
@@ -9,11 +10,14 @@ const Contact: React.FC = () => {
     name: "",
     email: "",
     message: "",
+    website: "" // Honeypot
   });
 
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
-    "idle"
-  );
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
+  const [startTime] = useState(Date.now());
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -23,23 +27,67 @@ const Contact: React.FC = () => {
 
   const sendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setStatus("loading");
+
+    // 🛡️ 1. Honeypot kontrolü
+    if (form.website.length > 0) {
+      console.warn("Bot engellendi (honeypot).");
+      setStatus("error");
+      return;
+    }
+
+    // 🛡️ 2. Bot timer — 0.8 saniyeden hızlı form gönderilmez
+    if (Date.now() - startTime < 800) {
+      console.warn("Bot engellendi (timer).");
+      setStatus("error");
+      return;
+    }
+
+    // 🛡️ 3. Rate limit — 15 saniyede 1 defa gönderilebilir
+    const last = localStorage.getItem("last_sent");
+    if (last && Date.now() - Number(last) < 15000) {
+      alert("Lütfen tekrar göndermeden önce birkaç saniye bekleyiniz.");
+      setStatus("error");
+      return;
+    }
+    localStorage.setItem("last_sent", Date.now().toString());
+
+    // 🛡️ 4. Email doğrulama (regex)
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
+    if (!emailValid) {
+      alert("Lütfen geçerli bir e-posta adresi giriniz.");
+      setStatus("error");
+      return;
+    }
+
+    // 🛡️ 5. Mesaj çok uzun olamaz (spam koruması)
+    if (form.message.length > 2000) {
+      alert("Mesaj çok uzun (max 2000 karakter).");
+      setStatus("error");
+      return;
+    }
+
+    // 🛡️ 6. XSS sanitize
+    const clean = {
+      name: DOMPurify.sanitize(form.name),
+      email: DOMPurify.sanitize(form.email),
+      message: DOMPurify.sanitize(form.message)
+    };
 
     try {
       await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        import.meta.env.VITE_EMAILJS_SERVICE_ID!,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID!,
         {
-          from_name: form.name,
-          from_email: form.email,
-          message: form.message,
+          from_name: clean.name,
+          from_email: clean.email,
+          message: clean.message
         },
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY!
       );
 
       setStatus("success");
-      setForm({ name: "", email: "", message: "" });
+      setForm({ name: "", email: "", message: "", website: "" });
     } catch (err) {
       console.error("EmailJS Error:", err);
       setStatus("error");
@@ -53,12 +101,20 @@ const Contact: React.FC = () => {
       <div className="contact-container">
         <h1>İletişim</h1>
         <p className="contact-desc">
-          Her türlü soru, öneri veya işbirliği için bize mesaj gönderebilirsiniz.  
+          Her türlü soru, öneri veya işbirliği için bize mesaj gönderebilirsiniz.
           En kısa sürede dönüş yapacağız.
         </p>
 
         <form className="contact-form" onSubmit={sendEmail}>
-          {/* Name */}
+          {/* 🛡️ Honeypot (gizli input) */}
+          <input
+            type="text"
+            name="website"
+            value={form.website}
+            onChange={handleChange}
+            style={{ display: "none" }}
+          />
+
           <div className="form-group">
             <label>Adınız</label>
             <input
@@ -71,7 +127,6 @@ const Contact: React.FC = () => {
             />
           </div>
 
-          {/* Email */}
           <div className="form-group">
             <label>E-posta</label>
             <input
@@ -84,7 +139,6 @@ const Contact: React.FC = () => {
             />
           </div>
 
-          {/* Message */}
           <div className="form-group">
             <label>Mesajınız</label>
             <textarea
@@ -96,12 +150,14 @@ const Contact: React.FC = () => {
             ></textarea>
           </div>
 
-          {/* Button */}
-          <button type="submit" className="submit-btn" disabled={status === "loading"}>
+          <button
+            type="submit"
+            className="submit-btn"
+            disabled={status === "loading"}
+          >
             {status === "loading" ? "Gönderiliyor..." : "Gönder"}
           </button>
 
-          {/* Status Messages */}
           {status === "success" && (
             <p className="success-msg">Mesajınız başarıyla gönderildi 💛</p>
           )}
