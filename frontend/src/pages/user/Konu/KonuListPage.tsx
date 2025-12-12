@@ -18,16 +18,19 @@ interface Konu {
 export default function KonuListPage() {
   const [konular, setKonular] = useState<Konu[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchKonular = async () => {
       try {
+        setLoading(true);
         const { data } = await api.get("/konular");
         setKonular(data);
       } catch (error) {
         console.error("Konular yüklenirken hata:", error);
+        setErrorMsg("Konular yüklenirken bir hata oluştu.");
         setKonular([]);
       } finally {
         setLoading(false);
@@ -37,36 +40,47 @@ export default function KonuListPage() {
     fetchKonular();
   }, []);
 
-  const filteredKonular = konular.filter((konu) =>
-    `${konu.baslik} ${konu.aciklama}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
-
   const getDifficultyBadge = (level: string) => {
-    if (level === "Kolay") return "difficulty-beginner";
-    if (level === "Orta") return "difficulty-intermediate";
-    return "difficulty-advanced";
+    try {
+      if (level === "Kolay") return "difficulty-beginner";
+      if (level === "Orta") return "difficulty-intermediate";
+      return "difficulty-advanced";
+    } catch {
+      return "difficulty-beginner";
+    }
   };
 
-  const getImageUrl = (url?: string) =>
-    url?.startsWith("http")
-      ? url
-      : url
-      ? `http://localhost:5001${url}`
-      : "/api/placeholder/400/220?text=Resim+Yok";
+  const getImageUrl = (url?: string) => {
+    try {
+      return url?.startsWith("http")
+        ? url
+        : url
+        ? `http://localhost:5001${url}`
+        : "/api/placeholder/400/220?text=Resim+Yok";
+    } catch {
+      return "/api/placeholder/400/220?text=Hata";
+    }
+  };
+
+  const filteredKonular = konular.filter((konu) => {
+    try {
+      return `${konu.baslik} ${konu.aciklama}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+    } catch {
+      return false;
+    }
+  });
 
   return (
     <main className="konu-page">
       <Navbar />
 
-      {/* SEO Başlık */}
       <header className="konu-header">
         <h1>İspanyolca Konuları</h1>
         <p>Seviyene uygun gramer konularını keşfet ve öğrenmeni hızlandır.</p>
       </header>
 
-      {/* Arama Alanı */}
       <section className="search-wrapper">
         <input
           type="search"
@@ -78,7 +92,6 @@ export default function KonuListPage() {
         />
       </section>
 
-      {/* Yükleme */}
       {loading && (
         <div className="loading-box">
           <div className="spinner"></div>
@@ -86,21 +99,31 @@ export default function KonuListPage() {
         </div>
       )}
 
-      {/* Hiç sonuç yok */}
+      {errorMsg && !loading && (
+        <div className="empty-box">
+          <p>{errorMsg}</p>
+        </div>
+      )}
+
       {!loading && filteredKonular.length === 0 && (
         <div className="empty-box">
           <p>Arama sonucu bulunamadı.</p>
         </div>
       )}
 
-      {/* Konu Grid */}
       <section className="konu-grid">
         {!loading &&
           filteredKonular.map((konu) => (
             <article
               key={konu.id}
               className="konu-card"
-              onClick={() => navigate(`/konular/${konu.id}`)}
+              onClick={() => {
+                try {
+                  navigate(`/konular/${konu.id}`);
+                } catch (err) {
+                  console.error("Yönlendirme hatası:", err);
+                }
+              }}
             >
               <div className="card-image-wrapper">
                 <img
@@ -108,7 +131,11 @@ export default function KonuListPage() {
                   alt={`${konu.baslik} konusu kapak görseli`}
                   loading="lazy"
                 />
-                <span className={`difficulty-badge ${getDifficultyBadge(konu.zorluk)}`}>
+                <span
+                  className={`difficulty-badge ${getDifficultyBadge(
+                    konu.zorluk
+                  )}`}
+                >
                   {konu.zorluk}
                 </span>
               </div>
@@ -129,7 +156,8 @@ export default function KonuListPage() {
             </article>
           ))}
       </section>
-      <Footer/>
+
+      <Footer />
     </main>
   );
 }

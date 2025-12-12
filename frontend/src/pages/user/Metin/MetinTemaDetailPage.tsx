@@ -11,7 +11,7 @@ interface Metin {
   id: number;
   baslik: string;
   icerik: string;
-  ceviri:string;
+  ceviri: string;
   aciklama: string;
   zorluk: string;
   okumaSuresi: number;
@@ -26,22 +26,19 @@ interface MetinTemaDetay {
   metinler: Metin[];
 }
 
-interface Tema {
-  id: number;
-  baslik: string;
-  kapakResmiUrl?: string;
-}
-
 export default function MetinTemaDetailPage() {
   const { id } = useParams();
   const [tema, setTema] = useState<MetinTemaDetay | null>(null);
   const [temaBaslik, setTemaBaslik] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
-  /* ----------- VERİ YÜKLEME ----------- */
+  /* ---------------- VERİ YÜKLEME ---------------- */
   useEffect(() => {
     const load = async () => {
       try {
+        setLoading(true);
+
+        // ---- METİN TEMA DETAYI ÇEK ----
         const res = await api.get(`/metinTema/${id}`);
         const data = res.data;
 
@@ -49,17 +46,23 @@ export default function MetinTemaDetailPage() {
           id: data.id,
           aciklama: data.aciklama,
           temaId: data.temaId,
-          metinler: data.metinler ?? []
+          metinler: Array.isArray(data.metinler) ? data.metinler : []
         };
 
         setTema(mapped);
 
         // ---- Tema başlığını çek ----
-        const temaRes = await api.get(`/tema/${mapped.temaId}`);
-        setTemaBaslik(temaRes.data.baslik);
+        try {
+          const temaRes = await api.get(`/tema/${mapped.temaId}`);
+          setTemaBaslik(temaRes.data?.baslik ?? "Bilinmeyen Tema");
+        } catch (innerErr) {
+          console.error("Tema başlığı çekilirken hata:", innerErr);
+          setTemaBaslik("Bilinmeyen Tema");
+        }
 
       } catch (err) {
-        console.error("Tema yüklenemedi", err);
+        console.error("Tema yüklenemedi:", err);
+        setTema(null);
       } finally {
         setLoading(false);
       }
@@ -68,19 +71,26 @@ export default function MetinTemaDetailPage() {
     load();
   }, [id]);
 
-  /* -------- SEO -------- */
+  /* ---------------- SEO ---------------- */
   useEffect(() => {
     if (!tema) return;
 
-    document.title = `${temaBaslik} • İspanyolca Okuma Metinleri`;
+    try {
+      document.title = `${temaBaslik} • İspanyolca Okuma Metinleri`;
 
-    const desc = document.querySelector('meta[name=description]') || document.createElement("meta");
-    desc.setAttribute("name", "description");
-    desc.setAttribute("content", tema.aciklama.slice(0, 150));
-    document.head.appendChild(desc);
+      let desc =
+        document.querySelector('meta[name="description"]') ||
+        document.createElement("meta");
+
+      desc.setAttribute("name", "description");
+      desc.setAttribute("content", tema.aciklama.slice(0, 150));
+      document.head.appendChild(desc);
+    } catch (seoErr) {
+      console.error("SEO meta bilgisi ayarlanamadı:", seoErr);
+    }
   }, [tema, temaBaslik]);
 
-  /* -------- DURUMLAR -------- */
+  /* ---------------- DURUMLAR ---------------- */
   if (loading) {
     return (
       <>
@@ -110,7 +120,7 @@ export default function MetinTemaDetailPage() {
     );
   }
 
-  /* -------- ANA TASARIM -------- */
+  /* ---------------- ANA TASARIM ---------------- */
   return (
     <>
       <Navbar />
@@ -122,25 +132,32 @@ export default function MetinTemaDetailPage() {
         </header>
 
         <section className="metin-list">
-          {tema.metinler.map((metin) => (
-            <article key={metin.id} className="metin-item">
-              <header className="metin-header-static">
-                <FileTextOutlined className="metin-header-icon" />
-                <div>
-                  <h2 className="metin-baslik">{metin.baslik}</h2>
-                  <p className="metin-aciklama">{metin.aciklama}</p>
-                </div>
-              </header>
+          {tema.metinler.map((metin) => {
+            try {
+              return (
+                <article key={metin.id} className="metin-item">
+                  <header className="metin-header-static">
+                    <FileTextOutlined className="metin-header-icon" />
+                    <div>
+                      <h2 className="metin-baslik">{metin.baslik}</h2>
+                      <p className="metin-aciklama">{metin.aciklama}</p>
+                    </div>
+                  </header>
 
-              <div className="metin-icerik-static">
-                <p className="metin-yazi">{metin.icerik}</p>
-              </div>
+                  <div className="metin-icerik-static">
+                    <p className="metin-yazi">{metin.icerik}</p>
+                  </div>
 
-              <div className="metin-icerik-static">
-                <p className="metin-yazi">{metin.ceviri}</p>
-              </div>
-            </article>
-          ))}
+                  <div className="metin-icerik-static">
+                    <p className="metin-yazi">{metin.ceviri}</p>
+                  </div>
+                </article>
+              );
+            } catch (mapErr) {
+              console.error("Metin render edilirken hata:", mapErr);
+              return null; // UI kırılmaz
+            }
+          })}
         </section>
       </main>
 

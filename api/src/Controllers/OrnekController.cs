@@ -16,7 +16,7 @@ namespace api.src.Controllers
     [Route("/api/admin/ornekler")]
     [ApiController]
     [Authorize(Roles = "Admin")]
-    public class OrnekController :ControllerBase
+    public class OrnekController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly IOrnek _repository;
@@ -30,56 +30,94 @@ namespace api.src.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var ornekler = await _repository.GetAllAsync();
-            var orneklerDto = ornekler.Select(m => m.ToOrnekListDto());
-            return Ok(orneklerDto);
+            try
+            {
+                var ornekler = await _repository.GetAllAsync();
+                var orneklerDto = ornekler.Select(m => m.ToOrnekListDto());
+                return Ok(orneklerDto);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var ornek = await _repository.GetByIdAsync(id);
-            if (ornek == null)
+            try
             {
-                return null;
+                var ornek = await _repository.GetByIdAsync(id);
+                if (ornek == null)
+                {
+                    return NotFound();
+                }
+                return Ok(ornek.ToOrnekListDto());
             }
-            return Ok(ornek.ToOrnekListDto());
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateKonu([FromBody] OrnekRequest request, [FromRoute] int id)
         {
-            var ornek = await _repository.GetByIdAsync(id);
-            if (ornek == null)
+            try
             {
-                return null;
+                var ornek = await _repository.GetByIdAsync(id);
+                if (ornek == null)
+                {
+                    return NotFound();
+                }
+                var updatedModel = await _repository.UpdateAsync(id, request);
+                return Ok(updatedModel.ToOrnekListDto());
             }
-            var updatedModel = await _repository.UpdateAsync(id, request);
-            return Ok(updatedModel.ToOrnekListDto());
+            catch (Exception ex)
+            {
+                // logging burada da yapılabilir
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateOrnek([FromBody] OrnekRequest request)
         {
-            var createdDto = request.CreateOrnekDto();
-            var createdOrnek = await _repository.CreateAsync(createdDto);
-            return CreatedAtAction(nameof(GetById), new { id = createdOrnek.Id }, createdOrnek.ToOrnekListDto());
+            try
+            {
+                var createdDto = request.CreateOrnekDto();
+                var createdOrnek = await _repository.CreateAsync(createdDto);
+                return CreatedAtAction(nameof(GetById), new { id = createdOrnek.Id }, createdOrnek.ToOrnekListDto());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
 
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrnek([FromRoute] int id)
         {
-            var ornekModel = await _repository.GetByIdAsync(id);
-
-            if (ornekModel == null )
+            try
             {
-                return NotFound();
-            }
+                var ornekModel = await _repository.GetByIdAsync(id);
 
-            await _repository.DeleteAsync(id);
-            return NoContent();
+                if (ornekModel == null)
+                {
+                    return NotFound();
+                }
+
+                await _repository.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                // logging burada da yapılabilir
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
     }

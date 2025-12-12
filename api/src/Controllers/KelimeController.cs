@@ -29,47 +29,68 @@ namespace api.src.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            try{
             var kelimeler = await _repository.GetAllAsync();
             var kelimelerDto = kelimeler.Select(m => m.ToKelimeListDto());
             return Ok(kelimelerDto);
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
+            try{
             var kelime = await _repository.GetByIdAsync(id);
             if (kelime == null)
             {
-                return null;
+                return NotFound();
             }
             return Ok(kelime.ToKelimeListDto());
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateKelime([FromBody] KelimeRequest request, [FromRoute] int id)
         {
+            try{
             var kelime = await _repository.GetByIdAsync(id);
             if (kelime == null)
             {
-                return null;
+                return NotFound();
             }
             var updatedModel = await _repository.UpdateAsync(id, request);
             return Ok(updatedModel.ToKelimeListDto());
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateOrnek([FromBody] KelimeRequest request)
         {
+            try{
             var createdDto = request.CreateKelimeDto();
             var createdKelime = await _repository.CreateAsync(createdDto);
             return CreatedAtAction(nameof(GetById), new { id = createdKelime.Id }, createdKelime.ToKelimeListDto());
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
 
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrnek([FromRoute] int id)
         {
+            try{
             var ornekModel = await _repository.GetByIdAsync(id);
 
             if (ornekModel == null )
@@ -79,6 +100,10 @@ namespace api.src.Controllers
 
             await _repository.DeleteAsync(id);
             return NoContent();
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
     }
 }

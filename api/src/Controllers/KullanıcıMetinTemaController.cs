@@ -28,7 +28,7 @@ namespace api.src.Controllers
             return Ok(dto);
         }
 
-        // /api/kelimetemalari/{id}
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

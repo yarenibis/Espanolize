@@ -5,6 +5,7 @@ import Navbar from "../Home/Navbar";
 import api from "../../../services/ApiService";
 import "./KelimeTemaListPage.css";
 import Footer from "../Home/Footer";
+import { message } from "antd";
 
 interface KelimeTema {
   id: number;
@@ -30,16 +31,38 @@ export default function KelimeTemaListPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [temaRes, anaTemaRes] = await Promise.all([
-          api.get("/kelimetemalari"),
-          api.get("/tema"),
-        ]);
+        let temaRes, anaTemaRes;
 
-        setTemalar(temaRes.data);
-        setAnaTemalar(anaTemaRes.data);
+        // ===========================
+        // 1) Kelime temaları isteği
+        // ===========================
+        try {
+          temaRes = await api.get("/kelimetemalari");
+        } catch (err) {
+          message.error("Kelime temaları yüklenemedi.");
+          console.error(err);
+          setTemalar([]);
+        }
+
+        // ===========================
+        // 2) Ana temalar isteği
+        // ===========================
+        try {
+          anaTemaRes = await api.get("/tema");
+        } catch (err) {
+          message.error("Ana tema listesi yüklenemedi.");
+          console.error(err);
+          setAnaTemalar([]);
+        }
+
+        // Listeleri doldur
+        if (temaRes?.data) setTemalar(temaRes.data);
+        if (anaTemaRes?.data) setAnaTemalar(anaTemaRes.data);
+
       } catch (err) {
-        console.error("Veriler yüklenemedi", err);
-        setTemalar([]);
+        // En üst seviye beklenmedik hata
+        message.error("Beklenmeyen bir hata oluştu!");
+        console.error("HATA:", err);
       } finally {
         setLoading(false);
       }
@@ -49,18 +72,27 @@ export default function KelimeTemaListPage() {
   }, []);
 
   const getTemaBaslik = (id: number) => {
-    const tema = anaTemalar.find((t) => t.id === id);
-    return tema?.baslik ?? `Tema ${id}`;
+    try {
+      const tema = anaTemalar.find((t) => t.id === id);
+      return tema?.baslik ?? `Tema ${id}`;
+    } catch {
+      return `Tema ${id}`;
+    }
   };
 
   const getImageUrl = (tema: KelimeTema) => {
-    const found = anaTemalar.find((t) => t.id === tema.temaId);
-    const url = found?.kapakResmiUrl ?? tema.kapakResmiUrl;
-    return url?.startsWith("http")
-      ? url
-      : url
-      ? `http://localhost:5001${url}`
-      : "/api/placeholder/400/220?text=Resim+Yok";
+    try {
+      const found = anaTemalar.find((t) => t.id === tema.temaId);
+      const url = found?.kapakResmiUrl ?? tema.kapakResmiUrl;
+
+      return url?.startsWith("http")
+        ? url
+        : url
+        ? `http://localhost:5001${url}`
+        : "/api/placeholder/400/220?text=Resim+Yok";
+    } catch {
+      return "/api/placeholder/400/220?text=Hata";
+    }
   };
 
   const filtered = temalar.filter((t) =>
@@ -78,6 +110,7 @@ export default function KelimeTemaListPage() {
         <p>İspanyolca kelimeleri tema bazlı şekilde öğren.</p>
       </header>
 
+      {/* Arama kutusu */}
       <section className="tema-search">
         <input
           type="search"
@@ -88,6 +121,7 @@ export default function KelimeTemaListPage() {
         />
       </section>
 
+      {/* Loading */}
       {loading && (
         <div className="loading-box">
           <div className="spinner"></div>
@@ -95,12 +129,14 @@ export default function KelimeTemaListPage() {
         </div>
       )}
 
+      {/* Boş sonuç */}
       {!loading && filtered.length === 0 && (
         <div className="empty-box">
           <p>Aradığın tema bulunamadı.</p>
         </div>
       )}
 
+      {/* Tema grid */}
       <section className="tema-grid">
         {!loading &&
           filtered.map((tema) => (

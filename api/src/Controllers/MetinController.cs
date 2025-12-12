@@ -29,47 +29,67 @@ namespace api.src.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            try{
             var metinler = await _repository.GetAllAsync();
             var metinlerDto = metinler.Select(m => m.ToMetinListDto());
             return Ok(metinlerDto);
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
+            try{
             var metin = await _repository.GetByIdAsync(id);
             if (metin == null)
             {
                 return null;
             }
             return Ok(metin.ToMetinListDto());
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMetin([FromBody] MetinRequest request, [FromRoute] int id)
         {
+            try{
             var metin = await _repository.GetByIdAsync(id);
             if (metin == null)
             {
-                return null;
+                return NotFound();
             }
             var updatedModel = await _repository.UpdateAsync(id, request);
             return Ok(updatedModel.ToMetinListDto());
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateMetin([FromBody] MetinRequest request)
         {
+            try{
             var createdDto = request.CreateMetin();
             var createdMetin = await _repository.CreateAsync(createdDto);
             return CreatedAtAction(nameof(GetById), new { id = createdMetin.Id }, createdMetin.ToMetinListDto());
-
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMetin([FromRoute] int id)
         {
+            try{
             var metinModel = await _repository.GetByIdAsync(id);
 
             if (metinModel == null)
@@ -79,6 +99,10 @@ namespace api.src.Controllers
 
             await _repository.DeleteAsync(id);
             return NoContent();
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
     }
 }

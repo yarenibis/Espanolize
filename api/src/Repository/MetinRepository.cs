@@ -19,13 +19,19 @@ namespace api.src.Repository
         }
         public async Task<Metin> CreateAsync(Metin metin)
         {
+            try{
             await _context.Metinler.AddAsync(metin);
             await _context.SaveChangesAsync();
             return metin;
+            }catch(Exception ex)
+            {
+                 throw new Exception("Metin oluşturulurken bir hata oluştu", ex);
+            }
         }
 
         public async Task<Metin?> DeleteAsync(int id)
         {
+            try{
             var metinModel=await _context.Metinler.FirstOrDefaultAsync(t => t.Id == id);
             if (metinModel == null)
             {
@@ -34,20 +40,35 @@ namespace api.src.Repository
             _context.Remove(metinModel);
             await _context.SaveChangesAsync();
             return metinModel;
+            }catch(Exception ex)
+            {
+                 throw new Exception("Metin silinirken bir hata oluştu", ex);
+            }
         }
 
         public async Task<List<Metin>> GetAllAsync()
         {
+            try{
             return await _context.Metinler.ToListAsync();
+            }catch(Exception ex)
+            {
+                 throw new Exception("Metinler getirilirken bir hata oluştu", ex);
+            }
         }
 
         public async Task<Metin?> GetByIdAsync(int id)
         {
+            try{
             return await _context.Metinler.FindAsync(id);
+            }catch(Exception ex)
+            {
+                 throw new Exception("Metin getirilirken bir hata oluştu", ex);
+            }
         }
 
         public async Task<Metin?> UpdateAsync(int id, MetinRequest request)
         {
+            try{
             var metinModel=await _context.Metinler.FirstOrDefaultAsync(t => t.Id == id);
             if (metinModel == null)
             {
@@ -59,6 +80,10 @@ namespace api.src.Repository
             metinModel.MetinTemaId = request.MetinTemaId;
             await _context.SaveChangesAsync();
             return metinModel;
+            }catch(Exception ex)
+            {
+                 throw new Exception("Metin güncellenirken bir hata oluştu", ex);
+            }
         }
     }
 }

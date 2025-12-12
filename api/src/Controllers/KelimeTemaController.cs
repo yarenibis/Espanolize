@@ -34,26 +34,37 @@ namespace api.src.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            try{
             var temalar = await _repository.GetAllAsync();
             var temaDtos = temalar.Select(t => t.ToKelimeTemaListDto());
             return Ok(temaDtos);
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
+            try{
             var tema = await _repository.GetByIdAsync(id);
             if (tema == null)
-                return NotFound($"ID {id} ile tema bulunamadı");
+                return NotFound();
 
             return Ok(tema.ToKelimeTemaListDto());
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 
         [HttpPost]
         public async Task<IActionResult> CreateTema([FromBody] KelimeTemaRequest request)
-        {
+        { 
+            try{
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -65,12 +76,17 @@ namespace api.src.Controllers
                 new { id = temaModel.Id }, 
                 temaModel.ToKelimeTemaListDto()
             );
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTema([FromRoute] int id, [FromBody] KelimeTemaRequest request)
         {
+            try{
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -79,11 +95,16 @@ namespace api.src.Controllers
                 return NotFound($"ID {id} ile tema bulunamadı");
 
             return Ok(updatedTema.ToKelimeTemaListDto());
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteKelimeTema([FromRoute] int id)
         {
+            try{
             var konuModel = await _repository.GetByIdAsync(id);
 
             if (konuModel == null )
@@ -93,6 +114,10 @@ namespace api.src.Controllers
 
             await _repository.DeleteAsync(id);
             return NoContent();
+            }catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 

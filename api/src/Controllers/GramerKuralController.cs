@@ -31,63 +31,94 @@ namespace api.src.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var list = await _repository.GetAllAsync();
-            return Ok(list.Select(x => x.ToGramerKuralListDto()));
+            try
+            {
+                var list = await _repository.GetAllAsync();
+                return Ok(list.Select(x => x.ToGramerKuralListDto()));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var kural = await _repository.GetByIdAsync(id);
-            if (kural == null)
-                return NotFound();
+            try
+            {
+                var kural = await _repository.GetByIdAsync(id);
+                if (kural == null)
+                    return NotFound();
 
-            return Ok(kural.ToGramerKuralDetayDto());
+                return Ok(kural.ToGramerKuralDetayDto());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 
         [HttpPost]
         public async Task<IActionResult> CreateKural([FromBody] GramerKuralRequest request)
         {
-            var model = request.CreateGramerKuralDto();
-            await _repository.CreateAsync(model);
+            try
+            {
+                var model = request.CreateGramerKuralDto();
+                await _repository.CreateAsync(model);
 
-            return CreatedAtAction(nameof(GetById),
-                new { id = model.Id },
-                model.ToGramerKuralListDto());
+                return CreatedAtAction(nameof(GetById),
+                    new { id = model.Id },
+                    model.ToGramerKuralListDto());
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateKural(int id, [FromBody] GramerKuralRequest request)
         {
-            var model = await _repository.GetByIdAsync(id);
-            if (model == null)
-                return NotFound();
+            try
+            {
+                var model = await _repository.GetByIdAsync(id);
+                if (model == null)
+                    return NotFound();
 
-            var updated = await _repository.UpdateAsync(id, request);
-            return Ok(updated.ToGramerKuralListDto());
+                var updated = await _repository.UpdateAsync(id, request);
+                return Ok(updated.ToGramerKuralListDto());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
 
-       [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteKural([FromRoute] int id)
         {
-            var konuModel = await _repository.GetByIdAsync(id);
-
-            if (konuModel == null )
+            try
             {
-                return NotFound();
+                var konuModel = await _repository.GetByIdAsync(id);
+
+                if (konuModel == null)
+                {
+                    return NotFound();
+                }
+
+                await _repository.DeleteAsync(id);
+                return NoContent();
             }
-
-            await _repository.DeleteAsync(id);
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
-
-
-       
-           
-
     }
 }

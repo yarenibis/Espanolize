@@ -9,6 +9,7 @@ import {
 import api from "../../../services/ApiService";
 import "./QuickLinks.css";
 
+// ------------------ TYPES ------------------
 interface Konu {
   id: number;
   baslik: string;
@@ -39,6 +40,7 @@ interface Tema {
   kapakResmiUrl?: string;
 }
 
+// ------------------ COMPONENT ------------------
 export default function QuickLinks() {
   const [gramerKonulari, setGramerKonulari] = useState<Konu[]>([]);
   const [kelimeTemalari, setKelimeTemalari] = useState<KelimeTema[]>([]);
@@ -50,6 +52,7 @@ export default function QuickLinks() {
     fetchQuickLinks();
   }, []);
 
+  // ------------------ API FETCH ------------------
   const fetchQuickLinks = async () => {
     try {
       setLoading(true);
@@ -58,63 +61,97 @@ export default function QuickLinks() {
         api.get("/konular?limit=3"),
         api.get("/kelimetemalari?limit=3"),
         api.get("/metinTema?limit=3"),
-        api.get("/tema"), // ⭐ Başlıklar burada
+        api.get("/tema"),
       ]);
 
-      setAnaTemalar(anaTemaRes.data);
+      // Güvenli setState
+      setAnaTemalar(anaTemaRes.data || []);
       setGramerKonulari(normalizeKonular(gramerRes.data));
       setKelimeTemalari(normalizeKelimeTemalari(kelimeRes.data));
       setMetinTemalari(normalizeMetinTemalari(metinRes.data));
+
     } catch (error) {
-      console.error("QuickLinks verileri yüklenirken hata:", error);
+      console.error("❌ QuickLinks verileri yüklenirken hata:", error);
+
       setGramerKonulari([]);
       setKelimeTemalari([]);
       setMetinTemalari([]);
+      setAnaTemalar([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const normalizeKonular = (data: any[]): Konu[] =>
-    data.map((item: any) => ({
-      id: item.id ?? item.Id,
-      baslik: item.baslik ?? item.Baslik,
-      aciklama: item.aciklama ?? item.Aciklama,
-      zorluk: item.zorluk ?? "Kolay",
-      calismaSuresi: item.calismaSuresi ?? 0,
-      kapakResmiUrl: item.kapakResmiUrl,
-    }));
-
-  const normalizeKelimeTemalari = (data: any[]): KelimeTema[] =>
-    data.map((item: any) => ({
-      id: item.id ?? item.Id,
-      temaId: item.temaId ?? item.TemaId,
-      aciklama: item.aciklama ?? item.Aciklama,
-      kelimeSayisi: item.kelimeSayisi ?? 0,
-      kapakResmiUrl: item.kapakResmiUrl,
-    }));
-
-  const normalizeMetinTemalari = (data: any[]): MetinTema[] =>
-    data.map((item: any) => ({
-      id: item.id ?? item.Id,
-      temaId: item.temaId ?? item.TemaId,
-      aciklama: item.aciklama ?? item.Aciklama,
-      kapakResmiUrl: item.kapakResmiUrl,
-    }));
-
-  // ⭐ Tema başlığı bul
-  const getTemaBaslik = (id: number): string => {
-    const tema = anaTemalar.find(t => t.id === id);
-    return tema?.baslik ?? `Tema ${id}`;
+  // ------------------ NORMALIZE FUNCTIONS ------------------
+  const normalizeKonular = (data: any[]): Konu[] => {
+    try {
+      if (!Array.isArray(data)) return [];
+      return data.map(item => ({
+        id: item.id ?? item.Id,
+        baslik: item.baslik ?? item.Baslik,
+        aciklama: item.aciklama ?? item.Aciklama,
+        zorluk: item.zorluk ?? "Kolay",
+        calismaSuresi: item.calismaSuresi ?? 0,
+        kapakResmiUrl: item.kapakResmiUrl,
+      }));
+    } catch (err) {
+      console.error("❌ normalizeKonular hatası:", err);
+      return [];
+    }
   };
 
-  const getImageUrl = (url?: string) =>
-    !url
-      ? "/api/placeholder/400/250?text=Görsel+Yok"
-      : url.startsWith("http")
-      ? url
-      : `http://localhost:5001${url}`;
+  const normalizeKelimeTemalari = (data: any[]): KelimeTema[] => {
+    try {
+      if (!Array.isArray(data)) return [];
+      return data.map(item => ({
+        id: item.id ?? item.Id,
+        temaId: item.temaId ?? item.TemaId,
+        aciklama: item.aciklama ?? item.Aciklama,
+        kelimeSayisi: item.kelimeSayisi ?? 0,
+        kapakResmiUrl: item.kapakResmiUrl,
+      }));
+    } catch (err) {
+      console.error("❌ normalizeKelimeTemalari hatası:", err);
+      return [];
+    }
+  };
 
+  const normalizeMetinTemalari = (data: any[]): MetinTema[] => {
+    try {
+      if (!Array.isArray(data)) return [];
+      return data.map(item => ({
+        id: item.id ?? item.Id,
+        temaId: item.temaId ?? item.TemaId,
+        aciklama: item.aciklama ?? item.Aciklama,
+        kapakResmiUrl: item.kapakResmiUrl,
+      }));
+    } catch (err) {
+      console.error("❌ normalizeMetinTemalari hatası:", err);
+      return [];
+    }
+  };
+
+  // ------------------ HELPER FUNCTIONS ------------------
+  const getTemaBaslik = (id: number): string => {
+    try {
+      const tema = anaTemalar.find(t => t.id === id);
+      return tema?.baslik ?? `Tema ${id}`;
+    } catch {
+      return `Tema ${id}`;
+    }
+  };
+
+  const getImageUrl = (url?: string) => {
+    try {
+      if (!url) return "/api/placeholder/400/250?text=Görsel+Yok";
+      if (url.startsWith("http")) return url;
+      return `http://localhost:5001${url}`;
+    } catch {
+      return "/api/placeholder/400/250?text=Görsel+Yok";
+    }
+  };
+
+  // ------------------ LOADING ------------------
   if (loading) {
     return (
       <section className="quick-links-section">
@@ -128,48 +165,48 @@ export default function QuickLinks() {
     );
   }
 
+  // ------------------ RENDER ------------------
   return (
     <section className="quick-links-section">
       <div className="container">
-        <section className="cards-category" aria-labelledby="quick-gramer-heading">
-  <div className="category-header">
-    <div className="category-title">
-      <BookOutlined className="category-icon" />
-      <h3 id="quick-gramer-heading">Gramer Konuları</h3>
-    </div>
-  </div>
 
-  {gramerKonulari.length > 0 ? (
-    <ul className="cards-grid">
-      {gramerKonulari.map((konu) => (
-        <li key={konu.id}>
-          <Link to={`/konular/${konu.id}`} className="quick-link-card">
-            <article>
-              <div className="card-cover">
-                <img
-                  src={getImageUrl(konu.kapakResmiUrl)}
-                  alt={`${konu.baslik} konusu`}
-                  className="card-image"
-                />
-              </div>
-              <div className="card-content">
-                <h4 className="card-title">{konu.baslik}</h4>
-                <p className="card-description">{konu.aciklama}</p>
-              </div>
-            </article>
-          </Link>
-        </li>
-      ))}
-    </ul>
-  ) : (
-    <div className="empty-category">
-      <BookOutlined className="empty-icon" />
-      <p>Şu anda listelenecek gramer konusu yok.</p>
-    </div>
-  )}
-</section>
+        {/* ------------------ GRAMER ------------------ */}
+        <section className="cards-category">
+          <div className="category-header">
+            <div className="category-title">
+              <BookOutlined className="category-icon" />
+              <h3>Gramer Konuları</h3>
+            </div>
+          </div>
 
-        {/* ------------------ Kelime Temaları ------------------ */}
+          {gramerKonulari.length > 0 ? (
+            <ul className="cards-grid">
+              {gramerKonulari.map((konu) => (
+                <li key={konu.id}>
+                  <Link to={`/konular/${konu.id}`} className="quick-link-card">
+                    <article>
+                      <div className="card-cover">
+                        <img
+                          src={getImageUrl(konu.kapakResmiUrl)}
+                          alt={konu.baslik}
+                          className="card-image"
+                        />
+                      </div>
+                      <div className="card-content">
+                        <h4 className="card-title">{konu.baslik}</h4>
+                        <p className="card-description">{konu.aciklama}</p>
+                      </div>
+                    </article>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="empty">Gösterilecek konu bulunamadı.</p>
+          )}
+        </section>
+
+        {/* ------------------ KELİME TEMALARI ------------------ */}
         <section className="cards-category">
           <div className="category-header">
             <div className="category-title">
@@ -201,7 +238,7 @@ export default function QuickLinks() {
           </ul>
         </section>
 
-        {/* ------------------ Okuma Metinleri ------------------ */}
+        {/* ------------------ OKUMA METİNLERİ ------------------ */}
         <section className="cards-category">
           <div className="category-header">
             <div className="category-title">
@@ -232,6 +269,7 @@ export default function QuickLinks() {
             ))}
           </ul>
         </section>
+
       </div>
     </section>
   );

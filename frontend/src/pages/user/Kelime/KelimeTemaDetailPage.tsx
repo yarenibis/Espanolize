@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../../../services/ApiService";
-import { Spin, Button } from "antd";
+import { Spin, Button, message } from "antd";
 import { ArrowLeftOutlined, CopyOutlined } from "@ant-design/icons";
 import "./KelimeTemaDetailPage.css";
 import Navbar from "../Home/Navbar";
@@ -19,7 +19,7 @@ interface KelimeTemaApi {
   temaId: number;
   kapakResmiUrl?: string;
   detayResimUrls?: string[];
-  kelimeler: any[];
+  kelimeler: Kelime[];
 }
 
 interface TemaApi {
@@ -36,14 +36,22 @@ export default function KelimeTemaDetailPage() {
   const [loading, setLoading] = useState(true);
   const [copiedWord, setCopiedWord] = useState<number | null>(null);
 
-  // =============================
-  // 🚀 TEMA VE ANA TEMA BİLGİLERİNİ YÜKLE
-  // =============================
   useEffect(() => {
     const loadData = async () => {
       try {
-        // 1) Kelime teması bilgisini al
-        const res = await api.get(`/kelimetemalari/${id}`);
+        // ===============================
+        // 1) Kelime teması API isteği
+        // ===============================
+        let res;
+
+        try {
+          res = await api.get(`/kelimetemalari/${id}`);
+        } catch (error: any) {
+          message.error("Kelime teması yüklenirken hata oluştu!");
+          console.error(error);
+          return;
+        }
+
         const t = res.data;
 
         const mappedTema: KelimeTemaApi = {
@@ -61,14 +69,21 @@ export default function KelimeTemaDetailPage() {
 
         setTema(mappedTema);
 
-        // 2) Ana temayı al → başlık buradan gelecek!
-        const temaRes = await api.get(`/tema/${mappedTema.temaId}`);
-        const anaTema: TemaApi = temaRes.data;
-
-        setTemaBaslik(anaTema.baslik);
+        // ===============================
+        // 2) Ana tema başlığı API isteği
+        // ===============================
+        try {
+          const temaRes = await api.get(`/tema/${mappedTema.temaId}`);
+          const anaTema: TemaApi = temaRes.data;
+          setTemaBaslik(anaTema.baslik);
+        } catch (error: any) {
+          message.warning("Tema başlığı yüklenemedi!");
+          console.error(error);
+        }
 
       } catch (err) {
-        console.error("Tema yüklenemedi:", err);
+        message.error("Beklenmeyen bir hata oluştu!");
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -77,14 +92,18 @@ export default function KelimeTemaDetailPage() {
     loadData();
   }, [id]);
 
-  // =============================
-  // 📌 Kopyalama işlemi
-  // =============================
-  const copyToClipboard = (text: string, wordId: number) => {
-    navigator.clipboard.writeText(text).then(() => {
+
+  // ================================
+  // 📌 Kopyalama fonksiyonu
+  // ================================
+  const copyToClipboard = async (text: string, wordId: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
       setCopiedWord(wordId);
       setTimeout(() => setCopiedWord(null), 1500);
-    });
+    } catch (error) {
+      message.error("Kopyalama başarısız!");
+    }
   };
 
   const getImageUrl = (url?: string) =>
@@ -94,9 +113,10 @@ export default function KelimeTemaDetailPage() {
       ? url
       : `http://localhost:5001${url}`;
 
-  // =============================
-  // 📌 SAYFA DURUMLARI
-  // =============================
+
+  // ================================
+  // 📌 DURUMLAR
+  // ================================
   if (loading) {
     return (
       <>
@@ -124,9 +144,10 @@ export default function KelimeTemaDetailPage() {
     );
   }
 
-  // =============================
-  // 📌 ASIL TASARIM
-  // =============================
+
+  // ================================
+  // 📌 SAYFA TASARIMI
+  // ================================
   return (
     <>
       <Navbar />

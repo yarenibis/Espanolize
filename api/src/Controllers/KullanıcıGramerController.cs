@@ -22,15 +22,15 @@ namespace api.src.Controllers
             _repository = repository;
         }
 
-     
+
 
         [HttpGet]
-public async Task<IActionResult> GetAll()
-{
-    var kurallar = await _repository.GetAllWithOrneklerAsync();
-    var dto = kurallar.Select(t => t.ToGramerKuralListDto()); // sadece başlık, açıklama vs.
-    return Ok(dto);
-}
+        public async Task<IActionResult> GetAll()
+        {
+            var kurallar = await _repository.GetAllWithOrneklerAsync();
+            var dto = kurallar.Select(t => t.ToGramerKuralListDto()); // sadece başlık, açıklama vs.
+            return Ok(dto);
+        }
 
 
 

@@ -19,49 +19,85 @@ namespace api.src.Repository
         }
         public async Task<KelimeTemasi> CreateAsync(KelimeTemasi tema)
         {
-            await _context.KelimeTemalari.AddAsync(tema);
-            await _context.SaveChangesAsync();
-            return tema;
+            try
+            {
+                await _context.KelimeTemalari.AddAsync(tema);
+                await _context.SaveChangesAsync();
+                return tema;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Kelime tema oluşturulurken bir hata oluştu", ex);
+            }
         }
 
         public async Task<KelimeTemasi?> DeleteAsync(int id)
         {
-            var temaModel = await _context.KelimeTemalari.FirstOrDefaultAsync(k => k.Id == id);
-            if (temaModel == null)
+            try
             {
-                return null;
+                var temaModel = await _context.KelimeTemalari.FirstOrDefaultAsync(k => k.Id == id);
+                if (temaModel == null)
+                {
+                    return null;
+                }
+                _context.Remove(temaModel);
+                await _context.SaveChangesAsync();
+                return temaModel;
             }
-            _context.Remove(temaModel);
-            await _context.SaveChangesAsync();
-            return temaModel;
+            catch (Exception ex)
+            {
+                throw new Exception("Kelime tema silinirken bir hata oluştu", ex);
+            }
         }
 
         public async Task<List<KelimeTemasi>> GetAllAsync()
         {
-            return await _context.KelimeTemalari.Include(g => g.Tema).ToListAsync();
+            try
+            {
+                return await _context.KelimeTemalari.Include(g => g.Tema).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Beklenmeyen bir hata oluştu. Tekrar deneyiniz.", ex);
+            }
         }
 
 
 
         public async Task<KelimeTemasi?> GetAllWithKelimelerAsync(int id)
         {
-            return await _context.KelimeTemalari
-            .Include(x => x.Tema)
-            .ThenInclude(x=>x.DetayResimler)
-        .Include(x => x.Kelimeler)
-        .FirstOrDefaultAsync(x => x.Id == id);
+            try
+            {
+                return await _context.KelimeTemalari
+                .Include(x => x.Tema)
+                .ThenInclude(x => x.DetayResimler)
+            .Include(x => x.Kelimeler)
+            .FirstOrDefaultAsync(x => x.Id == id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Beklenmeyen bir hata oluştu. Tekrar deneyiniz", ex);
+            }
         }
 
         public async Task<KelimeTemasi?> GetByIdAsync(int id)
         {
-            return await _context.KelimeTemalari.Include(t => t.Tema)
-       .FirstOrDefaultAsync(t => t.Id == id);
+            try
+            {
+                return await _context.KelimeTemalari.Include(t => t.Tema)
+           .FirstOrDefaultAsync(t => t.Id == id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Kelime tema bulunurken bir hata oluştu", ex);
+            }
         }
 
 
 
         public async Task<KelimeTemasi?> UpdateAsync(int id, KelimeTemaRequest request)
         {
+            try{
             var temaModel = await _context.KelimeTemalari.FirstOrDefaultAsync(k => k.Id == id);
             if (temaModel == null)
             {
@@ -71,6 +107,10 @@ namespace api.src.Repository
             temaModel.TemaId = request.TemaId;
             await _context.SaveChangesAsync();
             return temaModel;
+            }catch(Exception ex)
+            {
+                 throw new Exception("Kelime tema güncellenirken bir hata oluştu", ex);
+            }
         }
     }
 }
