@@ -11,15 +11,14 @@ export async function login(userName: string, password: string) {
 
     return res.data;
   } catch (error: any) {
-    console.error("Login sırasında hata:", error);
+  const status = error?.response?.status;
 
-    // Backend mesajı varsa onu döndür
-    const msg =
-      error?.response?.data?.message ||
-      "Giriş işlemi sırasında bir hata oluştu.";
-
-    throw new Error(msg);
+  if (status === 429) {
+    throw new Error("Çok fazla deneme yaptınız. Lütfen bekleyin.");
   }
+
+  throw new Error("Kullanıcı adı veya şifre hatalı.");
+}
 }
 
 // 🔹 REGISTER — yeni kullanıcı

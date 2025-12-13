@@ -2,30 +2,57 @@
 import { useState } from "react";
 import { login } from "../../../services/AuthService";
 import { useNavigate } from "react-router-dom";
-import "./LoginPage.css"
+import "./LoginPage.css";
 import { Helmet } from "react-helmet";
 
 export default function LoginPage() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLocked, setIsLocked] = useState(false);
+  const [lockTimer, setLockTimer] = useState(0);
   const navigate = useNavigate();
+  
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const data = await login(userName, password);
-      if (data.role === "Admin") {
-        localStorage.setItem("role", data.role);
-        localStorage.setItem("token", data.token);
-        navigate("/admin");
-      } else {
-        setError("Sadece admin girişi yapılabilir.");
-      }
-    } catch (err: any) {
-      setError(err.response?.data || "Giriş başarısız!");
+  e.preventDefault();
+
+  if (isLocked) return;
+
+  try {
+    const data = await login(userName, password);
+
+    if (data.role === "Admin") {
+      localStorage.setItem("role", data.role);
+      localStorage.setItem("token", data.token);
+      navigate("/admin");
+    } else {
+      setError("Sadece admin girişi yapılabilir.");
     }
-  };
+  } catch (err: any) {
+    const msg = err.message || "Giriş başarısız!";
+    setError(msg);
+
+    // 🔒 429 → KİLİT
+    if (msg.includes("fazla") || msg.includes("bekleyin")) {
+      setIsLocked(true);
+      setLockTimer(60);
+
+      const interval = setInterval(() => {
+        setLockTimer(prev => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            setIsLocked(false);
+            setError("");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+  }
+};
+
 
   return (
     <>
@@ -35,35 +62,45 @@ export default function LoginPage() {
         <title>Admin Giriş</title>
       </Helmet>
 
-      {/* Login tasarımın */}
-    <div className="login-container">
-  <form className="login-card" onSubmit={handleLogin}>
-    <h2 className="login-title">Admin Girişi</h2>
+      <div className="login-container">
+        <form className="login-card" onSubmit={handleLogin}>
+          <h2 className="login-title">Admin Girişi</h2>
 
-    <input
-      className="login-input"
-      type="text"
-      placeholder="Kullanıcı Adı"
-      value={userName}
-      onChange={(e) => setUserName(e.target.value)}
-    />
+          <input
+            className="login-input"
+            type="text"
+            placeholder="Kullanıcı Adı"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            disabled={isLocked}
+          />
 
-    <input
-      className="login-input"
-      type="password"
-      placeholder="Şifre"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-    />
+          <input
+            className="login-input"
+            type="password"
+            placeholder="Şifre"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={isLocked}
+          />
 
-    {error && <p className="login-error">{error}</p>}
+          {error && <p className="login-error">{error}</p>}
 
-    <button className="login-button" type="submit">
-      Giriş Yap
-    </button>
-  </form>
-</div>
-</>
+          {isLocked && (
+            <p className="login-warning">
+              Çok fazla deneme yaptınız. Lütfen bekleyin.
+            </p>
+          )}
 
+          <button
+  className="login-button"
+  type="submit"
+  disabled={isLocked}
+>
+  {isLocked ? `Bekleyin ` : "Giriş Yap"}
+</button>
+        </form>
+      </div>
+    </>
   );
 }

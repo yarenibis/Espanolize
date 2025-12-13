@@ -9,6 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 using api.Models;
 using api.Interface;
 using api.Services;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
+
 
 
 
@@ -59,7 +62,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 12;
 
-    
+
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -86,6 +89,30 @@ builder.Services.AddAuthentication(options =>
         )
     };
 });
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("LoginPolicy", context =>
+{
+    var ip = context.Connection.RemoteIpAddress?.ToString();
+
+    if (string.IsNullOrEmpty(ip))
+        ip = context.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? "local";
+
+    return RateLimitPartition.GetFixedWindowLimiter(
+        partitionKey: ip,
+        factory: _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 5,
+            Window = TimeSpan.FromMinutes(1),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+});
+
+});
+
 
 
 
@@ -122,6 +149,7 @@ app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

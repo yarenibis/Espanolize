@@ -6,6 +6,7 @@ using api.Models;
 using Microsoft.EntityFrameworkCore;
 using api.src.Dtos.AdminDtos;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace api.src.Controllers
 {
@@ -30,6 +31,7 @@ namespace api.src.Controllers
 
 
         [HttpPost("login")]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
             if (!ModelState.IsValid)
@@ -39,18 +41,23 @@ namespace api.src.Controllers
                 .FirstOrDefaultAsync(x => x.UserName == loginDto.UserName.ToLower());
 
             if (user == null)
-                return Unauthorized("Invalid username!");
+                return Unauthorized("Kullanıcı adı veya şifre hatalı");
 
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            var result = await _signInManager.CheckPasswordSignInAsync(
+    user,
+    loginDto.Password,
+    lockoutOnFailure: true
+);
+
 
             if (!result.Succeeded)
-                return Unauthorized("Username not found and/or password incorrect");
+                return Unauthorized("Kullanıcı adı veya şifre hatalı");
 
             // Kullanıcının rollerini çek
             var roles = await _userManager.GetRolesAsync(user);
             var userRole = roles.FirstOrDefault() ?? "Admin";
             if (userRole != "Admin")
-                return Unauthorized("Access denied. Only admin can log in.");
+                return Unauthorized("Kullanıcı adı veya şifre hatalı");
 
             return Ok(new NewUserDto
             {
@@ -63,7 +70,7 @@ namespace api.src.Controllers
 
 
 
-   [HttpPost("register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             if (!ModelState.IsValid)
@@ -99,4 +106,4 @@ namespace api.src.Controllers
 
 
     }
-    }
+}
