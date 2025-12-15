@@ -1,6 +1,7 @@
 import { Layout, Space, Select, Button } from "antd";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
+import { logout } from "../../../services/AuthService";
 
 const { Header } = Layout;
 const { Option } = Select;
@@ -21,9 +22,16 @@ export default function HeaderBar() {
     "/admin/tema": "Tema Yönetimi",
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // token'ı sil
-    navigate("/login"); // login sayfasına yönlendir
+  const handleLogout = async () => {
+    try {
+      console.log("LOGOUT BAŞLADI");
+
+      await logout(); // 🔥 BACKEND ÇAĞRISI
+      navigate("/login", { replace: true });
+
+    } catch (err) {
+      console.error("Logout hatası:", err);
+    }
   };
 
   return (

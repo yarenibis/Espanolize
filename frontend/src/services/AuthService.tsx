@@ -21,6 +21,12 @@ export async function login(userName: string, password: string) {
   }
 }
 
+
+export async function getMe() {
+  const res = await api.get("/account/me");
+  return res.data;
+}
+
 // 🔹 REGISTER
 export async function register(userName: string, email: string, password: string) {
   try {
@@ -34,4 +40,12 @@ export async function register(userName: string, email: string, password: string
   } catch (error: any) {
     throw new Error("Kayıt sırasında hata oluştu.");
   }
+}
+
+export async function logout() {
+  return api.post(
+    "/account/logout",
+    {},
+    { withCredentials: true }
+  );
 }

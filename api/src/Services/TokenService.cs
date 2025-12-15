@@ -18,14 +18,14 @@ namespace api.Services
         private readonly SymmetricSecurityKey _key;
         private readonly UserManager<AppUser> _userManager;
 
-        public TokenService(IConfiguration config,UserManager<AppUser> userManager)
+        public TokenService(IConfiguration config, UserManager<AppUser> userManager)
         {
             _config = config;
             _userManager = userManager;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]));
         }
 
-      
+
         public async Task<string> CreateToken(AppUser user)
         {
             var roles = await _userManager.GetRolesAsync(user);
@@ -33,9 +33,9 @@ namespace api.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.GivenName, user.UserName),
+                new Claim(ClaimTypes.Name, user.UserName),
             };
-            
+
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
