@@ -1,43 +1,37 @@
 import api from "./ApiService";
 
-// 🔹 LOGIN — JWT token kaydet
+// 🔹 LOGIN — token artık cookie'de
 export async function login(userName: string, password: string) {
   try {
-    const res = await api.post("/account/login", { userName, password });
+    const res = await api.post(
+      "/account/login",
+      { userName, password },
+      { withCredentials: true } // 👈 ÇOK ÖNEMLİ
+    );
 
-    if (res.data?.token) {
-      localStorage.setItem("token", res.data.token);
+    return res.data;
+  } catch (error: any) {
+    const status = error?.response?.status;
+
+    if (status === 429) {
+      throw new Error("Çok fazla deneme yaptınız. Lütfen bekleyin.");
     }
 
-    return res.data;
-  } catch (error: any) {
-  const status = error?.response?.status;
-
-  if (status === 429) {
-    throw new Error("Çok fazla deneme yaptınız. Lütfen bekleyin.");
+    throw new Error("Kullanıcı adı veya şifre hatalı.");
   }
-
-  throw new Error("Kullanıcı adı veya şifre hatalı.");
-}
 }
 
-// 🔹 REGISTER — yeni kullanıcı
+// 🔹 REGISTER
 export async function register(userName: string, email: string, password: string) {
   try {
-    const res = await api.post("/account/register", {
-      userName,
-      email,
-      password,
-    });
+    const res = await api.post(
+      "/account/register",
+      { userName, email, password },
+      { withCredentials: true }
+    );
 
     return res.data;
   } catch (error: any) {
-    console.error("Register sırasında hata:", error);
-
-    const msg =
-      error?.response?.data?.message ||
-      "Kayıt işlemi sırasında bir hata oluştu.";
-
-    throw new Error(msg);
+    throw new Error("Kayıt sırasında hata oluştu.");
   }
 }

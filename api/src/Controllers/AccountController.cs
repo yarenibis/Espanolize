@@ -5,12 +5,10 @@ using api.Interface;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 using api.src.Dtos.AdminDtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace api.src.Controllers
 {
-
     [Route("api/account")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -18,17 +16,19 @@ namespace api.src.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IWebHostEnvironment _env;
 
         public AccountController(
             UserManager<AppUser> userManager,
             ITokenService tokenService,
-            SignInManager<AppUser> signInManager)
+            SignInManager<AppUser> signInManager,
+            IWebHostEnvironment env)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _signInManager = signInManager;
+            _env = env;
         }
-
 
         [HttpPost("login")]
         [EnableRateLimiting("LoginPolicy")]
@@ -44,31 +44,37 @@ namespace api.src.Controllers
                 return Unauthorized("Kullanıcı adı veya şifre hatalı");
 
             var result = await _signInManager.CheckPasswordSignInAsync(
-    user,
-    loginDto.Password,
-    lockoutOnFailure: true
-);
-
+                user,
+                loginDto.Password,
+                lockoutOnFailure: true
+            );
 
             if (!result.Succeeded)
                 return Unauthorized("Kullanıcı adı veya şifre hatalı");
 
-            // Kullanıcının rollerini çek
             var roles = await _userManager.GetRolesAsync(user);
-            var userRole = roles.FirstOrDefault() ?? "Admin";
+            var userRole = roles.FirstOrDefault();
+
             if (userRole != "Admin")
                 return Unauthorized("Kullanıcı adı veya şifre hatalı");
 
-            return Ok(new NewUserDto
+            var token = await _tokenService.CreateToken(user);
+
+            Response.Cookies.Append("access_token", token, new CookieOptions
             {
-                UserName = user.UserName,
-                Email = user.Email,
-                Token = await _tokenService.CreateToken(user),
+                HttpOnly = true,
+                Secure = _env.IsProduction(), // PROD'da true
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddHours(1)
+            });
+
+            return Ok(new
+            {
+                user.UserName,
+                user.Email,
                 Role = userRole
             });
         }
-
-
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
@@ -87,23 +93,34 @@ namespace api.src.Controllers
             if (!createdUser.Succeeded)
                 return StatusCode(500, createdUser.Errors);
 
-            // Test amacıyla Admin rolü veriyoruz
             var roleResult = await _userManager.AddToRoleAsync(appUser, "Admin");
 
             if (!roleResult.Succeeded)
                 return StatusCode(500, roleResult.Errors);
 
-            var userRole = "Admin";
+            var token = await _tokenService.CreateToken(appUser);
 
-            return Ok(new NewUserDto
+            Response.Cookies.Append("access_token", token, new CookieOptions
             {
-                UserName = appUser.UserName,
-                Email = appUser.Email,
-                Token = await _tokenService.CreateToken(appUser),
-                Role = userRole
+                HttpOnly = true,
+                Secure = _env.IsProduction(),
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddHours(1)
+            });
+
+            return Ok(new
+            {
+                appUser.UserName,
+                appUser.Email,
+                Role = "Admin"
             });
         }
 
-
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("access_token");
+            return Ok();
+        }
     }
 }
