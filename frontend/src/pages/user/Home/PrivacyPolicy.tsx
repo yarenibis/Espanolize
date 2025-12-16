@@ -2,16 +2,26 @@ import React from "react";
 import "./legal-page.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { Helmet } from "react-helmet-async";
 
 
 const PrivacyPolicy: React.FC = () => {
   return (
     <>
+    <Helmet>
+        <title>Gizlilik Politikası | Españolize</title>
+        <meta
+          name="description"
+          content="Españolize gizlilik politikası: toplanan veriler, kullanım amaçları, çerezler ve kişisel veri güvenliği hakkında bilgiler."
+        />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
+
     <Navbar/>
     <main className="legal-page">
       <h1>Gizlilik Politikası</h1>
       <p>
-        Espanolize olarak kişisel verilerinizi korumayı önemsiyoruz. Bu
+        Españolize olarak kişisel verilerinizi korumayı önemsiyoruz. Bu
         Gizlilik Politikası, platformumuzu kullanırken hangi bilgilerin
         toplandığını, nasıl kullanıldığını ve nasıl korunduğunu açıklamaktadır.
       </p>

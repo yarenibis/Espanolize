@@ -2,16 +2,25 @@ import React from "react";
 import "./legal-page.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { Helmet } from "react-helmet-async";
 
 const CookiePolicy: React.FC = () => {
   return (
     <>
+    <Helmet>
+        <title>Çerez Politikası | Españolize </title>
+        <meta
+          name="description"
+          content="Españolize  çerez politikası: Zorunlu, analitik ve performans çerezlerinin kullanımı ve çerez yönetimi hakkında bilgiler."
+        />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
       <Navbar />
 
       <main className="legal-page">
         <h1>Çerez Politikası</h1>
         <p>
-          Espanolize olarak kullanıcı deneyimini geliştirmek ve platform performansını
+          Españolize  olarak kullanıcı deneyimini geliştirmek ve platform performansını
           optimize etmek için çerezler kullanıyoruz.
         </p>
 

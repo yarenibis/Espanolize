@@ -2,18 +2,27 @@ import React from "react";
 import "./legal-page.css";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
+import { Helmet } from "react-helmet-async";
 
 
 const FAQ: React.FC = () => {
   return (
     <>
+    <Helmet>
+        <title>Sık Sorulan Sorular | Españolize </title>
+        <meta
+          name="description"
+          content="Españolize hakkında sık sorulan sorular: platform nedir, içerikler ücretsiz mi, hangi seviyeler için uygundur ve nasıl iletişime geçilir."
+        />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
     <Navbar/>
     <main className="legal-page">
       <h1>Sık Sorulan Sorular</h1>
 
-      <h2>Espanolize nedir?</h2>
+      <h2>Españolize nedir?</h2>
       <p>
-        Espanolize, modern tekniklerle İspanyolca öğrenmenizi sağlayan bir web
+        Españolize , modern tekniklerle İspanyolca öğrenmenizi sağlayan bir web
         platformudur.
       </p>
 

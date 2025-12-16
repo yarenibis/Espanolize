@@ -4,6 +4,7 @@ import DOMPurify from "dompurify";
 import "./Contact.css";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
+import { Helmet } from "react-helmet-async";
 
 const Contact: React.FC = () => {
   const [form, setForm] = useState({
@@ -96,6 +97,14 @@ const Contact: React.FC = () => {
 
   return (
     <>
+    <Helmet>
+      <title>İletişim | Españolize </title>
+      <meta name="description" content="Bizimle iletişime geçin! Sorularınızı, önerilerinizi veya destek taleplerinizi buradan bize ulaştırabilirsiniz. Hızlı ve güvenli yanıt garantisi."></meta>
+      <meta property="og:title" content="İletişim | Españolize " />
+      <meta property="og:description" content="Bizimle iletişime geçin! Sorularınızı, önerilerinizi veya destek taleplerinizi buradan bize ulaştırabilirsiniz." />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="http://localhost:5173/iletisim" />
+    </Helmet>
       <Navbar />
 
       <div className="contact-container">

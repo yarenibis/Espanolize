@@ -5,6 +5,7 @@ import api from "../../../services/ApiService";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
 import "./MetinTemaListPage.css";
+import { Helmet } from "react-helmet-async";
 
 interface MetinTema {
   id: number;
@@ -173,6 +174,22 @@ export default function MetinTemaListPage() {
 
   /* ---------------------- RENDER ---------------------- */
   return (
+    <>
+  <Helmet>
+    <title>Metin Temaları | İspanyolca Okuma | Espanolize</title>
+
+    <meta
+      name="description"
+      content="İspanyolca okuma becerini geliştirmek için tema bazlı metinleri keşfet."
+    />
+
+    <meta property="og:title" content="Metin Temaları | İspanyolca Okuma" />
+    <meta
+      property="og:description"
+      content="Tema bazlı İspanyolca okuma metinleriyle kelime dağarcığını geliştir."
+    />
+    <meta property="og:url" content="http://localhost:5173/metinTema" />
+  </Helmet>
     <main className="metin-page">
       <Navbar />
 
@@ -254,5 +271,6 @@ export default function MetinTemaListPage() {
 
       <Footer />
     </main>
+    </>
   );
 }

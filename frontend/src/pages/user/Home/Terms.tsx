@@ -2,22 +2,31 @@ import React from "react";
 import "./legal-page.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { Helmet } from "react-helmet-async";
 
 
 const Terms: React.FC = () => {
   return (
      <>
+     <Helmet>
+        <title>Kullanım Koşulları | Españolize</title>
+        <meta
+          name="description"
+          content="Españolize kullanım koşulları: hizmet tanımı, kullanıcı yükümlülükleri, telif hakları ve sorumluluk reddi bilgileri."
+        />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
      <Navbar/>
     <main className="legal-page">
       <h1>Kullanım Koşulları</h1>
       <p>
-        Espanolize platformunu kullanarak aşağıdaki şartları kabul etmiş
+        Españolize platformunu kullanarak aşağıdaki şartları kabul etmiş
         olursunuz.
       </p>
 
       <h2>Hizmet Tanımı</h2>
       <p>
-        Espanolize; İspanyolca gramer, kelime temaları, alıştırmalar ve okuma
+        Españolize; İspanyolca gramer, kelime temaları, alıştırmalar ve okuma
         içerikleri sunan dijital bir öğrenme platformudur.
       </p>
 
@@ -45,7 +54,7 @@ const Terms: React.FC = () => {
 
       <h2>Değişiklikler</h2>
       <p>
-        Espanolize, kullanım koşullarını güncelleme hakkını saklı tutar.
+        Españolize, kullanım koşullarını güncelleme hakkını saklı tutar.
       </p>
 
     </main>

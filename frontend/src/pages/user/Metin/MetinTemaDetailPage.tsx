@@ -6,6 +6,7 @@ import { ArrowLeftOutlined, FileTextOutlined } from "@ant-design/icons";
 import "./MetinTemaDetailPage.css";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
+import { Helmet } from "react-helmet-async";
 
 interface Metin {
   id: number;
@@ -71,24 +72,7 @@ export default function MetinTemaDetailPage() {
     load();
   }, [id]);
 
-  /* ---------------- SEO ---------------- */
-  useEffect(() => {
-    if (!tema) return;
-
-    try {
-      document.title = `${temaBaslik} • İspanyolca Okuma Metinleri`;
-
-      let desc =
-        document.querySelector('meta[name="description"]') ||
-        document.createElement("meta");
-
-      desc.setAttribute("name", "description");
-      desc.setAttribute("content", tema.aciklama.slice(0, 150));
-      document.head.appendChild(desc);
-    } catch (seoErr) {
-      console.error("SEO meta bilgisi ayarlanamadı:", seoErr);
-    }
-  }, [tema, temaBaslik]);
+  
 
   /* ---------------- DURUMLAR ---------------- */
   if (loading) {
@@ -123,6 +107,40 @@ export default function MetinTemaDetailPage() {
   /* ---------------- ANA TASARIM ---------------- */
   return (
     <>
+
+      <Helmet>
+    <title>
+      {temaBaslik} | İspanyolca Okuma Metinleri |Espanolize
+    </title>
+
+    <meta
+      name="description"
+      content={
+        tema.aciklama
+          ? tema.aciklama.slice(0, 155)
+          : "İspanyolca okuma metinleri"
+      }
+    />
+
+    <meta
+      property="og:title"
+      content={`${temaBaslik} | İspanyolca Okuma Metinleri`}
+    />
+
+    <meta
+      property="og:description"
+      content={
+        tema.aciklama
+          ? tema.aciklama.slice(0, 155)
+          : "İspanyolca okuma metinleri"
+      }
+    />
+
+    <meta
+      property="og:url"
+      content={`http://localhost:5173/metinler/${id}`}
+    />
+  </Helmet>
       <Navbar />
 
       <main className="metin-container">

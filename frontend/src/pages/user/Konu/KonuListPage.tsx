@@ -5,6 +5,7 @@ import api from "../../../services/ApiService";
 import Navbar from "../Home/Navbar";
 import "./KonuListPage.css";
 import Footer from "../Home/Footer";
+import { Helmet } from "react-helmet-async";
 
 interface Konu {
   id: number;
@@ -73,6 +74,31 @@ export default function KonuListPage() {
   });
 
   return (
+    <><Helmet>
+      <title>
+        İspanyolca Gramer Konuları | Seviyene Göre Öğren | Españolize
+      </title>
+
+      <meta
+        name="description"
+        content="İspanyolca gramer konularını kolaydan zora sıralı şekilde öğrenin. Ser ve estar, zamanlar, fiiller ve daha fazlası örneklerle."
+      />
+
+      {/* Open Graph */}
+      <meta
+        property="og:title"
+        content="İspanyolca Gramer Konuları | Españolize"
+      />
+      <meta
+        property="og:description"
+        content="İspanyolca gramer konularını seviyene uygun şekilde keşfet. Açıklamalar, örnekler ve pratik kullanım."
+      />
+      <meta property="og:type" content="website" />
+      <meta
+        property="og:url"
+        content="http://localhost:5173/konular"
+      />
+    </Helmet>
     <main className="konu-page">
       <Navbar />
 
@@ -159,5 +185,6 @@ export default function KonuListPage() {
 
       <Footer />
     </main>
+    </>
   );
 }

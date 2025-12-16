@@ -6,6 +6,7 @@ import { ArrowLeftOutlined, CopyOutlined } from "@ant-design/icons";
 import "./KelimeTemaDetailPage.css";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
+import { Helmet } from "react-helmet-async";
 
 interface Kelime {
   id: number;
@@ -39,9 +40,7 @@ export default function KelimeTemaDetailPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // ===============================
-        // 1) Kelime teması API isteği
-        // ===============================
+   
         let res;
 
         try {
@@ -132,6 +131,7 @@ export default function KelimeTemaDetailPage() {
   if (!tema) {
     return (
       <>
+      
         <Navbar />
         <main className="kelime-error">
           <h2>Tema bulunamadı</h2>
@@ -150,6 +150,26 @@ export default function KelimeTemaDetailPage() {
   // ================================
   return (
     <>
+    {tema && (
+  <Helmet>
+    <title>
+      {temaBaslik
+        ? `${temaBaslik}: İspanyolca'da günlük hayatta kullanılan kelimeler ve cümle içerisindeki kullanımları | Españolize`
+        : "İspanyolca'da günlük hayatta kullanılan kelimeler ve cümle içerisindeki kullanımları | Españolize"}
+    </title>
+    <meta
+      name="description"
+      content={tema.aciklama ?? "Her kelimeye Türkçe karşılığıyla hızlı ve eğlenceli şekilde erişin."}
+    />
+    <meta property="og:title" content={temaBaslik ?? "Kelime Teması"} />
+    <meta property="og:description" content={tema.aciklama ?? ""} />
+    {tema.kapakResmiUrl && (
+      <meta property="og:image" content={getImageUrl(tema.kapakResmiUrl)} />
+    )}
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={`http://localhost:5173/kelimeler/${id}`} />
+  </Helmet>
+)}
       <Navbar />
 
       <main className="kelime-detail-container">

@@ -6,6 +6,7 @@ import api from "../../../services/ApiService";
 import "./KelimeTemaListPage.css";
 import Footer from "../Home/Footer";
 import { message } from "antd";
+import { Helmet } from "react-helmet-async";
 
 interface KelimeTema {
   id: number;
@@ -102,6 +103,38 @@ export default function KelimeTemaListPage() {
   );
 
   return (
+    <>
+   <Helmet>
+    <title>
+      İspanyolca Kelime Temaları | Tema Bazlı Kolay İspanyolca Öğrenme | Españolize
+    </title>
+
+    <meta
+      name="description"
+      content="İspanyolca kelimeleri tema bazlı öğrenin. Aile, yemekler, hayvanlar, günlük konuşma ve daha fazlası. Türkçe karşılıklarıyla hızlı ve etkili öğrenme."
+    />
+
+    {/* Open Graph */}
+    <meta
+      property="og:title"
+      content="İspanyolca Kelime Temaları | Españolize"
+    />
+    <meta
+      property="og:description"
+      content="İspanyolca kelimeleri tema bazlı öğrenin. Günlük hayatta en çok kullanılan kelimeleri Türkçe karşılıklarıyla keşfedin."
+    />
+    <meta
+      property="og:type"
+      content="website"
+    />
+    <meta
+      property="og:url"
+      content="http://localhost:5173/kelimetemalari"
+    />
+
+    
+  </Helmet>
+    
     <main className="kelime-tema-page">
       <Navbar />
 
@@ -165,5 +198,6 @@ export default function KelimeTemaListPage() {
 
       <Footer />
     </main>
+    </>
   );
 }

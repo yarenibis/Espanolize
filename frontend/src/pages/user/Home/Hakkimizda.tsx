@@ -3,17 +3,48 @@ import React from "react";
 import "./Hakkimizda.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { Helmet } from "react-helmet-async";
 
 const Hakkimizda: React.FC = () => {
   return (
     <>
+     <Helmet>
+        <title>Hakkımızda | Españolize  | İspanyolca Öğrenme Platformu</title>
+
+        <meta
+          name="description"
+          content="Españolize, İspanyolca öğrenmeyi herkes için erişilebilir, sade ve etkili hale getiren modern bir dil öğrenme platformudur."
+        />
+
+        <meta
+          name="keywords"
+          content="Españolize, İspanyolca öğrenme, online İspanyolca, İspanyolca gramer, kelime öğrenme"
+        />
+
+        {/* Open Graph */}
+        <meta property="og:title" content="Hakkımızda | Españolize " />
+        <meta
+          property="og:description"
+          content="Españolize'nin vizyonu, misyonu ve sunduğu İspanyolca öğrenme içerikleri hakkında detaylı bilgi."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.espanolize.com/hakkimizda" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Hakkımızda | Españolize " />
+        <meta
+          name="twitter:description"
+          content="Españolize'nin vizyonu, misyonu ve öğrenme yaklaşımı hakkında bilgi edinin."
+        />
+      </Helmet>
       <Navbar />
 
       <main className="about-container">
         <section className="about-hero">
           <h1>Hakkımızda</h1>
           <p className="about-hero-text">
-            Espanolize, İspanyolca öğrenmeyi herkes için erişilebilir, eğlenceli
+            Españolize, İspanyolca öğrenmeyi herkes için erişilebilir, eğlenceli
             ve etkili hale getirmek amacıyla oluşturulmuş modern bir dil
             öğrenme platformudur. Amacımız; öğrencilerin, gezginlerin ve
             profesyonellerin İspanyolca’yı sistemli, kolay anlaşılır ve pratik
@@ -62,9 +93,9 @@ const Hakkimizda: React.FC = () => {
 
         <section className="about-extra">
           <div className="about-card">
-            <h2>Neden Espanolize?</h2>
+            <h2>Neden Españolize?</h2>
             <p>
-              Espanolize, İspanyolcayı gerçekten öğrenmek isteyen kullanıcılar
+              Españolize, İspanyolcayı gerçekten öğrenmek isteyen kullanıcılar
               için sade, odaklı ve güvenilir bir öğrenme ortamı sunar.
             </p>
             <ul className="about-list">

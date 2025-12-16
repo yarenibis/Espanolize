@@ -165,15 +165,19 @@ builder.Services.AddScoped<IMetinTema, MetinTemaRepository>();
 builder.Services.AddScoped<IMetin, MetinRepository>();
 
 // -------------------- CORS --------------------
+var corsOrigins = builder.Configuration
+    .GetSection("Cors:Origins")
+    .Get<string[]>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173")
+            .WithOrigins(corsOrigins!)
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowCredentials(); // cookie için şart
     });
 });
 
@@ -187,6 +191,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseCors("AllowFrontend");
 
 app.UseRateLimiter();

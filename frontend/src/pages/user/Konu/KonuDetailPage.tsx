@@ -10,6 +10,7 @@ import Footer from "../Home/Footer";
 import api from "../../../services/ApiService";
 import "./KonuDetailPage.css";
 import { message } from "antd";
+import { Helmet } from "react-helmet-async";
 
 export default function KonuDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -39,38 +40,7 @@ export default function KonuDetailPage() {
     }
   };
 
-  // =======================
-  // 📌 SEO META GÜNCELLEME
-  // =======================
-  useEffect(() => {
-    if (!konu) return;
-
-    try {
-      document.title = `${konu.baslik} • İspanyolca Gramer`;
-
-      let desc = document.querySelector('meta[name="description"]');
-      if (!desc) {
-        desc = document.createElement("meta");
-        desc.setAttribute("name", "description");
-        document.head.appendChild(desc);
-      }
-      desc.setAttribute("content", konu.aciklama?.slice(0, 150) ?? "");
-
-      let kw = document.querySelector('meta[name="keywords"]');
-      if (!kw) {
-        kw = document.createElement("meta");
-        kw.setAttribute("name", "keywords");
-        document.head.appendChild(kw);
-      }
-      kw.setAttribute(
-        "content",
-        `İspanyolca gramer, ${konu.baslik}, açıklama, örnekler`
-      );
-    } catch (err) {
-      console.error("Meta-tag güncellenirken hata:", err);
-    }
-
-  }, [konu]);
+  
 
   // =======================
   // 📌 RESİM URL OLUŞTURMA
@@ -118,6 +88,45 @@ export default function KonuDetailPage() {
   // =======================
   return (
     <>
+    <Helmet>
+    <title>
+      {konu.baslik} : İspanyolca'da {konu.baslik} kullanımı  | Españolize
+    </title>
+
+    <meta
+      name="description"
+      content={
+        konu.aciklama
+          ? `${konu.aciklama.slice(0, 155)}`
+          : "İspanyolca gramer konusunu örneklerle öğrenin. Kurallar, açıklamalar ve pratik kullanım."
+      }
+    />
+
+    {/* Open Graph */}
+    <meta
+      property="og:title"
+      content={`${konu.baslik} | İspanyolca Gramer`}
+    />
+    <meta
+      property="og:description"
+      content={konu.aciklama ?? ""}
+    />
+    <meta
+      property="og:type"
+      content="article"
+    />
+    <meta
+      property="og:url"
+      content={`http://localhost:5173/konular/${id}`}
+    />
+
+    {konu.kapakResmiUrl && (
+      <meta
+        property="og:image"
+        content={getImageUrl(konu.kapakResmiUrl)}
+      />
+    )}
+  </Helmet>
       <Navbar />
 
       <main className="lesson-container">
