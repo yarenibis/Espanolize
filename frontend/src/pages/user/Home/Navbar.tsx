@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Navbar.css";
-import logo2 from "../../../assets/logo (2).png";
+import logo2 from "../../../assets/logo.png";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -35,7 +35,7 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link to="/" className="logo-area" onClick={closeMobileMenu}>
-            <img src={logo2} alt="Logo" className="logo-image" />
+            <img src={logo2} alt="Logo-Españolize" className="logo-image" loading="lazy" />
           </Link>
 
           {/* Desktop Menü */}

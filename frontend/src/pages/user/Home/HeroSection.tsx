@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import "./HeroSection.css";
-import heroImg from "../../../assets/spain-hero-illustration (1).webp";
+import heroImg from "../../../assets/ispanya-haritasi.webp";
 
 export default function HeroSection() {
   return (
@@ -34,8 +34,9 @@ export default function HeroSection() {
             <div className="visual-container">
               <img 
                 src={heroImg} 
-                alt="İspanyolca öğrenme platformu - Espanolize" 
+                alt="İspanyolca öğrenme platformu - Españolize" 
                 className="hero-image"
+       
               />
             </div>
           </div>

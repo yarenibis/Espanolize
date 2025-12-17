@@ -144,10 +144,6 @@ export default function KelimeTemaDetailPage() {
     );
   }
 
-
-  // ================================
-  // 📌 SAYFA TASARIMI
-  // ================================
   return (
     <>
     {tema && (
@@ -204,13 +200,7 @@ export default function KelimeTemaDetailPage() {
                   )}
                 </div>
 
-                {tema.detayResimUrls && tema.detayResimUrls[index] && (
-                  <img
-                    className="inline-image"
-                    src={getImageUrl(tema.detayResimUrls[index])}
-                    alt="detay"
-                  />
-                )}
+                
               </div>
             ))}
           </div>

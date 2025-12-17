@@ -1,19 +1,30 @@
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import {
   DashboardOutlined,
-  BookOutlined,
   FileTextOutlined,
   EditOutlined,
-  MessageOutlined
+  MessageOutlined,
+  TagsOutlined,
+  BookOutlined,
+  FileTextTwoTone,
+  GlobalOutlined,
 } from "@ant-design/icons";
+import { useNavigate, useLocation } from "react-router-dom";
 import type { MenuProps } from "antd";
 
 const { Sider } = Layout;
 
-export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+interface Props {
+  collapsed: boolean;
+  setCollapsed: (v: boolean) => void;
+  isMobile: boolean;
+}
+
+export default function Sidebar({
+  collapsed,
+  setCollapsed,
+  isMobile,
+}: Props) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,80 +33,106 @@ export default function Sidebar() {
       key: "/admin",
       icon: <DashboardOutlined />,
       label: "Dashboard",
-      onClick: () => navigate("/admin"),
+      onClick: () => {
+        navigate("/admin");
+        if (isMobile) setCollapsed(true);
+      },
     },
-    
     {
       key: "/admin/konular",
       icon: <FileTextOutlined />,
       label: "Konular",
-      onClick: () => navigate("/admin/konular"),
+      onClick: () => {
+        navigate("/admin/konular");
+        if (isMobile) setCollapsed(true);
+      },
     },
     {
       key: "/admin/gramerkurallar",
       icon: <EditOutlined />,
       label: "Gramer Kuralları",
-      onClick: () => navigate("/admin/gramerkurallar"),
+      onClick: () => {
+        navigate("/admin/gramerkurallar");
+        if (isMobile) setCollapsed(true);
+      },
     },
     {
       key: "/admin/ornekler",
       icon: <MessageOutlined />,
       label: "Örnekler",
-      onClick: () => navigate("/admin/ornekler"),
+      onClick: () => {
+        navigate("/admin/ornekler");
+        if (isMobile) setCollapsed(true);
+      },
     },
-    {
-      key: "/admin/kelimeTema",
-      icon: <MessageOutlined />,
-      label: "Kelime Temaları",
-      onClick: () => navigate("/admin/kelimeTema"),
-    },
-    {
-      key: "/admin/kelimeler",
-      icon: <MessageOutlined />,
-      label: "Kelimeler",
-      onClick: () => navigate("/admin/kelimeler"),
-    },
-    {
-      key: "/admin/metinTema",
-      icon: <MessageOutlined />,
-      label: "Metin Teması",
-      onClick: () => navigate("/admin/metinTema"),
-    },
-    {
-      key: "/admin/metinler",
-      icon: <MessageOutlined />,
-      label: "Metinler",
-      onClick: () => navigate("/admin/metinler"),
-    },
-    {
-      key: "/admin/tema",
-      icon: <MessageOutlined />,
-      label: "Temalar",
-      onClick: () => navigate("/admin/tema"),
+    { key: "/admin/kelimeTema", 
+      icon: <TagsOutlined />, 
+      label: "Kelime Temaları", 
+      onClick: () => { 
+        navigate("/admin/kelimeTema"); 
+        if (isMobile) setCollapsed(true); 
+      }, 
+    }, 
+    { key: "/admin/kelimeler", 
+      icon: <BookOutlined />, 
+      label: "Kelimeler", 
+      onClick: () => { 
+        navigate("/admin/kelimeler"); 
+        if (isMobile) setCollapsed(true); 
+      }, 
+    }, 
+    { key: "/admin/metinTema", 
+      icon: <FileTextTwoTone />, 
+      label: "Metin Temaları", 
+      onClick: () => { 
+        navigate("/admin/metinTema"); 
+        if (isMobile) setCollapsed(true); 
+      }, 
+    }, 
+    { key: "/admin/metinler", 
+      icon: <GlobalOutlined />, 
+      label: "Metinler", 
+      onClick: () => { 
+        navigate("/admin/metinler"); 
+        if (isMobile) setCollapsed(true); 
+      }, 
+    }, 
+    { key: "/admin/tema", 
+      icon: <TagsOutlined />, 
+      label: "Temalar", 
+      onClick: () => { 
+        navigate("/admin/tema"); 
+        if (isMobile) setCollapsed(true); 
+      }, 
     },
   ];
 
   return (
     <Sider
-      collapsible
-      collapsed={collapsed}
-      onCollapse={(value) => setCollapsed(value)}
       theme="light"
+      collapsible={!isMobile}
+      collapsed={collapsed}
+      onCollapse={setCollapsed}
       width={250}
-      collapsedWidth={0}          // Küçük ekranlarda sidebar gizlenecek
-      breakpoint="lg"             // lg = 992px, altına düşerse otomatik collapse
-      onBreakpoint={(broken) => setCollapsed(broken)}
+      collapsedWidth={isMobile ? 0 : 80}
+      trigger={null}
+      style={{
+        position: isMobile ? "fixed" : "relative",
+        height: "100vh",
+        left: 0,
+        top: 0,
+        zIndex: 1001,
+      }}
     >
       <div
         style={{
           height: 64,
-          padding: 16,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontWeight: "bold",
+          fontWeight: 700,
           fontSize: 18,
-          color: "#1890ff",
+          color: "#1677ff",
           borderBottom: "1px solid #f0f0f0",
         }}
       >
@@ -103,11 +140,10 @@ export default function Sidebar() {
       </div>
 
       <Menu
-        theme="light"
-        selectedKeys={[location.pathname]}
         mode="inline"
+        selectedKeys={[location.pathname]}
         items={menuItems}
-        style={{ borderRight: 0, marginTop: 8 }}
+        style={{ borderRight: 0 }}
       />
     </Sider>
   );

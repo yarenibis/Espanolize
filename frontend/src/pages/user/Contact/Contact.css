@@ -1,7 +1,7 @@
 .contact-container {
   max-width: 700px;
   margin: 50px auto;
-  padding: 0 20px;
+  padding: 96px 20px 60px;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -9,7 +9,6 @@
   font-size: 32px;
   font-weight: 700;
   color: #0f172a;
-  margin-top: 130px;
   margin-bottom: 10px;
 }
 
@@ -44,6 +43,7 @@
   border-radius: 8px;
   font-size: 16px;
   outline: none;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,

@@ -154,7 +154,7 @@ export default function KonuListPage() {
               <div className="card-image-wrapper">
                 <img
                   src={getImageUrl(konu.kapakResmiUrl)}
-                  alt={`${konu.baslik} konusu kapak görseli`}
+                  alt={`${konu.baslik} – İspanyolca gramer konuları`}
                   loading="lazy"
                 />
                 <span

@@ -1,5 +1,5 @@
 import "./HomeAboutSection.css";
-import heroImg from "../../../assets/espanolize (8)-converted-from-png.webp";
+import heroImg from "../../../assets/flamenco-yapan-kadın-ve-erkek.webp";
 
 export default function HomeAboutSection() {
   return (
@@ -15,7 +15,7 @@ export default function HomeAboutSection() {
         <div className="home-about-image-box">
           <img
             src={heroImg}
-            alt="Espanolize İspanyolca öğrenme platformu hakkında görsel"
+            alt="Españolize İspanyolca öğrenme platformu hakkında görsel"
             className="home-about-main-image"
             loading="lazy"
           />

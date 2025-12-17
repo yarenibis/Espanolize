@@ -1,41 +1,66 @@
-import { Layout } from "antd";
+import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import { Layout } from "antd";
+import { MenuOutlined } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
-import HeaderBar from "./HeaderBar";
-import { Helmet } from "react-helmet";
-
 
 const { Content } = Layout;
 
 export default function AdminLayout() {
+  const [collapsed, setCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Ekran boyutu kontrolü
+  useEffect(() => {
+    const checkScreen = () => {
+      const mobile = window.innerWidth < 992;
+      setIsMobile(mobile);
+      setCollapsed(mobile); // mobilde kapalı başlasın
+    };
+
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
   return (
-    <>
-    <Helmet>
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <title>Admin Paneli</title>
-      </Helmet>
-      {/* Layout HTML'i */}
     <Layout style={{ minHeight: "100vh" }}>
-      <Sidebar />
+      <Sidebar
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+        isMobile={isMobile}
+      />
 
       <Layout>
-        <HeaderBar />
-
-        <Content style={{ margin: "24px 16px" }}>
+        {/* MOBILE HEADER (hamburger) */}
+        {isMobile && (
           <div
             style={{
+              height: 56,
+              display: "flex",
+              alignItems: "center",
+              padding: "0 16px",
               background: "#fff",
-              padding: "24px",
-              minHeight: "80vh",
-              borderRadius: "8px",
+              borderBottom: "1px solid #f0f0f0",
+              position: "sticky",
+              top: 0,
+              zIndex: 1000,
             }}
           >
-            <Outlet />
+            <MenuOutlined
+              style={{ fontSize: 22, cursor: "pointer" }}
+              onClick={() => setCollapsed(false)}
+            />
+            <span style={{ marginLeft: 12, fontWeight: 600 }}>
+              Admin Panel
+            </span>
           </div>
+        )}
+
+        <Content style={{ padding: 24 }}>
+          <Outlet />
         </Content>
       </Layout>
     </Layout>
-    </>
   );
 }

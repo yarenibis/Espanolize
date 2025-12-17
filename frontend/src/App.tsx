@@ -1,34 +1,47 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/user/Home/HomePage";
-import LoginPage from "./pages/admin/Login/LoginPage";
-import KonuPage from "./pages/admin/Konu/KonuPage";
-import KelimeTemaPage from "./pages/admin/Kelime/KelimeTemaPage";
-import KelimePage from "./pages/admin/Kelime/KelimePage";
 import KelimeTemaListPage from "./pages/user/Kelime/KelimeTemaListPage";
 import KelimeTemaDetailPage from "./pages/user/Kelime/KelimeTemaDetailPage";
-import MetinTemaPage from "./pages/admin/Metin/MetinTemaPage";
-import MetinPage from "./pages/admin/Metin/MetinPage";
 import MetinTemaListPage from "./pages/user/Metin/MetinTemaListPage";
 import MetinTemaDetailPage from "./pages/user/Metin/MetinTemaDetailPage";
 import ProtectedRoute from "./pages/admin/Dashboard/ProtectedRoute";
 import TemaPage from "./pages/admin/Tema/TemaPage";
-import AdminLayout from "./pages/admin/Dashboard/AdminLayout";
 import KonuListPage from "./pages/user/Konu/KonuListPage";
 import KonuDetailPage from "./pages/user/Konu/KonuDetailPage";
-import PrivacyPolicy from "./pages/user/Home/PrivacyPolicy";
-import CookiePolicy from "./pages/user/Home/CookiePolicy";
-import Terms from "./pages/user/Home/Terms";
-import FAQ from "./pages/user/Home/FAQ";
-import Contact from "./pages/user/Contact/Contact";
-import Hakkimizda from "./pages/user/Home/Hakkimizda";
-import GramerKuralPage from "./pages/admin/Kural/GramerKuralPage";
-import OrnekPage from "./pages/admin/Ornek/OrnekPage";
-import Dashboard from "./pages/admin/Dashboard/Dashboard";
+import { Suspense, lazy } from "react";
+
+const LoginPage = lazy(() => import("./pages/admin/Login/LoginPage"));
+
+const PrivacyPolicy = lazy(() => import("./pages/user/Home/PrivacyPolicy"));
+const CookiePolicy = lazy(() => import("./pages/user/Home/CookiePolicy"));
+const Terms = lazy(() => import("./pages/user/Home/Terms"));
+const FAQ = lazy(() => import("./pages/user/Home/FAQ"));
+const Contact = lazy(() => import("./pages/user/Contact/Contact"));
+const Hakkimizda = lazy(() => import("./pages/user/Home/Hakkimizda"));
+const KelimeTemaPage =lazy(() => import("./pages/admin/Kelime/KelimeTemaPage"));
+const KelimePage = lazy(()=> import("./pages/admin/Kelime/KelimePage"));
+const MetinTemaPage =lazy(()=> import("./pages/admin/Metin/MetinTemaPage"));
+const MetinPage = lazy(() => import("./pages/admin/Metin/MetinPage"));
+const KonuPage=lazy(() => import("./pages/admin/Konu/KonuPage"));
+const OrnekPage = lazy(() => import("./pages/admin/Ornek/OrnekPage"));
+const GramerKuralPage = lazy(()=> import("./pages/admin/Kural/GramerKuralPage"));
+const AdminLayout = lazy(() => import("./pages/admin/Dashboard/AdminLayout"));
+const Dashboard = lazy(() => import("./pages/admin/Dashboard/Dashboard"));
 
 export default function App() {
+
+  function PageLoader() {
+  return (
+    <div style={{ padding: "80px", textAlign: "center" }}>
+      Yükleniyor...
+    </div>
+  );
+}
+
   return (
     <Router>
+      <Suspense fallback={<div><PageLoader /></div>}>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
@@ -69,6 +82,7 @@ export default function App() {
 
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
+      </Suspense>
     </Router>
   );
 }

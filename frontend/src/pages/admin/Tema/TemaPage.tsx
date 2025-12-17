@@ -511,7 +511,7 @@ export default function TemaPage() {
                 <div className="image-gallery">
                   {seciliTema.detayResimUrls.map((url, index) => (
                     <div key={index} className="image-item">
-                      <img src={url} alt={`Detay ${index + 1}`} className="image-preview" />
+                      <img src={url} alt={`Detay ${index + 1}`} className="image-preview" loading="lazy" />
                       <div className="image-actions">
                         <button
                           onClick={() => handleDetayResimSil(url)}

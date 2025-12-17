@@ -145,7 +145,8 @@ export default function KonuDetailPage() {
           <img
             className="lesson-image"
             src={getImageUrl(konu.kapakResmiUrl)}
-            alt="kapak"
+            alt={`${konu.baslik ??0} – İspanyolca gramer konuları`}
+            loading="lazy"
           />
         )}
 
@@ -173,7 +174,8 @@ export default function KonuDetailPage() {
                 <img
                   className="lesson-image"
                   src={getImageUrl(konu.detayResimUrls[i])}
-                  alt="detay"
+                  alt={`${kural.kuralBaslik ??0} - ispanyolca gramer`}
+                  loading="lazy"
                 />
               )}
             </section>

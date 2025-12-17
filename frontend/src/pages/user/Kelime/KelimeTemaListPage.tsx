@@ -179,7 +179,10 @@ export default function KelimeTemaListPage() {
               onClick={() => navigate(`/kelimeler/${tema.id}`)}
             >
               <div className="card-img">
-                <img src={getImageUrl(tema)} alt={getTemaBaslik(tema.temaId)} />
+                <img src={getImageUrl(tema)} 
+                alt={`${getTemaBaslik(tema.temaId)} – İspanyolca kelimeler `} 
+                loading="lazy"
+                />
               </div>
 
               <div className="card-body">

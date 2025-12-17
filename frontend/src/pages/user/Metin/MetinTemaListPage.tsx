@@ -244,7 +244,7 @@ export default function MetinTemaListPage() {
                   <div className="card-image-wrapper">
                     <img
                       src={getImageUrl(tema)}
-                      alt={getTemaBaslik(tema.temaId)}
+                      alt={`${getTemaBaslik(tema.temaId)} – İspanyolca okuma metni`}
                       loading="lazy"
                     />
                     <span

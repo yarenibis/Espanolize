@@ -1,7 +1,5 @@
 User-agent: *
-Disallow: /admin
 Disallow: /admin/
-Disallow: /admin/*
+Disallow: /login/
 
-# Allow everything else
-Allow: /
+Sitemap: https://www.espanolize.com/sitemap.xml
