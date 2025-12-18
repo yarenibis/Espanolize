@@ -1,25 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileTextOutlined } from "@ant-design/icons";
-import api from "../../../services/ApiService";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
+import MetinService, {
+  type MetinTema,
+  type Tema,
+} from "../../../services/user/MetinService";
 import "./MetinTemaListPage.css";
 import { Helmet } from "react-helmet-async";
-
-interface MetinTema {
-  id: number;
-  temaId: number;
-  aciklama: string;
-  kapakResmiUrl?: string;
-  zorluk: "Kolay" | "Orta" | "Zor" | "Bilinmiyor";
-}
-
-interface Tema {
-  id: number;
-  baslik: string;
-  kapakResmiUrl?: string;
-}
 
 export default function MetinTemaListPage() {
   const [temalar, setTemalar] = useState<MetinTema[]>([]);
@@ -28,87 +17,18 @@ export default function MetinTemaListPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  /* ---------------------- VERİ YÜKLEME ---------------------- */
+  /* ---------------- VERİ YÜKLEME ---------------- */
   useEffect(() => {
     const load = async () => {
       try {
-        setLoading(true);
+        const metinTemalari = await MetinService.getMetinTemalari();
+        setTemalar(metinTemalari);
 
-        let baseItems: any[] = [];
-
-        try {
-          // 1) Listeyi çek
-          const res = await api.get("/metinTema");
-          baseItems = res.data ?? [];
-        } catch (e) {
-          console.error("Liste yüklenirken hata:", e);
-          baseItems = [];
-        }
-
-        // 2) Her item için detay API çektik
-        const detailed = await Promise.all(
-          baseItems.map(async (item: any) => {
-            try {
-              const detail = await api.get(`/metinTema/${item.id}`);
-
-              return {
-                id: item.id,
-                temaId: item.temaId ?? detail.data.temaId,
-                aciklama: item.aciklama ?? detail.data.aciklama,
-                kapakResmiUrl: item.kapakResmiUrl ?? detail.data.kapakResmiUrl,
-                zorluk:
-                  detail.data?.zorluk ??
-                  detail.data?.metinler?.[0]?.zorluk ??
-                  "Bilinmiyor",
-              };
-            } catch (innerErr) {
-              console.error(`Detay yüklenemedi (ID: ${item.id})`, innerErr);
-              return null; // bozuk item atlanır
-            }
-          })
-        );
-
-        const filteredDetailed = detailed.filter((d) => d !== null);
-
-        setTemalar(filteredDetailed as MetinTema[]);
-
-        /* ---- Tema başlıklarını çek ---- */
-        let ids: number[] = [];
-        try {
-          ids = [...new Set(filteredDetailed.map((t: any) => t.temaId))];
-        } catch (idErr) {
-          console.error("Tema ID listesi oluşturulamadı:", idErr);
-          ids = [];
-        }
-
-        try {
-          const temaResponses = await Promise.all(
-            ids.map(async (id) => {
-              try {
-                const r = await api.get(`/tema/${id}`);
-                return {
-                  id: r.data?.id ?? id,
-                  baslik: r.data?.baslik ?? `Tema ${id}`,
-                  kapakResmiUrl: r.data?.kapakResmiUrl,
-                };
-              } catch (temaErr) {
-                console.error(`Tema bilgisi alınamadı (ID: ${id})`, temaErr);
-                return {
-                  id,
-                  baslik: `Tema ${id}`,
-                  kapakResmiUrl: undefined,
-                };
-              }
-            })
-          );
-
-          setAnaTemalar(temaResponses);
-        } catch (outerTemaErr) {
-          console.error("Tema başlıkları genel yükleme hatası:", outerTemaErr);
-          setAnaTemalar([]);
-        }
+        const temaIds = metinTemalari.map((t) => t.temaId);
+        const temaList = await MetinService.getTemalarByIds(temaIds);
+        setAnaTemalar(temaList);
       } catch (err) {
-        console.error("Metin temaları yükleme hatası:", err);
+        console.error("Metin temaları yüklenemedi:", err);
         setTemalar([]);
         setAnaTemalar([]);
       } finally {
@@ -119,158 +39,116 @@ export default function MetinTemaListPage() {
     load();
   }, []);
 
-  /* ---------------------- DIFFICULTY CLASS ---------------------- */
-  const getDifficultyClass = (level: string) => {
-    try {
-      if (level === "Kolay") return "difficulty-beginner";
-      if (level === "Orta") return "difficulty-intermediate";
-      if (level === "Zor") return "difficulty-advanced";
-      return "difficulty-unknown";
-    } catch {
-      return "difficulty-unknown";
-    }
-  };
+  /* ---------------- YARDIMCI FONKSİYONLAR ---------------- */
+  const getTemaBaslik = (id: number) =>
+    anaTemalar.find((t) => t.id === id)?.baslik ?? `Tema ${id}`;
 
-  /* ---------------------- TEMA BAŞLIĞI ---------------------- */
-  const getTemaBaslik = (id: number) => {
-    try {
-      const tema = anaTemalar.find((t) => t.id === id);
-      return tema?.baslik ?? `Tema ${id}`;
-    } catch (e) {
-      console.error("Tema başlığı bulunamadı:", e);
-      return `Tema ${id}`;
-    }
-  };
-
-  /* ---------------------- GÖRSEL URL ---------------------- */
   const getImageUrl = (tema: MetinTema) => {
-    try {
-      const found = anaTemalar.find((t) => t.id === tema.temaId);
-      const url = found?.kapakResmiUrl ?? tema.kapakResmiUrl;
+    const found = anaTemalar.find((t) => t.id === tema.temaId);
+    const url = found?.kapakResmiUrl ?? tema.kapakResmiUrl;
 
-      return url?.startsWith("http")
-        ? url
-        : url
-        ? `http://localhost:5001${url}`
-        : "/api/placeholder/400/250?text=Resim+Yok";
-    } catch (e) {
-      console.error("Görsel URL hesaplanamadı:", e);
-      return "/api/placeholder/400/250?text=Resim+Yok";
-    }
+    return url?.startsWith("http")
+      ? url
+      : url
+      ? `http://localhost:5001${url}`
+      : "/api/placeholder/400/250?text=Resim+Yok";
   };
 
-  /* ---------------------- ARAMA FİLTRESİ ---------------------- */
-  let filtered: MetinTema[] = [];
-  try {
-    filtered = temalar.filter((tema) =>
-      `${getTemaBaslik(tema.temaId)} ${tema.aciklama}`
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    );
-  } catch (fErr) {
-    console.error("Arama filtresi hata verdi:", fErr);
-    filtered = [];
-  }
+  const getDifficultyClass = (level: string) => {
+    if (level === "Kolay") return "difficulty-beginner";
+    if (level === "Orta") return "difficulty-intermediate";
+    if (level === "Zor") return "difficulty-advanced";
+    return "difficulty-unknown";
+  };
 
-  /* ---------------------- RENDER ---------------------- */
+  const filtered = temalar.filter((tema) =>
+    `${getTemaBaslik(tema.temaId)} ${tema.aciklama}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
+
+  /* ---------------- RENDER ---------------- */
   return (
     <>
-  <Helmet>
-    <title>Metin Temaları | İspanyolca Okuma | Espanolize</title>
-
-    <meta
-      name="description"
-      content="İspanyolca okuma becerini geliştirmek için tema bazlı metinleri keşfet."
-    />
-
-    <meta property="og:title" content="Metin Temaları | İspanyolca Okuma" />
-    <meta
-      property="og:description"
-      content="Tema bazlı İspanyolca okuma metinleriyle kelime dağarcığını geliştir."
-    />
-    <meta property="og:url" content="http://localhost:5173/metinTema" />
-  </Helmet>
-    <main className="metin-page">
-      <Navbar />
-
-      <header className="metin-header">
-        <h1>Metin Temaları</h1>
-        <p>
-          İspanyolca okuma becerini geliştirmek için tema bazlı metinleri
-          keşfet.
-        </p>
-      </header>
-
-      <section className="search-wrapper">
-        <input
-          type="search"
-          placeholder="Metin teması ara… (örn: kültür, hikaye)"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
+      <Helmet>
+        <title>Metin Temaları | İspanyolca Okuma | Espanolize</title>
+        <meta
+          name="description"
+          content="İspanyolca okuma becerini geliştirmek için tema bazlı metinleri keşfet."
         />
-      </section>
+        <meta property="og:title" content="Metin Temaları | Espanolize" />
+        <meta
+          property="og:description"
+          content="Tema bazlı İspanyolca okuma metinleri."
+        />
+        <meta property="og:url" content="http://localhost:5173/metinTema" />
+      </Helmet>
 
-      {loading && (
-        <div className="loading-box">
-          <div className="spinner"></div>
-          <p>Metin temaları yükleniyor…</p>
-        </div>
-      )}
+      <main className="metin-page">
+        <Navbar />
 
-      {!loading && filtered.length === 0 && (
-        <div className="empty-box">
-          <FileTextOutlined style={{ fontSize: "3rem", opacity: 0.4 }} />
-          <p>Sonuç bulunamadı.</p>
-        </div>
-      )}
+        <header className="metin-header">
+          <h1>Metin Temaları</h1>
+          <p>İspanyolca okuma becerini geliştirmek için tema bazlı metinleri keşfet.</p>
+        </header>
 
-      <section className="metin-grid">
-        {!loading &&
-          filtered.map((tema) => {
-            try {
-              return (
-                <article
-                  className="metin-card"
-                  key={tema.id}
-                  onClick={() => {
-                    try {
-                      navigate(`/metinler/${tema.id}`);
-                    } catch (navErr) {
-                      console.error("Navigate hata:", navErr);
-                    }
-                  }}
-                >
-                  <div className="card-image-wrapper">
-                    <img
-                      src={getImageUrl(tema)}
-                      alt={`${getTemaBaslik(tema.temaId)} – İspanyolca okuma metni`}
-                      loading="lazy"
-                    />
-                    <span
-                      className={`difficulty-badge ${getDifficultyClass(
-                        tema.zorluk
-                      )}`}
-                    >
-                      {tema.zorluk}
-                    </span>
-                  </div>
+        <section className="search-wrapper">
+          <input
+            type="search"
+            placeholder="Metin teması ara…"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </section>
 
-                  <div className="card-body">
-                    <h2>{getTemaBaslik(tema.temaId)}</h2>
-                    <p>{tema.aciklama}</p>
-                  </div>
-                </article>
-              );
-            } catch (cardErr) {
-              console.error("Kart render edilemedi:", cardErr);
-              return null;
-            }
-          })}
-      </section>
+        {loading && (
+          <div className="loading-box">
+            <div className="spinner"></div>
+            <p>Metin temaları yükleniyor…</p>
+          </div>
+        )}
 
-      <Footer />
-    </main>
+        {!loading && filtered.length === 0 && (
+          <div className="empty-box">
+            <FileTextOutlined style={{ fontSize: "3rem", opacity: 0.4 }} />
+            <p>Sonuç bulunamadı.</p>
+          </div>
+        )}
+
+        <section className="metin-grid">
+          {!loading &&
+            filtered.map((tema) => (
+              <article
+                key={tema.id}
+                className="metin-card"
+                onClick={() => navigate(`/metinler/${tema.id}`)}
+              >
+                <div className="card-image-wrapper">
+                  <img
+                    src={getImageUrl(tema)}
+                    alt={`${getTemaBaslik(tema.temaId)} – İspanyolca okuma`}
+                    loading="lazy"
+                  />
+                  <span
+                    className={`difficulty-badge ${getDifficultyClass(
+                      tema.zorluk
+                    )}`}
+                  >
+                    {tema.zorluk}
+                  </span>
+                </div>
+
+                <div className="card-body">
+                  <h2>{getTemaBaslik(tema.temaId)}</h2>
+                  <p>{tema.aciklama}</p>
+                </div>
+              </article>
+            ))}
+        </section>
+
+        <Footer />
+      </main>
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOutlined, ClockCircleOutlined, UserOutlined } from "@ant-design/icons";
+import {  ClockCircleOutlined, UserOutlined } from "@ant-design/icons";
 import api from "../../../services/ApiService";
 import Navbar from "../Home/Navbar";
 import "./KonuListPage.css";

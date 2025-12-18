@@ -1,68 +1,32 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import api from "../../../services/ApiService";
 import { Spin, Button } from "antd";
 import { ArrowLeftOutlined, FileTextOutlined } from "@ant-design/icons";
-import "./MetinTemaDetailPage.css";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
+import MetinService, {
+  type MetinTemaDetay,
+} from "../../../services/user/MetinService";
+import "./MetinTemaDetailPage.css";
 import { Helmet } from "react-helmet-async";
-
-interface Metin {
-  id: number;
-  baslik: string;
-  icerik: string;
-  ceviri: string;
-  aciklama: string;
-  zorluk: string;
-  okumaSuresi: number;
-  kapakResmiUrl?: string;
-  metinTemaId: number;
-}
-
-interface MetinTemaDetay {
-  id: number;
-  aciklama: string;
-  temaId: number;
-  metinler: Metin[];
-}
 
 export default function MetinTemaDetailPage() {
   const { id } = useParams();
   const [tema, setTema] = useState<MetinTemaDetay | null>(null);
-  const [temaBaslik, setTemaBaslik] = useState<string>("");
+  const [temaBaslik, setTemaBaslik] = useState("");
   const [loading, setLoading] = useState(true);
 
   /* ---------------- VERİ YÜKLEME ---------------- */
   useEffect(() => {
     const load = async () => {
       try {
-        setLoading(true);
+        const temaDetay = await MetinService.getMetinTemaDetay(id!);
+        setTema(temaDetay);
 
-        // ---- METİN TEMA DETAYI ÇEK ----
-        const res = await api.get(`/metinTema/${id}`);
-        const data = res.data;
-
-        const mapped: MetinTemaDetay = {
-          id: data.id,
-          aciklama: data.aciklama,
-          temaId: data.temaId,
-          metinler: Array.isArray(data.metinler) ? data.metinler : []
-        };
-
-        setTema(mapped);
-
-        // ---- Tema başlığını çek ----
-        try {
-          const temaRes = await api.get(`/tema/${mapped.temaId}`);
-          setTemaBaslik(temaRes.data?.baslik ?? "Bilinmeyen Tema");
-        } catch (innerErr) {
-          console.error("Tema başlığı çekilirken hata:", innerErr);
-          setTemaBaslik("Bilinmeyen Tema");
-        }
-
+        const anaTema = await MetinService.getTemaById(temaDetay.temaId);
+        setTemaBaslik(anaTema.baslik);
       } catch (err) {
-        console.error("Tema yüklenemedi:", err);
+        console.error("Metin tema detayı yüklenemedi:", err);
         setTema(null);
       } finally {
         setLoading(false);
@@ -71,8 +35,6 @@ export default function MetinTemaDetailPage() {
 
     load();
   }, [id]);
-
-  
 
   /* ---------------- DURUMLAR ---------------- */
   if (loading) {
@@ -93,11 +55,8 @@ export default function MetinTemaDetailPage() {
         <Navbar />
         <main className="metin-error">
           <h2>Tema Bulunamadı</h2>
-          <p>Geçerli bir metin teması seçin.</p>
-          <Link to="/metinler">
-            <Button type="primary" icon={<ArrowLeftOutlined />}>
-              Geri Dön
-            </Button>
+          <Link to="/metinTema">
+            <Button icon={<ArrowLeftOutlined />}>Geri Dön</Button>
           </Link>
         </main>
       </>
@@ -107,40 +66,26 @@ export default function MetinTemaDetailPage() {
   /* ---------------- ANA TASARIM ---------------- */
   return (
     <>
-
       <Helmet>
-    <title>
-      {temaBaslik} | İspanyolca Okuma Metinleri |Espanolize
-    </title>
+        <title>{temaBaslik} | İspanyolca Okuma | Espanolize</title>
+        <meta
+          name="description"
+          content={tema.aciklama?.slice(0, 155)}
+        />
+        <meta
+          property="og:title"
+          content={`${temaBaslik} | İspanyolca Okuma`}
+        />
+        <meta
+          property="og:description"
+          content={tema.aciklama?.slice(0, 155)}
+        />
+        <meta
+          property="og:url"
+          content={`http://localhost:5173/metinler/${id}`}
+        />
+      </Helmet>
 
-    <meta
-      name="description"
-      content={
-        tema.aciklama
-          ? tema.aciklama.slice(0, 155)
-          : "İspanyolca okuma metinleri"
-      }
-    />
-
-    <meta
-      property="og:title"
-      content={`${temaBaslik} | İspanyolca Okuma Metinleri`}
-    />
-
-    <meta
-      property="og:description"
-      content={
-        tema.aciklama
-          ? tema.aciklama.slice(0, 155)
-          : "İspanyolca okuma metinleri"
-      }
-    />
-
-    <meta
-      property="og:url"
-      content={`http://localhost:5173/metinler/${id}`}
-    />
-  </Helmet>
       <Navbar />
 
       <main className="metin-container">
@@ -150,32 +95,25 @@ export default function MetinTemaDetailPage() {
         </header>
 
         <section className="metin-list">
-          {tema.metinler.map((metin) => {
-            try {
-              return (
-                <article key={metin.id} className="metin-item">
-                  <header className="metin-header-static">
-                    <FileTextOutlined className="metin-header-icon" />
-                    <div>
-                      <h2 className="metin-baslik">{metin.baslik}</h2>
-                      <p className="metin-aciklama">{metin.aciklama}</p>
-                    </div>
-                  </header>
+          {tema.metinler.map((metin) => (
+            <article key={metin.id} className="metin-item">
+              <header className="metin-header-static">
+                <FileTextOutlined className="metin-header-icon" />
+                <div>
+                  <h2 className="metin-baslik">{metin.baslik}</h2>
+                  <p className="metin-aciklama">{metin.aciklama}</p>
+                </div>
+              </header>
 
-                  <div className="metin-icerik-static">
-                    <p className="metin-yazi">{metin.icerik}</p>
-                  </div>
+              <div className="metin-icerik-static">
+                <p className="metin-yazi">{metin.icerik}</p>
+              </div>
 
-                  <div className="metin-icerik-static">
-                    <p className="metin-yazi">{metin.ceviri}</p>
-                  </div>
-                </article>
-              );
-            } catch (mapErr) {
-              console.error("Metin render edilirken hata:", mapErr);
-              return null; // UI kırılmaz
-            }
-          })}
+              <div className="metin-icerik-static">
+                <p className="metin-yazi">{metin.ceviri}</p>
+              </div>
+            </article>
+          ))}
         </section>
       </main>
 
