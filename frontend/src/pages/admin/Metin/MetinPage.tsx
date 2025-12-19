@@ -14,12 +14,12 @@ interface Metin {
 interface MetinTema {
   id: number;
   aciklama: string;
-  temaId: number; // ⭐ Tema başlığına bağlanacak ID
+  temaId: number; 
 }
 
 interface Tema {
   id: number;
-  baslik: string; // ⭐ Tema başlığı
+  baslik: string; 
 }
 
 interface TableRow {

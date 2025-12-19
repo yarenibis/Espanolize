@@ -11,22 +11,26 @@ import "./MetinTemaDetailPage.css";
 import { Helmet } from "react-helmet-async";
 
 export default function MetinTemaDetailPage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+
   const [tema, setTema] = useState<MetinTemaDetay | null>(null);
   const [temaBaslik, setTemaBaslik] = useState("");
   const [loading, setLoading] = useState(true);
 
   /* ---------------- VERİ YÜKLEME ---------------- */
   useEffect(() => {
+    if (!id) return;
+
     const load = async () => {
+      setLoading(true);
       try {
-        const temaDetay = await MetinService.getMetinTemaDetay(id!);
+        const temaDetay = await MetinService.getMetinTemaDetay(id);
         setTema(temaDetay);
 
         const anaTema = await MetinService.getTemaById(temaDetay.temaId);
         setTemaBaslik(anaTema.baslik);
-      } catch (err) {
-        console.error("Metin tema detayı yüklenemedi:", err);
+      } catch (error) {
+        console.error("Metin tema detayı yüklenemedi:", error);
         setTema(null);
       } finally {
         setLoading(false);
@@ -71,18 +75,6 @@ export default function MetinTemaDetailPage() {
         <meta
           name="description"
           content={tema.aciklama?.slice(0, 155)}
-        />
-        <meta
-          property="og:title"
-          content={`${temaBaslik} | İspanyolca Okuma`}
-        />
-        <meta
-          property="og:description"
-          content={tema.aciklama?.slice(0, 155)}
-        />
-        <meta
-          property="og:url"
-          content={`http://localhost:5173/metinler/${id}`}
         />
       </Helmet>
 

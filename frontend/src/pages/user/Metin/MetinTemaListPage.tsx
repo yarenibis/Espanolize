@@ -15,11 +15,13 @@ export default function MetinTemaListPage() {
   const [anaTemalar, setAnaTemalar] = useState<Tema[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
   const navigate = useNavigate();
 
   /* ---------------- VERİ YÜKLEME ---------------- */
   useEffect(() => {
     const load = async () => {
+      setLoading(true);
       try {
         const metinTemalari = await MetinService.getMetinTemalari();
         setTemalar(metinTemalari);
@@ -27,8 +29,8 @@ export default function MetinTemaListPage() {
         const temaIds = metinTemalari.map((t) => t.temaId);
         const temaList = await MetinService.getTemalarByIds(temaIds);
         setAnaTemalar(temaList);
-      } catch (err) {
-        console.error("Metin temaları yüklenemedi:", err);
+      } catch (error) {
+        console.error("Metin temaları yüklenemedi:", error);
         setTemalar([]);
         setAnaTemalar([]);
       } finally {
@@ -40,28 +42,31 @@ export default function MetinTemaListPage() {
   }, []);
 
   /* ---------------- YARDIMCI FONKSİYONLAR ---------------- */
-  const getTemaBaslik = (id: number) =>
-    anaTemalar.find((t) => t.id === id)?.baslik ?? `Tema ${id}`;
+  const getTemaBaslik = (temaId: number): string =>
+    anaTemalar.find((t) => t.id === temaId)?.baslik ?? `Tema ${temaId}`;
 
-  const getImageUrl = (tema: MetinTema) => {
-    const found = anaTemalar.find((t) => t.id === tema.temaId);
-    const url = found?.kapakResmiUrl ?? tema.kapakResmiUrl;
+  const getImageUrl = (tema: MetinTema): string => {
+    const anaTema = anaTemalar.find((t) => t.id === tema.temaId);
+    const url = anaTema?.kapakResmiUrl ?? tema.kapakResmiUrl;
 
-    return url?.startsWith("http")
-      ? url
-      : url
-      ? `http://localhost:5001${url}`
-      : "/api/placeholder/400/250?text=Resim+Yok";
+    if (!url) return "/api/placeholder/400/250?text=Resim+Yok";
+    return url.startsWith("http") ? url : `http://localhost:5001${url}`;
   };
 
-  const getDifficultyClass = (level: string) => {
-    if (level === "Kolay") return "difficulty-beginner";
-    if (level === "Orta") return "difficulty-intermediate";
-    if (level === "Zor") return "difficulty-advanced";
-    return "difficulty-unknown";
+  const getDifficultyClass = (level: MetinTema["zorluk"]) => {
+    switch (level) {
+      case "Kolay":
+        return "difficulty-beginner";
+      case "Orta":
+        return "difficulty-intermediate";
+      case "Zor":
+        return "difficulty-advanced";
+      default:
+        return "difficulty-unknown";
+    }
   };
 
-  const filtered = temalar.filter((tema) =>
+  const filteredTemalar = temalar.filter((tema) =>
     `${getTemaBaslik(tema.temaId)} ${tema.aciklama}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
@@ -76,12 +81,6 @@ export default function MetinTemaListPage() {
           name="description"
           content="İspanyolca okuma becerini geliştirmek için tema bazlı metinleri keşfet."
         />
-        <meta property="og:title" content="Metin Temaları | Espanolize" />
-        <meta
-          property="og:description"
-          content="Tema bazlı İspanyolca okuma metinleri."
-        />
-        <meta property="og:url" content="http://localhost:5173/metinTema" />
       </Helmet>
 
       <main className="metin-page">
@@ -89,7 +88,9 @@ export default function MetinTemaListPage() {
 
         <header className="metin-header">
           <h1>Metin Temaları</h1>
-          <p>İspanyolca okuma becerini geliştirmek için tema bazlı metinleri keşfet.</p>
+          <p>
+            İspanyolca okuma becerini geliştirmek için tema bazlı metinleri keşfet.
+          </p>
         </header>
 
         <section className="search-wrapper">
@@ -104,12 +105,12 @@ export default function MetinTemaListPage() {
 
         {loading && (
           <div className="loading-box">
-            <div className="spinner"></div>
+            <div className="spinner" />
             <p>Metin temaları yükleniyor…</p>
           </div>
         )}
 
-        {!loading && filtered.length === 0 && (
+        {!loading && filteredTemalar.length === 0 && (
           <div className="empty-box">
             <FileTextOutlined style={{ fontSize: "3rem", opacity: 0.4 }} />
             <p>Sonuç bulunamadı.</p>
@@ -118,7 +119,7 @@ export default function MetinTemaListPage() {
 
         <section className="metin-grid">
           {!loading &&
-            filtered.map((tema) => (
+            filteredTemalar.map((tema) => (
               <article
                 key={tema.id}
                 className="metin-card"
@@ -127,7 +128,7 @@ export default function MetinTemaListPage() {
                 <div className="card-image-wrapper">
                   <img
                     src={getImageUrl(tema)}
-                    alt={`${getTemaBaslik(tema.temaId)} – İspanyolca okuma`}
+                    alt={getTemaBaslik(tema.temaId)}
                     loading="lazy"
                   />
                   <span

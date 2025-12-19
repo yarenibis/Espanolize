@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import api from "../../../services/ApiService";
 import { Spin, Button, message } from "antd";
 import { ArrowLeftOutlined, CopyOutlined } from "@ant-design/icons";
 import "./KelimeTemaDetailPage.css";
@@ -8,30 +7,15 @@ import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
 import { Helmet } from "react-helmet-async";
 
-interface Kelime {
-  id: number;
-  ispanyolca: string;
-  turkce: string;
-}
-
-interface KelimeTemaApi {
-  id: number;
-  aciklama: string;
-  temaId: number;
-  kapakResmiUrl?: string;
-  detayResimUrls?: string[];
-  kelimeler: Kelime[];
-}
-
-interface TemaApi {
-  id: number;
-  baslik: string;
-  kapakResmiUrl?: string;
-}
+import KelimeService, {
+  type KelimeTemaDetay,
+  type Tema,
+} from "../../../services/user/KelimeService";
 
 export default function KelimeTemaDetailPage() {
   const { id } = useParams();
-  const [tema, setTema] = useState<KelimeTemaApi | null>(null);
+
+  const [tema, setTema] = useState<KelimeTemaDetay | null>(null);
   const [temaBaslik, setTemaBaslik] = useState<string>("");
 
   const [loading, setLoading] = useState(true);
@@ -40,48 +24,22 @@ export default function KelimeTemaDetailPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-   
-        let res;
+        // 🔹 Kelime tema detayı
+        const temaDetay = await KelimeService.getKelimeTemaDetay(id!);
+        setTema(temaDetay);
 
+        // 🔹 Ana tema başlığı
         try {
-          res = await api.get(`/kelimetemalari/${id}`);
-        } catch (error: any) {
-          message.error("Kelime teması yüklenirken hata oluştu!");
-          console.error(error);
-          return;
-        }
-
-        const t = res.data;
-
-        const mappedTema: KelimeTemaApi = {
-          id: t.id ?? t.Id,
-          aciklama: t.aciklama ?? t.Aciklama,
-          temaId: t.temaId ?? t.TemaId,
-          kapakResmiUrl: t.kapakResmiUrl ?? t.KapakResmiUrl,
-          detayResimUrls: t.detayResimUrls ?? t.DetayResimUrls ?? [],
-          kelimeler: (t.kelimeler ?? t.Kelimeler)?.map((k: any) => ({
-            id: k.id ?? k.Id,
-            ispanyolca: k.ispanyolca ?? k.Ispanyolca,
-            turkce: k.turkce ?? k.Turkce,
-          })),
-        };
-
-        setTema(mappedTema);
-
-        // ===============================
-        // 2) Ana tema başlığı API isteği
-        // ===============================
-        try {
-          const temaRes = await api.get(`/tema/${mappedTema.temaId}`);
-          const anaTema: TemaApi = temaRes.data;
+          const anaTema: Tema = await KelimeService.getTemaById(
+            temaDetay.temaId
+          );
           setTemaBaslik(anaTema.baslik);
-        } catch (error: any) {
+        } catch (err) {
           message.warning("Tema başlığı yüklenemedi!");
-          console.error(error);
+          console.error(err);
         }
-
       } catch (err) {
-        message.error("Beklenmeyen bir hata oluştu!");
+        message.error("Kelime teması yüklenirken hata oluştu!");
         console.error(err);
       } finally {
         setLoading(false);
@@ -91,16 +49,15 @@ export default function KelimeTemaDetailPage() {
     loadData();
   }, [id]);
 
-
   // ================================
-  // 📌 Kopyalama fonksiyonu
+  // 📌 Kopyalama
   // ================================
   const copyToClipboard = async (text: string, wordId: number) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedWord(wordId);
       setTimeout(() => setCopiedWord(null), 1500);
-    } catch (error) {
+    } catch {
       message.error("Kopyalama başarısız!");
     }
   };
@@ -111,7 +68,6 @@ export default function KelimeTemaDetailPage() {
       : url.startsWith("http")
       ? url
       : `http://localhost:5001${url}`;
-
 
   // ================================
   // 📌 DURUMLAR
@@ -131,7 +87,6 @@ export default function KelimeTemaDetailPage() {
   if (!tema) {
     return (
       <>
-      
         <Navbar />
         <main className="kelime-error">
           <h2>Tema bulunamadı</h2>
@@ -146,26 +101,34 @@ export default function KelimeTemaDetailPage() {
 
   return (
     <>
-    {tema && (
-  <Helmet>
-    <title>
-      {temaBaslik
-        ? `${temaBaslik}: İspanyolca'da günlük hayatta kullanılan kelimeler ve cümle içerisindeki kullanımları | Españolize`
-        : "İspanyolca'da günlük hayatta kullanılan kelimeler ve cümle içerisindeki kullanımları | Españolize"}
-    </title>
-    <meta
-      name="description"
-      content={tema.aciklama ?? "Her kelimeye Türkçe karşılığıyla hızlı ve eğlenceli şekilde erişin."}
-    />
-    <meta property="og:title" content={temaBaslik ?? "Kelime Teması"} />
-    <meta property="og:description" content={tema.aciklama ?? ""} />
-    {tema.kapakResmiUrl && (
-      <meta property="og:image" content={getImageUrl(tema.kapakResmiUrl)} />
-    )}
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={`http://localhost:5173/kelimeler/${id}`} />
-  </Helmet>
-)}
+      <Helmet>
+        <title>
+          {temaBaslik
+            ? `${temaBaslik}: İspanyolca'da günlük hayatta kullanılan kelimeler | Españolize`
+            : "İspanyolca Kelimeler | Españolize"}
+        </title>
+        <meta
+          name="description"
+          content={
+            tema.aciklama ??
+            "Her kelimeye Türkçe karşılığıyla hızlı ve eğlenceli şekilde erişin."
+          }
+        />
+        <meta property="og:title" content={temaBaslik ?? "Kelime Teması"} />
+        <meta property="og:description" content={tema.aciklama ?? ""} />
+        {tema.kapakResmiUrl && (
+          <meta
+            property="og:image"
+            content={getImageUrl(tema.kapakResmiUrl)}
+          />
+        )}
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:url"
+          content={`http://localhost:5173/kelimeler/${id}`}
+        />
+      </Helmet>
+
       <Navbar />
 
       <main className="kelime-detail-container">
@@ -176,31 +139,27 @@ export default function KelimeTemaDetailPage() {
 
         <section className="kelimeler-section">
           <div className="kelimeler-list">
-            {tema.kelimeler.map((kelime, index) => (
-              <div key={kelime.id}>
-                <div className="kelime-item">
-                  <div className="kelime-text">
-                    <span className="kelime-es">{kelime.ispanyolca}</span>
-                    <span className="kelime-tr">{kelime.turkce}</span>
-                  </div>
-
-                  <button
-                    className={`copy-btn ${
-                      copiedWord === kelime.id ? "copied" : ""
-                    }`}
-                    onClick={() =>
-                      copyToClipboard(kelime.ispanyolca, kelime.id)
-                    }
-                  >
-                    <CopyOutlined />
-                  </button>
-
-                  {copiedWord === kelime.id && (
-                    <div className="copy-feedback">Kopyalandı!</div>
-                  )}
+            {tema.kelimeler.map((kelime) => (
+              <div key={kelime.id} className="kelime-item">
+                <div className="kelime-text">
+                  <span className="kelime-es">{kelime.ispanyolca}</span>
+                  <span className="kelime-tr">{kelime.turkce}</span>
                 </div>
 
-                
+                <button
+                  className={`copy-btn ${
+                    copiedWord === kelime.id ? "copied" : ""
+                  }`}
+                  onClick={() =>
+                    copyToClipboard(kelime.ispanyolca, kelime.id)
+                  }
+                >
+                  <CopyOutlined />
+                </button>
+
+                {copiedWord === kelime.id && (
+                  <div className="copy-feedback">Kopyalandı!</div>
+                )}
               </div>
             ))}
           </div>

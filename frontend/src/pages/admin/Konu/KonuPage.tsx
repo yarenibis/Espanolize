@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from "react";
-import api from "../../../services/ApiService";
 import CrudTable from "../Dashboard/CrudTable";
 import "./KonuPage.css";
 
-interface Konu {
-  id: number;
-  baslik: string;
-  zorluk: string;
-  calismaSuresi: number;
-  aciklama: string;
-  temaId: number;
-}
-
-interface Tema {
-  id: number;
-  baslik: string;
-}
+import {
+  type Konu,
+  type Tema,
+  konuService,
+  temaService,
+} from "../../../services/admin/Konu.service";
 
 export default function KonuPage() {
   const [konular, setKonular] = useState<Konu[]>([]);
@@ -31,175 +23,114 @@ export default function KonuPage() {
 
   const [duzenlenecek, setDuzenlenecek] = useState<Konu | null>(null);
 
-  // Temaları yükle
-  async function getTemalar() {
-    try {
-      const res = await api.get("/admin/tema");
-      setTemalar(res.data);
-    } catch (err) {
-      console.error("Temalar yüklenemedi:", err);
-      setError("Temalar yüklenirken bir hata oluştu.");
-    }
-  }
+  /* ========= LOAD DATA ========= */
 
-  // Konuları yükle
-  async function fetchKonular() {
+  const loadData = async () => {
+    setLoading(true);
+    setError("");
     try {
-      const res = await api.get("/admin/konular");
-      setKonular(res.data);
-    } catch (err) {
-      console.error("Konular yüklenemedi:", err);
-      setError("Konular yüklenirken bir hata oluştu.");
+      const [konuRes, temaRes] = await Promise.all([
+        konuService.getKonular(),
+        temaService.getTemalar(),
+      ]);
+      setKonular(konuRes.data);
+      setTemalar(temaRes.data);
+    } catch {
+      setError("Veriler yüklenirken hata oluştu.");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        await Promise.all([fetchKonular(), getTemalar()]);
-      } catch (err) {
-        setError("Veriler yüklenirken bir hata oluştu.");
-      } finally {
-        setLoading(false);
-      }
-    };
     loadData();
   }, []);
 
-  // Tema ID'sine göre tema başlığını bul
-  const getTemaBaslik = (temaId: number) => {
-    const tema = temalar.find(t => t.id === temaId);
-    return tema ? tema.baslik : `Tema ID: ${temaId}`;
-  };
+  /* ========= CRUD ========= */
 
-  // Zorluk seviyesine göre CSS class'ını döndür
-  const getZorlukClass = (zorluk: string) => {
-    switch (zorluk.toLowerCase()) {
-      case "kolay": return "zorluk-badge zorluk-kolay";
-      case "orta": return "zorluk-badge zorluk-orta";
-      case "zor": return "zorluk-badge zorluk-zor";
-      default: return "zorluk-badge zorluk-orta";
-    }
-  };
-
-  // Tablo için düzenlenmiş data oluştur
-  const tabloData = konular.map(konu => ({
-    id: konu.id,
-    baslik: konu.baslik,
-    zorluk: konu.zorluk,
-    calismaSuresi: konu.calismaSuresi,
-    aciklama: konu.aciklama.length > 100 ? konu.aciklama.substring(0, 100) + "..." : konu.aciklama,
-    tema: getTemaBaslik(konu.temaId)
-  }));
-
-  // Yeni konu ekle
-  async function handleAdd() {
-    if (!yeniBaslik.trim() || !yeniAciklama.trim() || yeniCalismaSuresi === "" || yeniTemaId === "") {
+  const handleAdd = async () => {
+    if (!yeniBaslik || !yeniAciklama || yeniCalismaSuresi === "" || yeniTemaId === "") {
       setError("Lütfen tüm alanları doldurun!");
       return;
     }
 
     setLoading(true);
-    setError("");
     try {
-      await api.post("/admin/konular", {
+      await konuService.addKonu({
         baslik: yeniBaslik,
         zorluk: yeniZorluk,
         calismaSuresi: Number(yeniCalismaSuresi),
         aciklama: yeniAciklama,
         temaId: Number(yeniTemaId),
       });
-
       resetForm();
-      await fetchKonular();
-    } catch (err) {
-      console.error("Ekleme hatası:", err);
-      setError("Ekleme işlemi başarısız!");
+      await loadData();
+    } catch {
+      setError("Ekleme başarısız!");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  // Konu sil
-  async function handleDelete(id: number) {
-    if (!window.confirm("Bu konuyu silmek istediğinizden emin misiniz?")) return;
-    
-    setLoading(true);
-    try {
-      await api.delete(`/admin/konular/${id}`);
-      await fetchKonular();
-    } catch (err) {
-      console.error("Silme hatası:", err);
-      setError("Silme işlemi başarısız!");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Düzenleme moduna geç
-  function startEdit(konu: Konu) {
-    setDuzenlenecek(konu);
-    setYeniBaslik(konu.baslik);
-    setYeniAciklama(konu.aciklama);
-    setYeniCalismaSuresi(konu.calismaSuresi);
-    setYeniZorluk(konu.zorluk);
-    setYeniTemaId(konu.temaId);
-    setError("");
-  }
-
-  // Güncelleme işlemi
-  async function handleUpdate() {
+  const handleUpdate = async () => {
     if (!duzenlenecek) return;
 
-    if (!yeniBaslik.trim() || !yeniAciklama.trim() || yeniCalismaSuresi === "" || yeniTemaId === "") {
-      setError("Lütfen tüm alanları doldurun!");
-      return;
-    }
-
     setLoading(true);
-    setError("");
     try {
-      await api.put(`/admin/konular/${duzenlenecek.id}`, {
+      await konuService.updateKonu(duzenlenecek.id, {
         baslik: yeniBaslik,
         zorluk: yeniZorluk,
         calismaSuresi: Number(yeniCalismaSuresi),
         aciklama: yeniAciklama,
         temaId: Number(yeniTemaId),
       });
-
       resetForm();
-      await fetchKonular();
-    } catch (err) {
-      console.error("Güncelleme hatası:", err);
-      setError("Güncelleme işlemi başarısız!");
+      await loadData();
+    } catch {
+      setError("Güncelleme başarısız!");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  // Formu sıfırla
-  function resetForm() {
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Silmek istiyor musunuz?")) return;
+    await konuService.deleteKonu(id);
+    loadData();
+  };
+
+  const startEdit = (konu: Konu) => {
+    setDuzenlenecek(konu);
+    setYeniBaslik(konu.baslik);
+    setYeniZorluk(konu.zorluk);
+    setYeniCalismaSuresi(konu.calismaSuresi);
+    setYeniAciklama(konu.aciklama);
+    setYeniTemaId(konu.temaId);
+  };
+
+  const resetForm = () => {
     setDuzenlenecek(null);
     setYeniBaslik("");
-    setYeniAciklama("");
-    setYeniCalismaSuresi("");
     setYeniZorluk("Kolay");
+    setYeniCalismaSuresi("");
+    setYeniAciklama("");
     setYeniTemaId("");
     setError("");
-  }
+  };
 
-  if (loading && konular.length === 0) {
-    return (
-      <div className="konu-container">
-        <div className="flex justify-center items-center h-64">
-          <div className="loading-spinner" style={{ borderColor: "#667eea", borderTopColor: 'transparent' }}></div>
-          <span className="ml-3 text-lg">Yükleniyor...</span>
-        </div>
-      </div>
-    );
-  }
+  /* ========= TABLE ========= */
+
+  const tabloData = konular.map(k => ({
+    id: k.id,
+    baslik: k.baslik,
+    zorluk: k.zorluk,
+    calismaSuresi: k.calismaSuresi,
+    aciklama:
+      k.aciklama.length > 100
+        ? k.aciklama.substring(0, 100) + "..."
+        : k.aciklama,
+    tema: temalar.find(t => t.id === k.temaId)?.baslik || "",
+  }));
 
   return (
     <div className="konu-container">
@@ -357,3 +288,6 @@ export default function KonuPage() {
     </div>
   );
 }
+
+
+

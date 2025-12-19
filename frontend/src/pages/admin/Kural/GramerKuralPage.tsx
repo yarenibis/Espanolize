@@ -1,19 +1,13 @@
 import { useEffect, useState } from "react";
-import api from "../../../services/ApiService";
 import CrudTable from "../Dashboard/CrudTable";
 import "./GramerKuralPage.css";
 
-interface Konu {
-  id: number;
-  baslik: string;
-}
-
-interface GramerKural {
-  id: number;
-  kuralBaslik: string;
-  aciklama: string;
-  konuId: number;
-}
+import {
+  type GramerKural,
+  type Konu,
+  gramerKuralService,
+  konuService,
+} from "../../../services/admin/GramerKural.service";
 
 interface TableRow {
   id: number;
@@ -43,14 +37,13 @@ export default function GramerKuralPage() {
     setError("");
     try {
       const [g, k] = await Promise.all([
-        api.get("/admin/gramerkurallar"),
-        api.get("/admin/konular"),
+        gramerKuralService.getAll(),
+        konuService.getAll(),
       ]);
 
       setGramer(g.data);
       setKonular(k.data);
-    } catch (error) {
-      console.error("Veri yüklenirken hata:", error);
+    } catch {
       setError("Veriler yüklenirken bir hata oluştu.");
     } finally {
       setLoading(false);
@@ -60,7 +53,10 @@ export default function GramerKuralPage() {
   const tableData: TableRow[] = gramer.map((g) => ({
     id: g.id,
     kuralBaslik: g.kuralBaslik,
-    aciklama: g.aciklama.length > 100 ? g.aciklama.substring(0, 100) + "..." : g.aciklama,
+    aciklama:
+      g.aciklama.length > 100
+        ? g.aciklama.substring(0, 100) + "..."
+        : g.aciklama,
     konuBaslik: konular.find((x) => x.id === g.konuId)?.baslik ?? "—",
   }));
 
@@ -71,9 +67,8 @@ export default function GramerKuralPage() {
     }
 
     setLoading(true);
-    setError("");
     try {
-      await api.post("/admin/gramerkurallar", {
+      await gramerKuralService.add({
         kuralBaslik: yeniBaslik,
         aciklama: yeniAciklama,
         konuId: Number(yeniKonuId),
@@ -81,8 +76,7 @@ export default function GramerKuralPage() {
 
       reset();
       await load();
-    } catch (error) {
-      console.error("Ekleme hatası:", error);
+    } catch {
       setError("Ekleme işlemi başarısız!");
     } finally {
       setLoading(false);
@@ -92,15 +86,9 @@ export default function GramerKuralPage() {
   async function guncelle() {
     if (!duzenle) return;
 
-    if (!yeniBaslik || !yeniAciklama || !yeniKonuId) {
-      setError("Lütfen tüm alanları doldurun!");
-      return;
-    }
-
     setLoading(true);
-    setError("");
     try {
-      await api.put(`/admin/gramerkurallar/${duzenle.id}`, {
+      await gramerKuralService.update(duzenle.id, {
         kuralBaslik: yeniBaslik,
         aciklama: yeniAciklama,
         konuId: Number(yeniKonuId),
@@ -108,31 +96,21 @@ export default function GramerKuralPage() {
 
       reset();
       await load();
-    } catch (error) {
-      console.error("Güncelleme hatası:", error);
+    } catch {
       setError("Güncelleme işlemi başarısız!");
     } finally {
       setLoading(false);
     }
   }
 
-  function reset() {
-    setDuzenle(null);
-    setYeniBaslik("");
-    setYeniAciklama("");
-    setYeniKonuId("");
-    setError("");
-  }
-
   async function sil(id: number) {
     if (!confirm("Bu gramer kuralını silmek istediğinizden emin misiniz?")) return;
-    
+
     setLoading(true);
     try {
-      await api.delete(`/admin/gramerkurallar/${id}`);
+      await gramerKuralService.delete(id);
       await load();
-    } catch (error) {
-      console.error("Silme hatası:", error);
+    } catch {
       setError("Silme işlemi başarısız!");
     } finally {
       setLoading(false);
@@ -147,6 +125,14 @@ export default function GramerKuralPage() {
     setYeniBaslik(target.kuralBaslik);
     setYeniAciklama(target.aciklama);
     setYeniKonuId(target.konuId);
+    setError("");
+  }
+
+  function reset() {
+    setDuzenle(null);
+    setYeniBaslik("");
+    setYeniAciklama("");
+    setYeniKonuId("");
     setError("");
   }
 
@@ -275,4 +261,8 @@ export default function GramerKuralPage() {
       </div>
     </div>
   );
+
 }
+
+
+  

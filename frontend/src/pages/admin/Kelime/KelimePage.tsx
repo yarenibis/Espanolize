@@ -1,25 +1,17 @@
 import { useEffect, useState } from "react";
-import api from "../../../services/ApiService";
 import CrudTable from "../Dashboard/CrudTable";
 import "./KelimePage.css";
 
-interface Kelime {
-  id: number;
-  ispanyolca: string;
-  turkce: string;
-  kelimeTemasiId: number;
-}
+import {
+  kelimeService,
+  type KelimeDto
+} from "../../../services/admin/Kelime.service";
 
-interface KelimeTema {
-  id: number;
-  aciklama: string;
-  temaId: number;
-}
-
-interface Tema {
-  id: number;
-  baslik: string;  // ⭐ Tema başlığı
-}
+import {
+  kelimeTemaService,
+  type KelimeTemaDto,
+  type TemaDto
+} from "../../../services/admin/KelimeTema.service";
 
 interface TableRow {
   id: number;
@@ -29,36 +21,31 @@ interface TableRow {
 }
 
 export default function KelimePage() {
-  const [kelimeler, setKelimeler] = useState<Kelime[]>([]);
-  const [kelimeTemalari, setKelimeTemalari] = useState<KelimeTema[]>([]);
-  const [temalar, setTemalar] = useState<Tema[]>([]);
+  const [kelimeler, setKelimeler] = useState<KelimeDto[]>([]);
+  const [kelimeTemalari, setKelimeTemalari] = useState<KelimeTemaDto[]>([]);
+  const [temalar, setTemalar] = useState<TemaDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const [yeniIspanyolca, setYeniIspanyolca] = useState("");
   const [yeniTurkce, setYeniTurkce] = useState("");
   const [yeniTemaId, setYeniTemaId] = useState<number | "">("");
+  const [duzenlenecek, setDuzenlenecek] = useState<KelimeDto | null>(null);
 
-  const [duzenlenecek, setDuzenlenecek] = useState<Kelime | null>(null);
-
-  // Kelimeler + Kelime Temaları + Temalar yükleniyor
   async function fetchAll() {
     setLoading(true);
-    setError("");
     try {
       const [kelimeRes, kelimeTemaRes, temaRes] = await Promise.all([
-        api.get("/admin/kelimeler"),
-        api.get("/admin/kelime-temalari"),
-        api.get("/admin/tema")  // ⭐ Tema başlıkları buradan geliyor
+        kelimeService.getAll(),
+        kelimeTemaService.getAllKelimeTemalari(),
+        kelimeTemaService.getAllTemalar()
       ]);
 
       setKelimeler(kelimeRes.data);
       setKelimeTemalari(kelimeTemaRes.data);
       setTemalar(temaRes.data);
-
-    } catch (err) {
-      console.error("Veriler yüklenemedi:", err);
-      setError("Veriler yüklenirken bir hata oluştu.");
+    } catch {
+      setError("Veriler yüklenirken hata oluştu.");
     } finally {
       setLoading(false);
     }
@@ -68,122 +55,81 @@ export default function KelimePage() {
     fetchAll();
   }, []);
 
-  // ⭐ Tema ID → Tema Başlığı eşleştirme
   const getTemaBaslik = (kelimeTemasiId: number) => {
-    const kelimeTema = kelimeTemalari.find(kt => kt.id === kelimeTemasiId);
-    if (!kelimeTema) return "Tema bulunamadı";
-
-    const anaTema = temalar.find(t => t.id === kelimeTema.temaId);
-    return anaTema ? anaTema.baslik : "Başlık yok";
+    const kt = kelimeTemalari.find(k => k.id === kelimeTemasiId);
+    const tema = temalar.find(t => t.id === kt?.temaId);
+    return tema ? tema.baslik : "Tema bulunamadı";
   };
 
-  // Yeni kelime ekle
-  async function handleAdd() {
-    if (!yeniIspanyolca.trim() || !yeniTurkce.trim() || yeniTemaId === "") {
-      setError("Lütfen tüm alanları doldurun!");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-
-    try {
-      await api.post("/admin/kelimeler", {
-        ispanyolca: yeniIspanyolca,
-        turkce: yeniTurkce,
-        kelimeTemasiId: Number(yeniTemaId),
-      });
-
-      resetForm();
-      await fetchAll();
-    } catch (err) {
-      console.error("Ekleme hatası:", err);
-      setError("Ekleme işlemi başarısız!");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Kelime sil
-  async function handleDelete(id: number) {
-    if (!window.confirm("Bu kelimeyi silmek istediğinizden emin misiniz?")) return;
-    
-    setLoading(true);
-    try {
-      await api.delete(`/admin/kelimeler/${id}`);
-      await fetchAll();
-    } catch (err) {
-      console.error("Silme hatası:", err);
-      setError("Silme işlemi başarısız!");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Düzenleme moduna geç
-  function startEdit(kelime: Kelime) {
-    setDuzenlenecek(kelime);
-    setYeniIspanyolca(kelime.ispanyolca);
-    setYeniTurkce(kelime.turkce);
-    setYeniTemaId(kelime.kelimeTemasiId);
-    setError("");
-  }
-
-  // Güncelleme işlemi
-  async function handleUpdate() {
-    if (!duzenlenecek) return;
-
-    if (!yeniIspanyolca.trim() || !yeniTurkce.trim() || yeniTemaId === "") {
-      setError("Lütfen tüm alanları doldurun!");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-
-    try {
-      await api.put(`/admin/kelimeler/${duzenlenecek.id}`, {
-        ispanyolca: yeniIspanyolca,
-        turkce: yeniTurkce,
-        kelimeTemasiId: Number(yeniTemaId),
-      });
-
-      resetForm();
-      await fetchAll();
-    } catch (err) {
-      console.error("Güncelleme hatası:", err);
-      setError("Güncelleme işlemi başarısız!");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Form sıfırla
-  function resetForm() {
-    setDuzenlenecek(null);
-    setYeniIspanyolca("");
-    setYeniTurkce("");
-    setYeniTemaId("");
-    setError("");
-  }
-
-  // ⭐ Tablo verisini oluştur
-  const tabloData: TableRow[] = kelimeler.map((k) => ({
+  const tableData: TableRow[] = kelimeler.map(k => ({
     id: k.id,
     ispanyolca: k.ispanyolca,
     turkce: k.turkce,
     tema: getTemaBaslik(k.kelimeTemasiId)
   }));
 
-  if (loading && kelimeler.length === 0) {
-    return (
-      <div className="kelime-container">
-        <div className="flex justify-center items-center h-64">
-          <div className="loading-spinner" style={{ borderColor: "#667eea", borderTopColor: 'transparent' }}></div>
-          <span className="ml-3 text-lg">Yükleniyor...</span>
-        </div>
-      </div>
-    );
+  async function handleAdd() {
+    if (!yeniIspanyolca || !yeniTurkce || yeniTemaId === "") {
+      setError("Tüm alanları doldurun!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await kelimeService.create({
+        ispanyolca: yeniIspanyolca,
+        turkce: yeniTurkce,
+        kelimeTemasiId: Number(yeniTemaId)
+      });
+
+      resetForm();
+      await fetchAll();
+    } catch {
+      setError("Ekleme başarısız!");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleUpdate() {
+    if (!duzenlenecek) return;
+
+    setLoading(true);
+    try {
+      await kelimeService.update(duzenlenecek.id, {
+        ispanyolca: yeniIspanyolca,
+        turkce: yeniTurkce,
+        kelimeTemasiId: Number(yeniTemaId)
+      });
+
+      resetForm();
+      await fetchAll();
+    } catch {
+      setError("Güncelleme başarısız!");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDelete(id: number) {
+    if (!window.confirm("Kelime silinsin mi?")) return;
+
+    await kelimeService.delete(id);
+    await fetchAll();
+  }
+
+  function startEdit(k: KelimeDto) {
+    setDuzenlenecek(k);
+    setYeniIspanyolca(k.ispanyolca);
+    setYeniTurkce(k.turkce);
+    setYeniTemaId(k.kelimeTemasiId);
+  }
+
+  function resetForm() {
+    setDuzenlenecek(null);
+    setYeniIspanyolca("");
+    setYeniTurkce("");
+    setYeniTemaId("");
   }
 
   return (
@@ -191,101 +137,75 @@ export default function KelimePage() {
       <div className="kelime-header">
         <h1 className="kelime-title">Kelime Yönetimi</h1>
         <p className="kelime-subtitle">
-          İspanyolca-Türkçe kelimeleri ekleyin, düzenleyin ve yönetin
+          İspanyolca - Türkçe kelimeleri yönetin
         </p>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
-      {/* ⭐ Form */}
       <div className="kelime-form-container">
         <h2 className="kelime-form-title">
           {duzenlenecek ? "📝 Kelime Düzenle" : "➕ Yeni Kelime Ekle"}
         </h2>
-        
+
         <div className="kelime-form-grid">
-          <div className="form-group">
-            <label className="form-label">İspanyolca *</label>
-            <input
-              type="text"
-              placeholder="İspanyolca kelimeyi girin"
-              value={yeniIspanyolca}
-              onChange={(e) => setYeniIspanyolca(e.target.value)}
-              className="form-input"
-              disabled={loading}
-            />
-          </div>
+          <input
+            className="form-input"
+            value={yeniIspanyolca}
+            onChange={e => setYeniIspanyolca(e.target.value)}
+            placeholder="İspanyolca"
+          />
 
-          <div className="form-group">
-            <label className="form-label">Türkçe *</label>
-            <input
-              type="text"
-              placeholder="Türkçe karşılığını girin"
-              value={yeniTurkce}
-              onChange={(e) => setYeniTurkce(e.target.value)}
-              className="form-input"
-              disabled={loading}
-            />
-          </div>
+          <input
+            className="form-input"
+            value={yeniTurkce}
+            onChange={e => setYeniTurkce(e.target.value)}
+            placeholder="Türkçe"
+          />
 
-          {/* ⭐ Dropdown artık Tema Başlıklarını gösteriyor */}
-          <div className="form-group">
-            <label className="form-label">Kelime Teması *</label>
-            <select
-              value={yeniTemaId}
-              onChange={(e) => setYeniTemaId(Number(e.target.value))}
-              className="form-select"
-              disabled={loading}
-            >
-              <option value="">Kelime Teması Seçin</option>
-
-              {kelimeTemalari.map((kt) => {
-                const anaTema = temalar.find(t => t.id === kt.temaId);
-                return (
-                  <option key={kt.id} value={kt.id}>
-                    {anaTema ? anaTema.baslik : "Başlık yok"}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
+          <select
+            className="form-select"
+            value={yeniTemaId}
+            onChange={e => setYeniTemaId(Number(e.target.value))}
+          >
+            <option value="">Kelime Teması Seçin</option>
+            {kelimeTemalari.map(kt => {
+              const tema = temalar.find(t => t.id === kt.temaId);
+              return (
+                <option key={kt.id} value={kt.id}>
+                  {tema?.baslik ?? "Başlık yok"}
+                </option>
+              );
+            })}
+          </select>
         </div>
 
         <div className="form-actions">
           {duzenlenecek ? (
             <>
               <button onClick={handleUpdate} className="btn btn-primary">
-                {loading ? "Güncelleniyor..." : "✅ Güncelle"}
+                Güncelle
               </button>
               <button onClick={resetForm} className="btn btn-secondary">
                 İptal
               </button>
             </>
           ) : (
-            <button
-              onClick={handleAdd}
-              disabled={!yeniIspanyolca || !yeniTurkce || yeniTemaId === "" || loading}
-              className="btn btn-success"
-            >
-              {loading ? "Ekleniyor..." : "➕ Yeni Kelime Ekle"}
+            <button onClick={handleAdd} className="btn btn-success">
+              ➕ Yeni Kelime Ekle
             </button>
           )}
         </div>
       </div>
 
-      {/* ⭐ Tablo */}
-      <div className="kelime-form-container">
-        <h2 className="kelime-form-title">📋 Mevcut Kelimeler</h2>
-
-        <CrudTable
-          data={tabloData}
-          onEdit={(item) => {
-            const originalKelime = kelimeler.find(k => k.id === item.id);
-            if (originalKelime) startEdit(originalKelime);
-          }}
-          onDelete={handleDelete}
-        />
-      </div>
+      <CrudTable
+        data={tableData}
+        onEdit={item => {
+          const k = kelimeler.find(x => x.id === item.id);
+          if (k) startEdit(k);
+        }}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }

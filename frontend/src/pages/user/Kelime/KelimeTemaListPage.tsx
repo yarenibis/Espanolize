@@ -2,25 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOutlined } from "@ant-design/icons";
 import Navbar from "../Home/Navbar";
-import api from "../../../services/ApiService";
-import "./KelimeTemaListPage.css";
 import Footer from "../Home/Footer";
+import "./KelimeTemaListPage.css";
 import { message } from "antd";
 import { Helmet } from "react-helmet-async";
 
-interface KelimeTema {
-  id: number;
-  aciklama: string;
-  temaId: number;
-  kelimeSayisi: number;
-  kapakResmiUrl?: string;
-}
-
-interface Tema {
-  id: number;
-  baslik: string;
-  kapakResmiUrl?: string;
-}
+import KelimeService, {
+  type KelimeTema,
+  type Tema,
+} from "../../../services/user/KelimeService";
 
 export default function KelimeTemaListPage() {
   const [temalar, setTemalar] = useState<KelimeTema[]>([]);
@@ -32,38 +22,18 @@ export default function KelimeTemaListPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        let temaRes, anaTemaRes;
+        const [kelimeTemalari, anaTemaList] = await Promise.all([
+          KelimeService.getKelimeTemalari(),
+          KelimeService.getTemalar(),
+        ]);
 
-        // ===========================
-        // 1) Kelime temaları isteği
-        // ===========================
-        try {
-          temaRes = await api.get("/kelimetemalari");
-        } catch (err) {
-          message.error("Kelime temaları yüklenemedi.");
-          console.error(err);
-          setTemalar([]);
-        }
-
-        // ===========================
-        // 2) Ana temalar isteği
-        // ===========================
-        try {
-          anaTemaRes = await api.get("/tema");
-        } catch (err) {
-          message.error("Ana tema listesi yüklenemedi.");
-          console.error(err);
-          setAnaTemalar([]);
-        }
-
-        // Listeleri doldur
-        if (temaRes?.data) setTemalar(temaRes.data);
-        if (anaTemaRes?.data) setAnaTemalar(anaTemaRes.data);
-
+        setTemalar(kelimeTemalari);
+        setAnaTemalar(anaTemaList);
       } catch (err) {
-        // En üst seviye beklenmedik hata
-        message.error("Beklenmeyen bir hata oluştu!");
-        console.error("HATA:", err);
+        message.error("Temalar yüklenirken bir hata oluştu.");
+        console.error(err);
+        setTemalar([]);
+        setAnaTemalar([]);
       } finally {
         setLoading(false);
       }
@@ -104,103 +74,88 @@ export default function KelimeTemaListPage() {
 
   return (
     <>
-   <Helmet>
-    <title>
-      İspanyolca Kelime Temaları | Tema Bazlı Kolay İspanyolca Öğrenme | Españolize
-    </title>
+      <Helmet>
+        <title>
+          İspanyolca Kelime Temaları | Tema Bazlı Kolay İspanyolca Öğrenme | Españolize
+        </title>
 
-    <meta
-      name="description"
-      content="İspanyolca kelimeleri tema bazlı öğrenin. Aile, yemekler, hayvanlar, günlük konuşma ve daha fazlası. Türkçe karşılıklarıyla hızlı ve etkili öğrenme."
-    />
-
-    {/* Open Graph */}
-    <meta
-      property="og:title"
-      content="İspanyolca Kelime Temaları | Españolize"
-    />
-    <meta
-      property="og:description"
-      content="İspanyolca kelimeleri tema bazlı öğrenin. Günlük hayatta en çok kullanılan kelimeleri Türkçe karşılıklarıyla keşfedin."
-    />
-    <meta
-      property="og:type"
-      content="website"
-    />
-    <meta
-      property="og:url"
-      content="http://localhost:5173/kelimetemalari"
-    />
-
-    
-  </Helmet>
-    
-    <main className="kelime-tema-page">
-      <Navbar />
-
-      <header className="kelime-tema-header">
-        <h1>Kelime Temaları</h1>
-        <p>İspanyolca kelimeleri tema bazlı şekilde öğren.</p>
-      </header>
-
-      {/* Arama kutusu */}
-      <section className="tema-search">
-        <input
-          type="search"
-          placeholder="Tema ara… (örn: Aile, Hayvanlar, Yemekler)"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          aria-label="Tema arama"
+        <meta
+          name="description"
+          content="İspanyolca kelimeleri tema bazlı öğrenin. Aile, yemekler, hayvanlar, günlük konuşma ve daha fazlası."
         />
-      </section>
 
-      {/* Loading */}
-      {loading && (
-        <div className="loading-box">
-          <div className="spinner"></div>
-          <p>Temalar yükleniyor…</p>
-        </div>
-      )}
+        <meta property="og:title" content="İspanyolca Kelime Temaları | Españolize" />
+        <meta
+          property="og:description"
+          content="İspanyolca kelimeleri tema bazlı öğrenin."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="http://localhost:5173/kelimetemalari" />
+      </Helmet>
 
-      {/* Boş sonuç */}
-      {!loading && filtered.length === 0 && (
-        <div className="empty-box">
-          <p>Aradığın tema bulunamadı.</p>
-        </div>
-      )}
+      <main className="kelime-tema-page">
+        <Navbar />
 
-      {/* Tema grid */}
-      <section className="tema-grid">
-        {!loading &&
-          filtered.map((tema) => (
-            <article
-              key={tema.id}
-              className="tema-card"
-              onClick={() => navigate(`/kelimeler/${tema.id}`)}
-            >
-              <div className="card-img">
-                <img src={getImageUrl(tema)} 
-                alt={`${getTemaBaslik(tema.temaId)} – İspanyolca kelimeler `} 
-                loading="lazy"
-                />
-              </div>
+        <header className="kelime-tema-header">
+          <h1>Kelime Temaları</h1>
+          <p>İspanyolca kelimeleri tema bazlı şekilde öğren.</p>
+        </header>
 
-              <div className="card-body">
-                <h2>{getTemaBaslik(tema.temaId)}</h2>
-                <p>{tema.aciklama}</p>
+        <section className="tema-search">
+          <input
+            type="search"
+            placeholder="Tema ara… (örn: Aile, Hayvanlar, Yemekler)"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label="Tema arama"
+          />
+        </section>
 
-                <div className="meta">
-                  <span>
-                    <BookOutlined /> {tema.kelimeSayisi} kelime
-                  </span>
+        {loading && (
+          <div className="loading-box">
+            <div className="spinner"></div>
+            <p>Temalar yükleniyor…</p>
+          </div>
+        )}
+
+        {!loading && filtered.length === 0 && (
+          <div className="empty-box">
+            <p>Aradığın tema bulunamadı.</p>
+          </div>
+        )}
+
+        <section className="tema-grid">
+          {!loading &&
+            filtered.map((tema) => (
+              <article
+                key={tema.id}
+                className="tema-card"
+                onClick={() => navigate(`/kelimeler/${tema.id}`)}
+              >
+                <div className="card-img">
+                  <img
+                    src={getImageUrl(tema)}
+                    alt={`${getTemaBaslik(tema.temaId)} – İspanyolca kelimeler`}
+                    loading="lazy"
+                  />
                 </div>
-              </div>
-            </article>
-          ))}
-      </section>
 
-      <Footer />
-    </main>
+                <div className="card-body">
+                  <h2>{getTemaBaslik(tema.temaId)}</h2>
+                  <p>{tema.aciklama}</p>
+
+                  <div className="meta">
+                    <span>
+                      <BookOutlined /> {tema.kelimeSayisi} kelime
+                    </span>
+                  </div>
+                </div>
+              </article>
+            ))}
+        </section>
+
+        <Footer />
+      </main>
     </>
   );
 }
