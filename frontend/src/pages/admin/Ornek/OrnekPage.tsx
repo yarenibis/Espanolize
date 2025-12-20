@@ -1,20 +1,13 @@
 import { useEffect, useState } from "react";
-import api from "../../../services/ApiService";
 import CrudTable from "../Dashboard/CrudTable";
 import "./OrnekPage.css";
 
-interface Ornek {
-  id: number;
-  ispanyolcaOrnek: string;
-  ceviri: string;
-  aciklama?: string;
-  gramerKuralId: number;
-}
-
-interface GramerKural {
-  id: number;
-  kuralBaslik: string;
-}
+import {
+  type Ornek,
+  type GramerKural,
+  ornekService,
+  gramerKuralService,
+} from "../../../services/admin/Ornek.service";
 
 export default function OrnekPage() {
   const [ornekler, setOrnekler] = useState<Ornek[]>([]);
@@ -29,142 +22,110 @@ export default function OrnekPage() {
 
   const [duzenlenecek, setDuzenlenecek] = useState<Ornek | null>(null);
 
-  // Gramer kurallarını yükle
-  async function getGramerKurallar() {
+  /* =====================
+     DATA FETCH
+  ===================== */
+
+  async function fetchGramerKurallar() {
     try {
-      const res = await api.get("/admin/gramerkurallar");
+      const res = await gramerKuralService.getAll();
       setGramerKurallar(res.data);
     } catch (err) {
-      console.error("Gramer kuralları yüklenemedi:", err);
-      setError("Gramer kuralları yüklenirken bir hata oluştu.");
+      console.error(err);
+      setError("Gramer kuralları yüklenirken hata oluştu.");
     }
   }
 
-  // Örnekleri yükle
   async function fetchOrnekler() {
     try {
-      const res = await api.get("/admin/ornekler");
+      const res = await ornekService.getAll();
       setOrnekler(res.data);
     } catch (err) {
-      console.error("Örnekler yüklenemedi:", err);
-      setError("Örnekler yüklenirken bir hata oluştu.");
+      console.error(err);
+      setError("Örnekler yüklenirken hata oluştu.");
     }
   }
 
   useEffect(() => {
-    const loadData = async () => {
+    const load = async () => {
       setLoading(true);
       setError("");
-      try {
-        await Promise.all([getGramerKurallar(), fetchOrnekler()]);
-      } catch (err) {
-        setError("Veriler yüklenirken bir hata oluştu.");
-      } finally {
-        setLoading(false);
-      }
+      await Promise.all([fetchGramerKurallar(), fetchOrnekler()]);
+      setLoading(false);
     };
-    loadData();
+    load();
   }, []);
 
-  // Gramer kural ID'sine göre kural başlığını bul
-  const getGramerBaslik = (gramerKuralId: number) => {
-    const kural = gramerKurallar.find(t => t.id === gramerKuralId);
-    return kural ? kural.kuralBaslik : `Kural ID: ${gramerKuralId}`;
+  /* =====================
+     HELPERS
+  ===================== */
+
+  const getGramerBaslik = (id: number) => {
+    const kural = gramerKurallar.find(k => k.id === id);
+    return kural ? kural.kuralBaslik : `Kural ID: ${id}`;
   };
 
-  // Tablo için düzenlenmiş data oluştur
-  const tableData = ornekler.map(ornek => ({
-    
-    id: ornek.id,
-    ispanyolcaOrnek: ornek.ispanyolcaOrnek,
-    ceviri: ornek.ceviri,
-    aciklama: ornek.aciklama ?? "",
-    kuralBaslik: getGramerBaslik(ornek.gramerKuralId)
+  const tableData = ornekler.map(o => ({
+    id: o.id,
+    ispanyolcaOrnek: o.ispanyolcaOrnek,
+    ceviri: o.ceviri,
+    aciklama: o.aciklama ?? "",
+    kuralBaslik: getGramerBaslik(o.gramerKuralId),
   }));
 
-  // Yeni örnek ekle
+  /* =====================
+     CRUD
+  ===================== */
+
   async function handleAdd() {
-    if (!yeniIspanyolcaOrnek.trim() || !yeniCeviri.trim()  || yeniGramerKuralId === "") {
+    if (!yeniIspanyolcaOrnek || !yeniCeviri || yeniGramerKuralId === "") {
       setError("Lütfen tüm alanları doldurun!");
       return;
     }
 
     setLoading(true);
-    setError("");
-    try {
-      await api.post("/admin/ornekler", {
-        ispanyolcaOrnek: yeniIspanyolcaOrnek,
-        ceviri: yeniCeviri,
-        aciklama: yeniAciklama,
-        gramerKuralId: Number(yeniGramerKuralId),
-      });
-
-      resetForm();
-      await fetchOrnekler();
-    } catch (err) {
-      console.error("Ekleme hatası:", err);
-      setError("Ekleme işlemi başarısız!");
-    } finally {
-      setLoading(false);
-    }
+    await ornekService.add({
+      ispanyolcaOrnek: yeniIspanyolcaOrnek,
+      ceviri: yeniCeviri,
+      aciklama: yeniAciklama,
+      gramerKuralId: Number(yeniGramerKuralId),
+    });
+    resetForm();
+    await fetchOrnekler();
+    setLoading(false);
   }
 
-  // Örnek sil
-  async function handleDelete(id: number) {
-    if (!window.confirm("Bu örneği silmek istediğinizden emin misiniz?")) return;
-    
-    setLoading(true);
-    try {
-      await api.delete(`/admin/ornekler/${id}`);
-      await fetchOrnekler();
-    } catch (err) {
-      console.error("Silme hatası:", err);
-      setError("Silme işlemi başarısız!");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Düzenleme moduna geç
-  function startEdit(ornek: Ornek) {
-    setDuzenlenecek(ornek);
-    setYeniIspanyolcaOrnek(ornek.ispanyolcaOrnek);
-    setYeniCeviri(ornek.ceviri);
-    setYeniAciklama(ornek.aciklama ?? "");
-    setYeniGramerKuralId(ornek.gramerKuralId);
-    setError("");
-  }
-
-  // Güncelleme işlemi
   async function handleUpdate() {
     if (!duzenlenecek) return;
 
-    if (!yeniIspanyolcaOrnek.trim() || !yeniCeviri.trim()  || yeniGramerKuralId === "") {
-      setError("Lütfen tüm alanları doldurun!");
-      return;
-    }
-
     setLoading(true);
-    setError("");
-    try {
-      await api.put(`/admin/ornekler/${duzenlenecek.id}`, {
-        ispanyolcaOrnek: yeniIspanyolcaOrnek,
-        ceviri: yeniCeviri,
-        aciklama: yeniAciklama,
-        gramerKuralId: Number(yeniGramerKuralId),
-      });
-
-      resetForm();
-      await fetchOrnekler();
-    } catch (err) {
-      console.error("Güncelleme hatası:", err);
-      setError("Güncelleme işlemi başarısız!");
-    } finally {
-      setLoading(false);
-    }
+    await ornekService.update(duzenlenecek.id, {
+      ispanyolcaOrnek: yeniIspanyolcaOrnek,
+      ceviri: yeniCeviri,
+      aciklama: yeniAciklama,
+      gramerKuralId: Number(yeniGramerKuralId),
+    });
+    resetForm();
+    await fetchOrnekler();
+    setLoading(false);
   }
 
-  // Formu sıfırla
+  async function handleDelete(id: number) {
+    if (!window.confirm("Silmek istediğinize emin misiniz?")) return;
+    setLoading(true);
+    await ornekService.delete(id);
+    await fetchOrnekler();
+    setLoading(false);
+  }
+
+  function startEdit(o: Ornek) {
+    setDuzenlenecek(o);
+    setYeniIspanyolcaOrnek(o.ispanyolcaOrnek);
+    setYeniCeviri(o.ceviri);
+    setYeniAciklama(o.aciklama ?? "");
+    setYeniGramerKuralId(o.gramerKuralId);
+  }
+
   function resetForm() {
     setDuzenlenecek(null);
     setYeniIspanyolcaOrnek("");
@@ -174,16 +135,6 @@ export default function OrnekPage() {
     setError("");
   }
 
-  if (loading && ornekler.length === 0) {
-    return (
-      <div className="ornek-container">
-        <div className="flex justify-center items-center h-64">
-          <div className="loading-spinner" style={{ borderColor: "#667eea", borderTopColor: 'transparent' }}></div>
-          <span className="ml-3 text-lg">Yükleniyor...</span>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="ornek-container">

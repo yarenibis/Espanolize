@@ -1,14 +1,7 @@
 import { useEffect, useState, type JSX } from "react";
-import api from "../../../services/ApiService";
+import { temaService, type Tema } from "../../../services/admin/Tema.service";
 import CrudTable from "../Dashboard/CrudTable";
 import "./TemaPage.css";
-
-interface Tema {
-  id: number;
-  baslik: string;
-  kapakResmiUrl?: string;
-  detayResimUrls?: string[];
-}
 
 interface TableRow {
   id: number;
@@ -38,7 +31,7 @@ export default function TemaPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await api.get("/admin/tema");
+      const res = await temaService.getAll();
       setTemalar(res.data);
     } catch (err) {
       console.error("Temalar yüklenemedi:", err);
@@ -136,7 +129,7 @@ export default function TemaPage() {
     setLoading(true);
     setError("");
     try {
-      await api.post("/admin/tema", {
+      await temaService.add({
         baslik: yeniBaslik,
       });
 
@@ -157,7 +150,7 @@ export default function TemaPage() {
 
     setLoading(true);
     try {
-      await api.delete(`/admin/tema/${id}`);
+      await temaService.delete(id);
       await fetchTemalar();
       setSeciliTema(null);
       setSuccess("Tema ve tüm resimleri başarıyla silindi!");
@@ -179,14 +172,7 @@ export default function TemaPage() {
     setUploadLoading(true);
     setError("");
     try {
-      const formData = new FormData();
-      formData.append("file", kapakResmi);
-
-      const res = await api.post(`/admin/tema/${seciliTema.id}/upload-cover`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const res = await temaService.uploadCover(seciliTema.id, kapakResmi);
 
       // Güncellenmiş temayı state'e ekle
       const guncellenmisTemalar = temalar.map(t => 
@@ -214,16 +200,7 @@ export default function TemaPage() {
     setUploadLoading(true);
     setError("");
     try {
-      const formData = new FormData();
-      detayResimler.forEach(file => {
-        formData.append("files", file);
-      });
-
-      const res = await api.post(`/admin/tema/${seciliTema.id}/upload-details`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const res = await temaService.uploadDetails(seciliTema.id, detayResimler);
 
       // Güncellenmiş temayı state'e ekle
       const guncellenmisTemalar = temalar.map(t => 
@@ -247,7 +224,7 @@ export default function TemaPage() {
 
     setUploadLoading(true);
     try {
-      const res = await api.delete(`/admin/tema/${seciliTema.id}/cover`);
+      const res = await temaService.deleteCover(seciliTema.id);
 
       const guncellenmisTemalar = temalar.map(t => 
         t.id === seciliTema.id ? res.data : t
@@ -269,7 +246,7 @@ export default function TemaPage() {
 
     setUploadLoading(true);
     try {
-      const res = await api.delete(`/admin/tema/${seciliTema.id}/details?url=${encodeURIComponent(resimUrl)}`);
+      const res = await temaService.deleteDetail(seciliTema.id, resimUrl);
 
       const guncellenmisTemalar = temalar.map(t => 
         t.id === seciliTema.id ? res.data : t

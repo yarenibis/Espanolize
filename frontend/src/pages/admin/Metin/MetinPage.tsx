@@ -1,26 +1,15 @@
 import { useEffect, useState } from "react";
-import api from "../../../services/ApiService";
 import CrudTable from "../Dashboard/CrudTable";
 import "./MetinPage.css";
 
-interface Metin {
-  id: number;
-  icerik: string;
-  ceviri: string;
-  zorluk: string;
-  metinTemaId: number;
-}
-
-interface MetinTema {
-  id: number;
-  aciklama: string;
-  temaId: number; 
-}
-
-interface Tema {
-  id: number;
-  baslik: string; 
-}
+import {
+  type Metin,
+  type MetinTema,
+  type Tema,
+  metinService,
+  metinTemaLookupService,
+  temaLookupService,
+} from "../../../services/admin/Metin.service";
 
 interface TableRow {
   id: number;
@@ -50,15 +39,14 @@ export default function MetinPage() {
     setError("");
     try {
       const [metinRes, metinTemaRes, temaRes] = await Promise.all([
-        api.get("/admin/metinler"),
-        api.get("/admin/metin-temalari"),
-        api.get("/admin/tema") // ⭐ Tema başlıkları buradan geliyor
+        metinService.getAll(),
+        metinTemaLookupService.getAll(),
+        temaLookupService.getAll(),
       ]);
 
       setMetinler(metinRes.data);
       setMetinTemalari(metinTemaRes.data);
       setTemalar(temaRes.data);
-
     } catch (err) {
       console.error("Veriler yüklenemedi:", err);
       setError("Veriler yüklenirken bir hata oluştu.");
@@ -80,23 +68,19 @@ export default function MetinPage() {
     return anaTema ? anaTema.baslik : "Başlık yok";
   };
 
-  // ⭐ Zorluk CSS sınıfı
-  const getZorlukClass = (zorluk: string) => {
-    switch (zorluk.toLowerCase()) {
-      case "kolay": return "zorluk-badge zorluk-kolay";
-      case "orta": return "zorluk-badge zorluk-orta";
-      case "zor": return "zorluk-badge zorluk-zor";
-      default: return "zorluk-badge zorluk-orta";
-    }
-  };
-
-  // ⭐ Tablo görünümü oluştur
+  // ⭐ Tablo görünümü
   const tabloData: TableRow[] = metinler.map((metin) => ({
     id: metin.id,
-    icerik: metin.icerik.length > 100 ? metin.icerik.substring(0, 100) + "..." : metin.icerik,
-    ceviri: metin.ceviri.length > 100 ? metin.ceviri.substring(0, 100) + "..." : metin.ceviri,
+    icerik:
+      metin.icerik.length > 100
+        ? metin.icerik.substring(0, 100) + "..."
+        : metin.icerik,
+    ceviri:
+      metin.ceviri.length > 100
+        ? metin.ceviri.substring(0, 100) + "..."
+        : metin.ceviri,
     zorluk: metin.zorluk,
-    tema: getTemaBaslik(metin.metinTemaId)
+    tema: getTemaBaslik(metin.metinTemaId),
   }));
 
   // Yeni metin ekle
@@ -108,7 +92,7 @@ export default function MetinPage() {
 
     setLoading(true);
     try {
-      await api.post("/admin/metinler", {
+      await metinService.add({
         icerik: yeniIcerik,
         ceviri: yeniCeviri,
         zorluk: yeniZorluk,
@@ -130,7 +114,7 @@ export default function MetinPage() {
 
     setLoading(true);
     try {
-      await api.delete(`/admin/metinler/${id}`);
+      await metinService.delete(id);
       await fetchAll();
     } catch {
       setError("Silme işlemi başarısız!");
@@ -148,7 +132,7 @@ export default function MetinPage() {
     setYeniMetinTemaId(metin.metinTemaId);
   }
 
-  // Güncelleme işlemi
+  // Güncelle
   async function handleUpdate() {
     if (!duzenlenecek) return;
 
@@ -159,7 +143,7 @@ export default function MetinPage() {
 
     setLoading(true);
     try {
-      await api.put(`/admin/metinler/${duzenlenecek.id}`, {
+      await metinService.update(duzenlenecek.id, {
         icerik: yeniIcerik,
         ceviri: yeniCeviri,
         zorluk: yeniZorluk,
@@ -175,7 +159,6 @@ export default function MetinPage() {
     }
   }
 
-  // Form sıfırla
   function resetForm() {
     setDuzenlenecek(null);
     setYeniIcerik("");
@@ -194,15 +177,13 @@ export default function MetinPage() {
 
       {error && <div className="error-message">{error}</div>}
 
-      {/* ⭐ Form */}
+      {/* FORM */}
       <div className="metin-form-container">
         <h2 className="metin-form-title">
           {duzenlenecek ? "📝 Metni Düzenle" : "➕ Yeni Metin Ekle"}
         </h2>
 
         <div className="metin-form-grid">
-
-          {/* Zorluk */}
           <div className="form-group">
             <label className="form-label">Zorluk Seviyesi *</label>
             <select
@@ -216,7 +197,6 @@ export default function MetinPage() {
             </select>
           </div>
 
-          {/* ⭐ Metin Teması Dropdown — Tema Başlığını Gösteriyor */}
           <div className="form-group">
             <label className="form-label">Metin Teması *</label>
             <select
@@ -225,7 +205,6 @@ export default function MetinPage() {
               className="form-select"
             >
               <option value="">Metin Teması Seçin</option>
-
               {metinTemalari.map((mt) => {
                 const tema = temalar.find(t => t.id === mt.temaId);
                 return (
@@ -237,7 +216,6 @@ export default function MetinPage() {
             </select>
           </div>
 
-          {/* İçerik */}
           <div className="form-group metin-form-full">
             <label className="form-label">İspanyolca Metin *</label>
             <textarea
@@ -248,7 +226,6 @@ export default function MetinPage() {
             />
           </div>
 
-          {/* Çeviri */}
           <div className="form-group metin-form-full">
             <label className="form-label">Türkçe Çeviri *</label>
             <textarea
@@ -260,7 +237,6 @@ export default function MetinPage() {
           </div>
         </div>
 
-        {/* Kaydet / Güncelle */}
         <div className="form-actions">
           {duzenlenecek ? (
             <>
@@ -283,7 +259,7 @@ export default function MetinPage() {
         </div>
       </div>
 
-      {/* ⭐ Tablo */}
+      {/* TABLO */}
       <div className="metin-form-container">
         <h2 className="metin-form-title">📋 Mevcut Metinler</h2>
 
