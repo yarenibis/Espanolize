@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Layout, Menu, Button, Drawer } from "antd";
+import { Layout, Menu, Button, Drawer, type MenuProps } from "antd";
 import {
   MenuOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../../../services/AuthService";
-import { adminMenu } from "../../admin/Dashboard/AdminMenu";
+import { adminMenu, type MenuItem } from "../../../services/admin/AdminMenu";
 
 const { Header } = Layout;
 
@@ -19,6 +19,9 @@ const BREAKPOINTS = {
   xl: 1200,
   xxl: 1600,
 };
+
+// TypeScript için menü öğesi tipi
+type MenuItemType = Required<MenuProps>['items'][number];
 
 export default function HeaderBar() {
   const navigate = useNavigate();
@@ -46,7 +49,7 @@ export default function HeaderBar() {
   }, []);
 
   // Aktif menü item'ını bul (nested routes için)
-  const findActiveKey = () => {
+  const findActiveKey = (): string[] => {
     const currentPath = location.pathname;
     
     // Ana sayfa kontrolü
@@ -54,7 +57,7 @@ export default function HeaderBar() {
     
     // En spesifik eşleşmeyi bul
     const matchedMenu = adminMenu
-      .filter(menu => currentPath.startsWith(menu.key))
+      .filter((menu: MenuItem) => currentPath.startsWith(menu.key))
       .sort((a, b) => b.key.length - a.key.length)[0];
     
     return matchedMenu ? [matchedMenu.key] : [];
@@ -65,7 +68,8 @@ export default function HeaderBar() {
     navigate("/login", { replace: true });
   };
 
-  const menuItems = adminMenu.map((m) => ({
+  // Ant Design Menu için items formatına çevir
+  const menuItems: MenuItemType[] = adminMenu.map((m: MenuItem) => ({
     key: m.key,
     label: m.label,
     onClick: () => {

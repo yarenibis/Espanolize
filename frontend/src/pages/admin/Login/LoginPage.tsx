@@ -14,7 +14,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   
 
-  const handleLogin = async (e: React.FormEvent) => {
+const handleLogin = async (e: React.FormEvent) => {
   e.preventDefault();
 
   if (isLocked) return;
@@ -23,8 +23,6 @@ export default function LoginPage() {
     const data = await login(userName, password);
 
     if (data.role === "Admin") {
-      localStorage.setItem("role", data.role);
-      localStorage.setItem("token", data.token);
       navigate("/admin");
     } else {
       setError("Sadece admin girişi yapılabilir.");
@@ -33,7 +31,6 @@ export default function LoginPage() {
     const msg = err.message || "Giriş başarısız!";
     setError(msg);
 
-    // 🔒 429 → KİLİT
     if (msg.includes("fazla") || msg.includes("bekleyin")) {
       setIsLocked(true);
       setLockTimer(60);
@@ -52,6 +49,7 @@ export default function LoginPage() {
     }
   }
 };
+
 
 
   return (

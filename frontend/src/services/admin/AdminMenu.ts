@@ -1,6 +1,12 @@
+// AdminMenu.ts
+export interface MenuItem {
+  key: string;
+  label: string;
+  icon?: React.ReactNode;
+  children?: MenuItem[];
+}
 
-
-export const adminMenu = [
+export const adminMenu: MenuItem[] = [
   {
     key: "/admin",
     label: "Dashboard",
@@ -35,7 +41,6 @@ export const adminMenu = [
   },
   {
     key: "/admin/tema",
-    label: "Temalar"
-
+    label: "Temalar",
   },
 ];

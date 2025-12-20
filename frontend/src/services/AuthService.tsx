@@ -6,7 +6,7 @@ export async function login(userName: string, password: string) {
     const res = await api.post(
       "/account/login",
       { userName, password },
-      { withCredentials: true } // 👈 ÇOK ÖNEMLİ
+      { withCredentials: true } 
     );
 
     return res.data;
