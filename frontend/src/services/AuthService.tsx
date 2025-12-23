@@ -22,6 +22,14 @@ export async function login(userName: string, password: string) {
 }
 
 
+export async function refreshToken() {
+  return api.post(
+    "/account/refresh",
+    {},
+    { withCredentials: true }
+  );
+}
+
 export async function getMe() {
   const res = await api.get("/account/me");
   return res.data;

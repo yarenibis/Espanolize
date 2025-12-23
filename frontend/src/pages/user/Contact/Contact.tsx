@@ -32,14 +32,14 @@ const Contact: React.FC = () => {
 
     // 🛡️ 1. Honeypot kontrolü
     if (form.website.length > 0) {
-      console.warn("Bot engellendi (honeypot).");
+      //console.warn("Bot engellendi (honeypot).");
       setStatus("error");
       return;
     }
 
     // 🛡️ 2. Bot timer — 0.8 saniyeden hızlı form gönderilmez
     if (Date.now() - startTime < 800) {
-      console.warn("Bot engellendi (timer).");
+      //console.warn("Bot engellendi (timer).");
       setStatus("error");
       return;
     }

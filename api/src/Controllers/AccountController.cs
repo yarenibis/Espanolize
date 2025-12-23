@@ -43,6 +43,63 @@ namespace api.src.Controllers
             };
         }
 
+        private CookieOptions RefreshTokenCookieOptions(DateTimeOffset? expires = null)
+        {
+            return new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = _env.IsProduction(),
+                SameSite = SameSiteMode.Lax, // daha sıkı
+                Path = "/",
+                Expires = expires
+            };
+        }
+
+
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            if (!Request.Cookies.TryGetValue("refresh_token", out var refreshToken))
+                return Unauthorized();
+
+            var user = await _userManager.Users
+                .FirstOrDefaultAsync(u =>
+                    u.RefreshToken == refreshToken &&
+                    u.RefreshTokenExpiryTime > DateTime.UtcNow
+                );
+
+            if (user == null)
+                return Unauthorized();
+
+            // 🔁 rotate refresh token
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            await _userManager.UpdateAsync(user);
+
+            var newAccessToken = await _tokenService.CreateToken(user);
+
+            Response.Cookies.Append(
+                "access_token",
+                newAccessToken,
+                AccessTokenCookieOptions(DateTimeOffset.UtcNow.AddMinutes(30))
+            );
+
+            Response.Cookies.Append(
+                "refresh_token",
+                newRefreshToken,
+                RefreshTokenCookieOptions(DateTimeOffset.UtcNow.AddDays(7))
+            );
+
+            return Ok();
+        }
+
+
+
+
+
+
         // ========================= LOGIN =========================
         [HttpPost("login")]
         [EnableRateLimiting("LoginPolicy")]
@@ -70,11 +127,23 @@ namespace api.src.Controllers
                 return Unauthorized("Yetkisiz kullanıcı");
 
             var token = await _tokenService.CreateToken(user);
+            var refreshToken = _tokenService.GenerateRefreshToken();
+
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            await _userManager.UpdateAsync(user);
 
             Response.Cookies.Append(
                 "access_token",
                 token,
                 AccessTokenCookieOptions(DateTimeOffset.UtcNow.AddHours(1))
+            );
+
+            // refresh token
+            Response.Cookies.Append(
+                "refresh_token",
+                refreshToken,
+                RefreshTokenCookieOptions(DateTimeOffset.UtcNow.AddDays(7))
             );
 
             return Ok(new
@@ -126,18 +195,40 @@ namespace api.src.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            // 🔑 Identity context temizle
-            await _signInManager.SignOutAsync();
+            var refreshToken = Request.Cookies["refresh_token"];
 
-            // 🔥 Cookie'yi %100 silecek yöntem
+            if (!string.IsNullOrEmpty(refreshToken))
+            {
+                var user = await _userManager.Users
+                    .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+
+                if (user != null)
+                {
+                    user.RefreshToken = null;
+                    user.RefreshTokenExpiryTime = DateTime.MinValue;
+                    await _userManager.UpdateAsync(user);
+                }
+            }
+
             Response.Cookies.Append(
                 "access_token",
                 "",
                 AccessTokenCookieOptions(DateTimeOffset.UtcNow.AddDays(-1))
             );
 
+            Response.Cookies.Append(
+                "refresh_token",
+                "",
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(-1),
+                    Path = "/"
+                }
+            );
+
             return Ok();
         }
+
 
         // ========================= ME =========================
         [Authorize(Roles = "Admin")]

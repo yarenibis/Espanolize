@@ -97,7 +97,15 @@ export default function KonuDetailPage() {
         {konu.kurallar?.map((kural, i) => (
           <section key={kural.id} className="rule-block">
             <h2>{i + 1}. {kural.kuralBaslik}</h2>
+            {konu.detayResimUrls?.[i] && (
+      <img
+        src={getImageUrl(konu.detayResimUrls[i])}
+        alt={kural.kuralBaslik}
+        className="rule-image"
+      />
+    )}
             <p>{kural.aciklama}</p>
+    
 
             {kural.ornekler?.map((o) => (
               <div key={o.id} className="example">

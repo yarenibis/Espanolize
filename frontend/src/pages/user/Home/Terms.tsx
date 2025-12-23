@@ -39,7 +39,7 @@ const Terms: React.FC = () => {
 
       <h2>Telif Hakları</h2>
       <p>
-        Sitedeki tüm içerikler Espanolize’e aittir. İzinsiz kullanılamaz veya
+        Sitedeki tüm içerikler Españolize’e aittir. İzinsiz kullanılamaz veya
         kopyalanamaz.
       </p>
 

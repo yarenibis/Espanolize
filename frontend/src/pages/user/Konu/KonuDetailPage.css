@@ -129,6 +129,13 @@
   font-style: italic;
 }
 
+.rule-image {
+  width: 100%;
+  max-width: 700px;
+  margin: 5px 0;
+  border-radius: 8px;
+}
+
 /* ======= Loading / Error ======= */
 .loading-container,
 .error-container {
