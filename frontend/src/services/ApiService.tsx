@@ -8,10 +8,9 @@ const api = axios.create({
 let isRefreshing = false;
 let failedQueue: any[] = [];
 
-const processQueue = (error: any, token = null) => {
-  failedQueue.forEach(prom => {
-    if (error) prom.reject(error);
-    else prom.resolve(token);
+const processQueue = (error: any) => {
+  failedQueue.forEach(p => {
+    error ? p.reject(error) : p.resolve(null);
   });
   failedQueue = [];
 };
@@ -21,8 +20,16 @@ api.interceptors.response.use(
   async error => {
     const originalRequest = error.config;
 
-    // 🔴 401 yakala
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // 🔴 401 ama refresh endpoint DEĞİLSE
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/account/refresh")
+    ) {
+      // ❗ Refresh token yoksa -> direkt login
+      if (!document.cookie.includes("refresh_token")) {
+        return Promise.reject(error);
+      }
 
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -34,16 +41,11 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // 🔁 refresh çağrısı
         await api.post("/account/refresh");
-
         processQueue(null);
         return api(originalRequest);
-
       } catch (err) {
         processQueue(err);
-        // ❌ refresh de başarısız → logout
-        window.location.href = "/login";
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
