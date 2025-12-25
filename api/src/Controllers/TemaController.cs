@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using api.src.Mapper.KullanıcıMapper;
 using ImageMagick;
 using ImageMagick.Formats;
+using System.Security;
 
 [Route("api/admin/tema")]
 [ApiController]
@@ -17,6 +18,9 @@ public class TemaController : ControllerBase
     private readonly ApplicationDbContext _context;
     private readonly IWebHostEnvironment _env;
 
+    private const long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    private static readonly string[] ALLOWED_TYPES = { "image/jpeg", "image/png", "image/webp" };
+
     public TemaController(ApplicationDbContext context, IWebHostEnvironment env)
     {
         _context = context;
@@ -24,253 +28,142 @@ public class TemaController : ControllerBase
     }
 
     private string UploadRoot =>
-        Path.Combine(_env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), "uploads", "themes");
+        Path.Combine(_env.WebRootPath ?? "wwwroot", "uploads", "themes");
 
     private string BuildPublicUrl(string relativePath)
         => $"{Request.Scheme}://{Request.Host}{relativePath.Replace("\\", "/")}";
 
-    private string GetPhysicalPathFromUrl(string fullUrl)
+    private string SafeCombine(params string[] paths)
     {
-        var baseUrl = $"{Request.Scheme}://{Request.Host}/";
-        var relative = fullUrl.Replace(baseUrl, "").Replace("/", Path.DirectorySeparatorChar.ToString());
-        return Path.Combine(_env.WebRootPath ?? "", relative);
+        var full = Path.GetFullPath(Path.Combine(paths));
+        if (!full.StartsWith(UploadRoot))
+            throw new SecurityException("Geçersiz dosya yolu");
+        return full;
     }
 
     // ================= GET ALL =================
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        try
-        {
-            var temalar = await _context.Temalar.ToListAsync();
-            return Ok(temalar.Select(t => t.ToTemaListDto()));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "Temalar alınırken hata oluştu.", detail = ex.Message });
-        }
-    }
-
-    // ================= GET BY ID =================
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        try
-        {
-            var tema = await _context.Temalar.Include(t => t.DetayResimler)
-                                             .FirstOrDefaultAsync(t => t.Id == id);
-
-            if (tema == null)
-                return NotFound("Tema bulunamadı.");
-
-            return Ok(tema.ToTemaDetayDto());
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "Tema getirilirken hata oluştu.", detail = ex.Message });
-        }
+        var temalar = await _context.Temalar.AsNoTracking().ToListAsync();
+        return Ok(temalar.Select(t => t.ToTemaListDto()));
     }
 
     // ================= CREATE =================
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] TemaRequest req)
     {
-        try
-        {
-            var tema = req.ToTema();
-            _context.Temalar.Add(tema);
-            await _context.SaveChangesAsync();
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-            return Ok(tema.ToTemaListDto());
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "Tema oluşturulurken hata oluştu.", detail = ex.Message });
-        }
+        var tema = req.ToTema();
+        _context.Temalar.Add(tema);
+        await _context.SaveChangesAsync();
+
+        return Ok(tema.ToTemaListDto());
     }
 
     // ================= UPLOAD COVER =================
     [HttpPost("{id}/upload-cover")]
-    public async Task<IActionResult> UploadCover(int id, IFormFile file)
+    public async Task<IActionResult> UploadCover(int id, [FromForm] IFormFile file)
     {
-        try
+        var tema = await _context.Temalar.FindAsync(id);
+        if (tema == null) return NotFound();
+
+        ValidateImage(file);
+
+        var dir = SafeCombine(UploadRoot, id.ToString());
+        Directory.CreateDirectory(dir);
+
+        var fileName = $"cover_{Guid.NewGuid():N}.webp";
+        var physicalPath = Path.Combine(dir, fileName);
+
+        await SaveAsWebp(file, physicalPath);
+
+        tema.KapakResmiUrl = BuildPublicUrl($"/uploads/themes/{id}/{fileName}");
+        await _context.SaveChangesAsync();
+
+        return Ok(tema.ToTemaListDto());
+    }
+
+    // ================= UPLOAD DETAILS =================
+    [HttpPost("{id}/upload-details")]
+    public async Task<IActionResult> UploadDetails(int id, [FromForm] List<IFormFile> files)
+    {
+        if (files == null || files.Count == 0)
+            return BadRequest("Dosya yok.");
+
+        var tema = await _context.Temalar
+            .Include(t => t.DetayResimler)
+            .FirstOrDefaultAsync(t => t.Id == id);
+
+        if (tema == null) return NotFound();
+
+        var dir = SafeCombine(UploadRoot, id.ToString(), "gallery");
+        Directory.CreateDirectory(dir);
+
+        foreach (var file in files)
         {
-            var tema = await _context.Temalar.FindAsync(id);
-            if (tema == null) return NotFound();
+            ValidateImage(file);
 
-            if (file == null || file.Length == 0)
-                return BadRequest("Dosya yok.");
-
-            var dir = Path.Combine(UploadRoot, id.ToString());
-            Directory.CreateDirectory(dir);
-
-            var name = $"cover_{Guid.NewGuid():N}.webp";
+            var name = $"img_{Guid.NewGuid():N}.webp";
             var phys = Path.Combine(dir, name);
 
-            using (var input = file.OpenReadStream())
-            using (var image = new MagickImage(input))
+            await SaveAsWebp(file, phys);
+
+            tema.DetayResimler.Add(new TemaResim
             {
-                var define = new WebPWriteDefines { AlphaQuality = 75, Lossless = false };
-                image.Write(phys, define);
-            }
-
-            var relative = $"/uploads/themes/{id}/{name}";
-            tema.KapakResmiUrl = BuildPublicUrl(relative);
-
-            await _context.SaveChangesAsync();
-
-            var full = await _context.Temalar.Include(t => t.DetayResimler)
-                                             .FirstAsync(t => t.Id == id);
-
-            return Ok(full.ToTemaDetayDto());
+                TemaId = id,
+                ResimUrl = BuildPublicUrl($"/uploads/themes/{id}/gallery/{name}")
+            });
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "Kapak yüklenirken hata oluştu.", detail = ex.Message });
-        }
+
+        await _context.SaveChangesAsync();
+        return Ok(tema.ToTemaDetayDto());
     }
 
-    // ================= UPLOAD DETAILS (MULTIPLE) =================
-    [HttpPost("{id}/upload-details")]
-    public async Task<IActionResult> UploadDetails(int id, List<IFormFile> files)
-    {
-        try
-        {
-            var tema = await _context.Temalar.Include(t => t.DetayResimler)
-                                             .FirstOrDefaultAsync(t => t.Id == id);
-
-            if (tema == null) return NotFound();
-            if (files == null || files.Count == 0) return BadRequest("Dosya yok.");
-
-            var dir = Path.Combine(UploadRoot, id.ToString(), "gallery");
-            Directory.CreateDirectory(dir);
-
-            foreach (var file in files)
-            {
-                if (file.Length == 0) continue;
-
-                var name = $"img_{Guid.NewGuid():N}.webp";
-                var phys = Path.Combine(dir, name);
-
-                using (var input = file.OpenReadStream())
-                using (var image = new MagickImage(input))
-                {
-                    var define = new WebPWriteDefines { AlphaQuality = 75, Lossless = false };
-                    image.Write(phys, define);
-                }
-
-                var relative = $"/uploads/themes/{id}/gallery/{name}";
-
-                tema.DetayResimler.Add(new TemaResim
-                {
-                    TemaId = id,
-                    ResimUrl = BuildPublicUrl(relative)
-                });
-            }
-
-            await _context.SaveChangesAsync();
-
-            var dto = await _context.Temalar.Include(t => t.DetayResimler)
-                                            .FirstAsync(t => t.Id == id);
-
-            return Ok(dto.ToTemaDetayDto());
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "Detay görseller yüklenirken hata oluştu.", detail = ex.Message });
-        }
-    }
-
-    // ================= DELETE COVER =================
-    [HttpDelete("{id}/cover")]
-    public async Task<IActionResult> RemoveCover(int id)
-    {
-        try
-        {
-            var tema = await _context.Temalar.FindAsync(id);
-            if (tema == null) return NotFound();
-
-            if (!string.IsNullOrWhiteSpace(tema.KapakResmiUrl))
-            {
-                var phys = GetPhysicalPathFromUrl(tema.KapakResmiUrl);
-
-                if (System.IO.File.Exists(phys))
-                    System.IO.File.Delete(phys);
-
-                tema.KapakResmiUrl = null;
-                await _context.SaveChangesAsync();
-            }
-
-            var dto = await _context.Temalar.Include(t => t.DetayResimler)
-                                            .FirstAsync(t => t.Id == id);
-
-            return Ok(dto.ToTemaDetayDto());
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "Kapak silinirken hata oluştu.", detail = ex.Message });
-        }
-    }
-
-    // ================= DELETE GALLERY ITEM =================
-    [HttpDelete("{id}/details")]
-    public async Task<IActionResult> DeleteDetail(int id, [FromQuery] string url)
-    {
-        try
-        {
-            var tema = await _context.Temalar.Include(t => t.DetayResimler)
-                                             .FirstOrDefaultAsync(t => t.Id == id);
-
-            if (tema == null) return NotFound();
-
-            var item = tema.DetayResimler.FirstOrDefault(r => r.ResimUrl == url);
-            if (item == null) return NotFound();
-
-            var phys = GetPhysicalPathFromUrl(item.ResimUrl);
-            if (System.IO.File.Exists(phys))
-                System.IO.File.Delete(phys);
-
-            _context.TemaResimleri.Remove(item);
-            await _context.SaveChangesAsync();
-
-            var dto = await _context.Temalar.Include(t => t.DetayResimler)
-                                            .FirstAsync(t => t.Id == id);
-
-            return Ok(dto.ToTemaDetayDto());
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "Detay görsel silinirken hata oluştu.", detail = ex.Message });
-        }
-    }
-
-    // ================= DELETE FULL THEME =================
+    // ================= DELETE =================
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTema(int id)
     {
-        try
-        {
-            var tema = await _context.Temalar.Include(t => t.DetayResimler)
-                                             .FirstOrDefaultAsync(t => t.Id == id);
+        var tema = await _context.Temalar
+            .Include(t => t.DetayResimler)
+            .FirstOrDefaultAsync(t => t.Id == id);
 
-            if (tema == null)
-                return NotFound("Tema bulunamadı.");
+        if (tema == null) return NotFound();
 
-            var themeFolder = Path.Combine(UploadRoot, id.ToString());
-            if (Directory.Exists(themeFolder))
-                Directory.Delete(themeFolder, recursive: true);
+        var folder = SafeCombine(UploadRoot, id.ToString());
+        if (Directory.Exists(folder))
+            Directory.Delete(folder, true);
 
-            if (tema.DetayResimler.Any())
-                _context.TemaResimleri.RemoveRange(tema.DetayResimler);
+        _context.RemoveRange(tema.DetayResimler);
+        _context.Temalar.Remove(tema);
 
-            _context.Temalar.Remove(tema);
-            await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
 
-            return Ok(new { message = "Tema ve tüm resimler başarıyla silindi." });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "Tema silinirken hata oluştu.", detail = ex.Message });
-        }
+    // ================= HELPERS =================
+    private void ValidateImage(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            throw new ArgumentException("Dosya boş");
+
+        if (file.Length > MAX_FILE_SIZE)
+            throw new ArgumentException("Dosya çok büyük");
+
+        if (!ALLOWED_TYPES.Contains(file.ContentType))
+            throw new ArgumentException("Geçersiz dosya türü");
+    }
+
+    private async Task SaveAsWebp(IFormFile file, string path)
+    {
+        using var stream = file.OpenReadStream();
+        using var image = new MagickImage(stream);
+
+        image.Strip();
+        image.Quality = 75;
+
+        await image.WriteAsync(path, MagickFormat.WebP);
     }
 }
