@@ -134,6 +134,11 @@ export default function KelimePage() {
 
   return (
     <div className="kelime-container">
+      {loading && (
+      <div className="loading-overlay">
+        Yükleniyor...
+      </div>
+    )}
       <div className="kelime-header">
         <h1 className="kelime-title">Kelime Yönetimi</h1>
         <p className="kelime-subtitle">

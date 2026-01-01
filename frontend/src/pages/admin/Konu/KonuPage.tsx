@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import CrudTable from "../Dashboard/CrudTable";
 import "./KonuPage.css";
 
@@ -134,6 +134,11 @@ export default function KonuPage() {
 
   return (
     <div className="konu-container">
+      {loading && (
+      <div className="loading-overlay">
+        Yükleniyor...
+      </div>
+    )}
       {/* Header */}
       <div className="konu-header">
         <h1 className="konu-title">Konu Yönetimi</h1>

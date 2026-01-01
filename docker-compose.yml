@@ -1,40 +1,56 @@
-version: "3.9"
+
 
 services:
-  postgres:
-    image: postgres:15
-    container_name: postgres_db
-    restart: always
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: languageapp-db
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${SA_PASSWORD}
+      MSSQL_PID: ${MSSQL_PID}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - sql_data:/var/opt/mssql
     ports:
-      - "5432:5432"
+      - "1433:1433"
+    restart: always
 
   backend:
-    build: ./backend
-    container_name: api
+    build:
+      context: ./api
+    container_name: languageapp-api
     restart: always
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET}
     depends_on:
-      - postgres
+      - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+
+      # DB
+      ConnectionStrings__DefaultConnection: ${DB_CONNECTION}
+
+      # JWT
+      JWT__SigningKey: ${JWT_SIGNING_KEY}
+      JWT__Issuer: http://localhost:5001
+      JWT__Audience: http://localhost:5001
+
+      # CORS
+      Cors__Origins__0: http://localhost:3000
+      Cors__Origins__1: http://localhost:5173
     ports:
-      - "5001:5001"
+      - "5001:5000"
+
+
+    
 
   frontend:
-    build: ./frontend
-    container_name: frontend
+    build:
+      context: ./frontend
+    container_name: languageapp-frontend
     restart: always
-    ports:
-      - "80:80"
     depends_on:
       - backend
+    ports:
+      - "3000:80"
 
 volumes:
-  postgres_data:
+  sql_data:

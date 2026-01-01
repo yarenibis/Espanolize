@@ -30,6 +30,8 @@ namespace api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RefreshTokenExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -48,22 +50,6 @@ namespace api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Konular",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Baslik = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Zorluk = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CalismaSuresi = table.Column<int>(type: "int", nullable: false),
-                    Aciklama = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Konular", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -187,34 +173,6 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GramerKurallar",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    KuralBaslik = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Aciklama = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    KonuId = table.Column<int>(type: "int", nullable: false),
-                    TemaId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GramerKurallar", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GramerKurallar_Konular_KonuId",
-                        column: x => x.KonuId,
-                        principalTable: "Konular",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GramerKurallar_Temalar_TemaId",
-                        column: x => x.TemaId,
-                        principalTable: "Temalar",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "KelimeTemalari",
                 columns: table => new
                 {
@@ -228,6 +186,29 @@ namespace api.Migrations
                     table.PrimaryKey("PK_KelimeTemalari", x => x.Id);
                     table.ForeignKey(
                         name: "FK_KelimeTemalari_Temalar_TemaId",
+                        column: x => x.TemaId,
+                        principalTable: "Temalar",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Konular",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Baslik = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Zorluk = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CalismaSuresi = table.Column<int>(type: "int", nullable: false),
+                    Aciklama = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TemaId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Konular", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Konular_Temalar_TemaId",
                         column: x => x.TemaId,
                         principalTable: "Temalar",
                         principalColumn: "Id",
@@ -275,28 +256,6 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ornekler",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IspanyolcaOrnek = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Ceviri = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Aciklama = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GramerKuralId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ornekler", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Ornekler_GramerKurallar_GramerKuralId",
-                        column: x => x.GramerKuralId,
-                        principalTable: "GramerKurallar",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Kelimeler",
                 columns: table => new
                 {
@@ -313,6 +272,27 @@ namespace api.Migrations
                         name: "FK_Kelimeler_KelimeTemalari_KelimeTemasiId",
                         column: x => x.KelimeTemasiId,
                         principalTable: "KelimeTemalari",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GramerKurallar",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    KuralBaslik = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Aciklama = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    KonuId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GramerKurallar", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GramerKurallar_Konular_KonuId",
+                        column: x => x.KonuId,
+                        principalTable: "Konular",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -335,6 +315,28 @@ namespace api.Migrations
                         name: "FK_Metinler_MetinTemalari_MetinTemaId",
                         column: x => x.MetinTemaId,
                         principalTable: "MetinTemalari",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Ornekler",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IspanyolcaOrnek = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Ceviri = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Aciklama = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GramerKuralId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ornekler", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Ornekler_GramerKurallar_GramerKuralId",
+                        column: x => x.GramerKuralId,
+                        principalTable: "GramerKurallar",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -389,11 +391,6 @@ namespace api.Migrations
                 column: "KonuId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GramerKurallar_TemaId",
-                table: "GramerKurallar",
-                column: "TemaId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Kelimeler_KelimeTemasiId",
                 table: "Kelimeler",
                 column: "KelimeTemasiId");
@@ -401,6 +398,11 @@ namespace api.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_KelimeTemalari_TemaId",
                 table: "KelimeTemalari",
+                column: "TemaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Konular_TemaId",
+                table: "Konular",
                 column: "TemaId");
 
             migrationBuilder.CreateIndex(

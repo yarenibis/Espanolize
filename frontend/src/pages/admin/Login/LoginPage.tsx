@@ -86,7 +86,7 @@ const handleLogin = async (e: React.FormEvent) => {
 
           {isLocked && (
             <p className="login-warning">
-              Çok fazla deneme yaptınız. Lütfen bekleyin.
+              Çok fazla deneme yaptınız.{lockTimer} Lütfen bekleyin.
             </p>
           )}
 

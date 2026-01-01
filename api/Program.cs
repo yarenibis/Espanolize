@@ -12,6 +12,7 @@ using api.Services;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using System.Text;
+using api.src.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
 
+    option.OperationFilter<SwaggerFileOperationFilter>();
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -52,7 +54,11 @@ builder.Services.AddSwaggerGen(option =>
             new string[] { }
         }
     });
+
+   
 });
+
+
 
 // -------------------- Identity --------------------
 builder.Services
@@ -182,6 +188,12 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 // -------------------- MIDDLEWARE --------------------
 if (app.Environment.IsDevelopment())

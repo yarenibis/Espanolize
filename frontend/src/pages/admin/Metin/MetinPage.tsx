@@ -170,6 +170,11 @@ export default function MetinPage() {
 
   return (
     <div className="metin-container">
+      {loading && (
+      <div className="loading-overlay">
+        Yükleniyor...
+      </div>
+    )}
       <div className="metin-header">
         <h1 className="metin-title">Metin Yönetimi</h1>
         <p className="metin-subtitle">Metinleri ekleyin, düzenleyin ve yönetin</p>

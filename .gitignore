@@ -1,0 +1,35 @@
+########################
+# ENV
+########################
+.env
+.env.*
+!.env.example
+.env.production
+
+########################
+# FRONTEND
+########################
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.production
+
+########################
+# BACKEND (.NET)
+########################
+api/bin/
+api/obj/
+
+########################
+# LOGS
+########################
+*.log
+
+########################
+# EDITORS / OS
+########################
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store

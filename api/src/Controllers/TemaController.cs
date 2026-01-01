@@ -10,6 +10,7 @@ using ImageMagick;
 using ImageMagick.Formats;
 using System.Security;
 
+
 [Route("api/admin/tema")]
 [ApiController]
 [Authorize(Roles = "Admin")]
@@ -65,8 +66,10 @@ public class TemaController : ControllerBase
 
     // ================= UPLOAD COVER =================
     [HttpPost("{id}/upload-cover")]
-    public async Task<IActionResult> UploadCover(int id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadCover(int id, [FromForm] UploadCoverRequest request)
     {
+        var file = request.File;
         var tema = await _context.Temalar.FindAsync(id);
         if (tema == null) return NotFound();
 
@@ -88,8 +91,10 @@ public class TemaController : ControllerBase
 
     // ================= UPLOAD DETAILS =================
     [HttpPost("{id}/upload-details")]
-    public async Task<IActionResult> UploadDetails(int id, [FromForm] List<IFormFile> files)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadDetails(int id, [FromForm] UploadDetailsRequest request)
     {
+        var files = request.Files;
         if (files == null || files.Count == 0)
             return BadRequest("Dosya yok.");
 

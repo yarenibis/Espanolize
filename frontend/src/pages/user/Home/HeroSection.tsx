@@ -1,5 +1,4 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+
 import "./HeroSection.css";
 import heroImg from "../../../assets/ispanya-haritasi.webp";
 
